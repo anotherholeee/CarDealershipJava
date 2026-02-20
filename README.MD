@@ -35,3 +35,7 @@
     - Метод: DELETE
     - Эндпоинт: /api/cars/{id}
     - Описание: Удаляет автомобиль из "базы данных" по его ID.
+
+## Ссылка на SonarQube проверку
+
+https://sonarcloud.io/summary/new_code?id=anotherholeee_CarDealershipJava&branch=main
