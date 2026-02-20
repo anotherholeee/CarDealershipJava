@@ -9,9 +9,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Car {
     private Long id;
-    private String brand;       // Марка (Toyota, BMW)
-    private String model;       // Модель (Camry, X5)
-    private int year;           // Год выпуска
-    private String color;       // Цвет
-    private double price;       // Цена
+    private String brand;
+    private String model;
+    private int year;
+    private String color;
+    private double price;
 }
