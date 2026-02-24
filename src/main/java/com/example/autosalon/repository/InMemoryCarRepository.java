@@ -1,20 +1,18 @@
 package com.example.autosalon.repository;
 
 import com.example.autosalon.entity.Car;
-import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
+import org.springframework.stereotype.Repository;
 
 @Repository
 public class InMemoryCarRepository implements CarRepository {
 
-
     private final Map<Long, Car> storage = new ConcurrentHashMap<>();
-
     private final AtomicLong idGenerator = new AtomicLong(1);
 
     @Override

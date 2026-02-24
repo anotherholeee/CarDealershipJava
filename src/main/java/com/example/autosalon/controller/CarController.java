@@ -2,15 +2,22 @@ package com.example.autosalon.controller;
 
 import com.example.autosalon.dto.CarRequestDto;
 import com.example.autosalon.dto.CarResponseDto;
-import com.example.autosalon.mapper.CarMapper;
 import com.example.autosalon.entity.Car;
+import com.example.autosalon.mapper.CarMapper;
 import com.example.autosalon.service.CarService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/cars")
@@ -21,7 +28,8 @@ public class CarController {
     private final CarMapper carMapper;
 
     @GetMapping
-    public ResponseEntity<List<CarResponseDto>> getCars(@RequestParam(required = false) String brand) {
+    public ResponseEntity<List<CarResponseDto>> getCars(
+            @RequestParam(required = false) String brand) {
         List<Car> cars;
         if (brand != null) {
             cars = carService.getCarsByBrand(brand);
@@ -44,7 +52,8 @@ public class CarController {
     }
 
     @PostMapping
-    public ResponseEntity<CarResponseDto> createCar(@RequestBody CarRequestDto createDto) {
+    public ResponseEntity<CarResponseDto> createCar(
+            @RequestBody CarRequestDto createDto) {
         Car car = carMapper.toEntity(createDto);
         Car savedCar = carService.createCar(car);
         CarResponseDto responseDto = carMapper.toResponseDto(savedCar);
@@ -52,7 +61,9 @@ public class CarController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CarResponseDto> updateCar(@PathVariable Long id, @RequestBody CarRequestDto updateDto) {
+    public ResponseEntity<CarResponseDto> updateCar(
+            @PathVariable Long id,
+            @RequestBody CarRequestDto updateDto) {
         Car carDetails = carMapper.toEntity(updateDto);
         Car updatedCar = carService.updateCar(id, carDetails);
         CarResponseDto responseDto = carMapper.toResponseDto(updatedCar);

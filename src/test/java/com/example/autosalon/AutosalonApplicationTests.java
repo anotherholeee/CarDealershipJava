@@ -9,5 +9,4 @@ class AutosalonApplicationTests {
     @Test
     void contextLoads() {
     }
-
 }

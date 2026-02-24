@@ -13,5 +13,4 @@ public class CarRequestDto {
     private int year;
     private String color;
     private double price;
-
 }

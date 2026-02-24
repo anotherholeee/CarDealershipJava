@@ -2,29 +2,24 @@ package com.example.autosalon.service;
 
 import com.example.autosalon.entity.Car;
 import com.example.autosalon.repository.CarRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class CarService {
 
-
     private final CarRepository carRepository;
-
 
     public List<Car> getAllCars() {
         return carRepository.findAll();
     }
 
-
     public Car getCarById(Long id) {
-
         return carRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Машина с id " + id + " не найдена"));
     }
-
 
     public Car createCar(Car car) {
         return carRepository.save(car);
