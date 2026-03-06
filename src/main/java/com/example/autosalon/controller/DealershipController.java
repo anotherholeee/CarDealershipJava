@@ -21,7 +21,7 @@ public class DealershipController {
      */
     @PostMapping("/without-transaction")
     public String createWithoutTransaction(@RequestBody DealershipWithCarsRequest request) {
-        log.info("\n=== ПОЛУЧЕН ЗАПРОС: /api/dealerships/without-transaction ===");
+        log.info("%n=== ПОЛУЧЕН ЗАПРОС: /api/dealerships/without-transaction ===");
         long beforeCount = dealershipService.countDealerships();
         log.info("📊 До операции: салонов в БД = {}", beforeCount);
 
@@ -53,7 +53,7 @@ public class DealershipController {
      */
     @PostMapping("/with-transaction")
     public String createWithTransaction(@RequestBody DealershipWithCarsRequest request) {
-        log.info("\n=== ПОЛУЧЕН ЗАПРОС: /api/dealerships/with-transaction ===");
+        log.info("%n=== ПОЛУЧЕН ЗАПРОС: /api/dealerships/with-transaction ===");
         long beforeCount = dealershipService.countDealerships();
         log.info("📊 До операции: салонов в БД = {}", beforeCount);
 
