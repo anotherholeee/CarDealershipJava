@@ -58,7 +58,7 @@ public class DealershipController {
         log.info("📊 До операции: салонов в БД = {}", beforeCount);
 
         try {
-            Dealership saved = dealershipService.createDealershipWithCarsWithTransaction(
+            dealershipService.createDealershipWithCarsWithTransaction(
                     request.getDealership(),
                     request.getCars()
             );
