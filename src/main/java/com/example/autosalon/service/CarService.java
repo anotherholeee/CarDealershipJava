@@ -16,7 +16,6 @@ public class CarService {
 
     private final CarRepository carRepository;
     private final CarRepositoryWithoutGraph carRepositoryWithout;
-    private final CarService self;
 
     @Transactional(readOnly = true)
     public List<Car> getAllCars() {
@@ -38,7 +37,7 @@ public class CarService {
 
     @Transactional
     public Car updateCar(Long id, Car carDetails) {
-        Car existingCar = self.getCarById(id);
+        Car existingCar = getCarById(id);  // ← просто вызываем напрямую
 
         existingCar.setBrand(carDetails.getBrand());
         existingCar.setModel(carDetails.getModel());

@@ -29,7 +29,7 @@ public class DealershipService {
         log.info("Начинаем сохранение автосалона и машин...");
 
         Dealership savedDealership = dealershipRepository.save(dealership);
-        log.info("✅ Шаг 1: Автосалон '{}' сохранен в БД",
+        log.info(" Шаг 1: Автосалон '{}' сохранен в БД",
                 savedDealership.getName());
 
         for (int i = 0; i < cars.size(); i++) {
@@ -37,19 +37,19 @@ public class DealershipService {
             car.setDealership(savedDealership);
 
             if (i == 1) {
-                log.error("❌ Шаг {}: ОШИБКА при сохранении машины {} {} !!!",
+                log.error(" Шаг {}: ОШИБКА при сохранении машины {} {} !!!",
                         i + 2, car.getBrand(), car.getModel());
                 throw new IllegalArgumentException(
-                        "💥 Ошибка сохранения машины: "
+                        " Ошибка сохранения машины: "
                                 + car.getBrand() + " " + car.getModel());
             }
 
             Car savedCar = carRepository.save(car);
-            log.info("✅ Шаг {}: Машина {} {} сохранена",
+            log.info(" Шаг {}: Машина {} {} сохранена",
                     i + 2, savedCar.getBrand(), savedCar.getModel());
         }
 
-        log.info("✅ Все данные успешно сохранены!");
+        log.info(" Все данные успешно сохранены!");
         return savedDealership;
     }
 
@@ -65,7 +65,7 @@ public class DealershipService {
         log.info("Начинаем сохранение автосалона и машин...");
 
         Dealership savedDealership = dealershipRepository.save(dealership);
-        log.info("✅ Шаг 1: Автосалон '{}' сохранен (в транзакции)",
+        log.info(" Шаг 1: Автосалон '{}' сохранен (в транзакции)",
                 savedDealership.getName());
 
         for (int i = 0; i < cars.size(); i++) {
@@ -73,21 +73,21 @@ public class DealershipService {
             car.setDealership(savedDealership);
 
             if (i == 1) {
-                log.error("❌ Шаг {}: ОШИБКА при сохранении машины {} {} !!!",
+                log.error(" Шаг {}: ОШИБКА при сохранении машины {} {} !!!",
                         i + 2, car.getBrand(), car.getModel());
-                log.info("🔄 Транзакция откатывается... "
+                log.info(" Транзакция откатывается... "
                         + "Все изменения будут отменены!");
                 throw new IllegalArgumentException(
-                        "💥 Ошибка сохранения машины: "
+                        " Ошибка сохранения машины: "
                                 + car.getBrand() + " " + car.getModel());
             }
 
             Car savedCar = carRepository.save(car);
-            log.info("✅ Шаг {}: Машина {} {} сохранена",
+            log.info(" Шаг {}: Машина {} {} сохранена",
                     i + 2, savedCar.getBrand(), savedCar.getModel());
         }
 
-        log.info("✅ Все данные успешно сохранены!");
+        log.info(" Все данные успешно сохранены!");
         return savedDealership;
     }
 
