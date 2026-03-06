@@ -15,9 +15,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CarService {
 
-    private final CarRepository carRepository;                 // обычный репозиторий
-    private final CarRepositoryWithoutGraph carRepositoryWithout; // репозиторий без @EntityGraph
-
+    private final CarRepository carRepository;
+    private final CarRepositoryWithoutGraph carRepositoryWithout;
+    private final CarService self;  // ← внедряем сам себя для транзакционных вызовов
 
     @Transactional(readOnly = true)
     public List<Car> getAllCars() {
@@ -27,7 +27,7 @@ public class CarService {
     @Transactional(readOnly = true)
     public Car getCarById(Long id) {
         return carRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Машина с id " + id + " не найдена"));
+                .orElseThrow(() -> new IllegalArgumentException("Машина с id " + id + " не найдена"));
     }
 
     @Transactional
@@ -38,12 +38,14 @@ public class CarService {
 
     @Transactional
     public Car updateCar(Long id, Car carDetails) {
-        Car existingCar = getCarById(id);
+        Car existingCar = self.getCarById(id);  // ← вызываем через self, а не this
+
         existingCar.setBrand(carDetails.getBrand());
         existingCar.setModel(carDetails.getModel());
         existingCar.setYear(carDetails.getYear());
         existingCar.setColor(carDetails.getColor());
         existingCar.setPrice(carDetails.getPrice());
+
         return existingCar;
     }
 
@@ -60,16 +62,15 @@ public class CarService {
         return carRepository.findByBrandIgnoreCase(brand);
     }
 
-
     @Transactional(readOnly = true)
     public List<Car> getCarsWithNPlusOneProblem() {
         log.info("=== ПРОБЛЕМА N+1: обычный findAll ===");
-        return carRepositoryWithout.findAll();  // используем репозиторий БЕЗ @EntityGraph
+        return carRepositoryWithout.findAll();
     }
 
     @Transactional(readOnly = true)
     public List<Car> getCarsWithSolution() {
         log.info("=== РЕШЕНИЕ: findAll с @EntityGraph ===");
-        return carRepository.findAll();  // используем репозиторий С @EntityGraph
+        return carRepository.findAll();
     }
 }
