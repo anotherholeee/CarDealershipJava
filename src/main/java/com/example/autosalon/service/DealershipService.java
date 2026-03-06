@@ -38,7 +38,7 @@ public class DealershipService {
             if (i == 1) {
                 log.error("❌ Шаг {}: ОШИБКА при сохранении машины {} {} !!!",
                         i + 2, car.getBrand(), car.getModel());
-                throw new RuntimeException("💥 Ошибка сохранения машины: " + car.getBrand() + " " + car.getModel());
+                throw new IllegalArgumentException("💥 Ошибка сохранения машины: " + car.getBrand() + " " + car.getModel());
             }
 
             Car savedCar = carRepository.save(car);
@@ -70,7 +70,7 @@ public class DealershipService {
                 log.error("❌ Шаг {}: ОШИБКА при сохранении машины {} {} !!!",
                         i + 2, car.getBrand(), car.getModel());
                 log.info("🔄 Транзакция откатывается... Все изменения будут отменены!");
-                throw new RuntimeException("💥 Ошибка сохранения машины: " + car.getBrand() + " " + car.getModel());
+                throw new IllegalArgumentException("💥 Ошибка сохранения машины: " + car.getBrand() + " " + car.getModel());
             }
 
             Car savedCar = carRepository.save(car);
