@@ -5,10 +5,9 @@ import com.example.autosalon.dto.CarResponseDto;
 import com.example.autosalon.entity.Car;
 import com.example.autosalon.entity.Feature;
 import com.example.autosalon.repository.FeatureRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 @Component
 @RequiredArgsConstructor

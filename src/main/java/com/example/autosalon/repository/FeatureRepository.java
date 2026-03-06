@@ -12,9 +12,7 @@ import org.springframework.stereotype.Repository;
  * - save(feature) - сохранить/обновить
  * - deleteById(id) - удалить по ID
  * - count() - количество записей
- * - и другие методы из JpaRepository
  */
 @Repository
 public interface FeatureRepository extends JpaRepository<Feature, Long> {
-
 }

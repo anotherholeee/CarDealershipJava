@@ -2,8 +2,8 @@ package com.example.autosalon.dto;
 
 import com.example.autosalon.entity.Car;
 import com.example.autosalon.entity.Dealership;
-import lombok.Data;
 import java.util.List;
+import lombok.Data;
 
 @Data
 public class DealershipWithCarsRequest {

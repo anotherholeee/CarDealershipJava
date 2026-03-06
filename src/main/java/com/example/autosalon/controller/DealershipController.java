@@ -5,7 +5,10 @@ import com.example.autosalon.entity.Dealership;
 import com.example.autosalon.service.DealershipService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
@@ -26,14 +29,16 @@ public class DealershipController {
         log.info("📊 До операции: салонов в БД = {}", beforeCount);
 
         try {
-            Dealership saved = dealershipService.createDealershipWithCarsWithoutTransaction(
-                    request.getDealership(),
-                    request.getCars()
-            );
+            Dealership saved = dealershipService
+                    .createDealershipWithCarsWithoutTransaction(
+                            request.getDealership(),
+                            request.getCars()
+                    );
 
             long afterCount = dealershipService.countDealerships();
             return String.format(
-                    "✅ УСПЕХ! (хотя не должно было) Салонов было: %d, стало: %d. Салон '%s' сохранен!",
+                    "✅ УСПЕХ! (хотя не должно было) Салонов было: %d, стало: %d. "
+                            + "Салон '%s' сохранен!",
                     beforeCount, afterCount, saved.getName()
             );
 
@@ -41,7 +46,9 @@ public class DealershipController {
             long afterCount = dealershipService.countDealerships();
             log.error("Ошибка при сохранении: {}", e.getMessage());
             return String.format(
-                    "❌ ОШИБКА: %s%n📊 Салонов было: %d, стало: %d. Видите? Салон сохранился, хотя должна была быть ошибка! Это частичное сохранение.",
+                    "❌ ОШИБКА: %s%n📊 Салонов было: %d, стало: %d. "
+                            + "Видите? Салон сохранился, хотя должна была быть ошибка! "
+                            + "Это частичное сохранение.",
                     e.getMessage(), beforeCount, afterCount
             );
         }
@@ -73,7 +80,8 @@ public class DealershipController {
             long afterCount = dealershipService.countDealerships();
             log.error("Ошибка при сохранении, транзакция откатилась: {}", e.getMessage());
             return String.format(
-                    "✅ ОТКАТ: %s%n📊 Салонов было: %d, стало: %d. Отлично! Транзакция сработала - салон НЕ сохранился!",
+                    "✅ ОТКАТ: %s%n📊 Салонов было: %d, стало: %d. "
+                            + "Отлично! Транзакция сработала - салон НЕ сохранился!",
                     e.getMessage(), beforeCount, afterCount
             );
         }

@@ -3,12 +3,11 @@ package com.example.autosalon.service;
 import com.example.autosalon.entity.Car;
 import com.example.autosalon.repository.CarRepository;
 import com.example.autosalon.repository.CarRepositoryWithoutGraph;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Slf4j
 @Service
@@ -17,7 +16,7 @@ public class CarService {
 
     private final CarRepository carRepository;
     private final CarRepositoryWithoutGraph carRepositoryWithout;
-    private final CarService self;  // ← внедряем сам себя для транзакционных вызовов
+    private final CarService self;
 
     @Transactional(readOnly = true)
     public List<Car> getAllCars() {
@@ -27,7 +26,8 @@ public class CarService {
     @Transactional(readOnly = true)
     public Car getCarById(Long id) {
         return carRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Машина с id " + id + " не найдена"));
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Машина с id " + id + " не найдена"));
     }
 
     @Transactional
@@ -38,7 +38,7 @@ public class CarService {
 
     @Transactional
     public Car updateCar(Long id, Car carDetails) {
-        Car existingCar = self.getCarById(id);  // ← вызываем через self, а не this
+        Car existingCar = self.getCarById(id);
 
         existingCar.setBrand(carDetails.getBrand());
         existingCar.setModel(carDetails.getModel());
@@ -52,7 +52,8 @@ public class CarService {
     @Transactional
     public void deleteCar(Long id) {
         if (!carRepository.existsById(id)) {
-            throw new IllegalArgumentException("Машина с id " + id + " не найдена");
+            throw new IllegalArgumentException(
+                    "Машина с id " + id + " не найдена");
         }
         carRepository.deleteById(id);
     }
@@ -63,7 +64,7 @@ public class CarService {
     }
 
     @Transactional(readOnly = true)
-    public List<Car> getCarsWithNPlusOneProblem() {
+    public List<Car> getCarsWithNplusOneProblem() {
         log.info("=== ПРОБЛЕМА N+1: обычный findAll ===");
         return carRepositoryWithout.findAll();
     }
