@@ -22,7 +22,6 @@ public class DealershipController {
     @PostMapping("/without-transaction")
     public String createWithoutTransaction(@RequestBody DealershipWithCarsRequest request) {
         log.info("\n=== ПОЛУЧЕН ЗАПРОС: /api/dealerships/without-transaction ===");
-
         long beforeCount = dealershipService.countDealerships();
         log.info("📊 До операции: салонов в БД = {}", beforeCount);
 
@@ -42,7 +41,7 @@ public class DealershipController {
             long afterCount = dealershipService.countDealerships();
             log.error("Ошибка при сохранении: {}", e.getMessage());
             return String.format(
-                    "❌ ОШИБКА: %s\n📊 Салонов было: %d, стало: %d. Видите? Салон сохранился, хотя должна была быть ошибка! Это частичное сохранение.",
+                    "❌ ОШИБКА: %s%n📊 Салонов было: %d, стало: %d. Видите? Салон сохранился, хотя должна была быть ошибка! Это частичное сохранение.",
                     e.getMessage(), beforeCount, afterCount
             );
         }
@@ -55,7 +54,6 @@ public class DealershipController {
     @PostMapping("/with-transaction")
     public String createWithTransaction(@RequestBody DealershipWithCarsRequest request) {
         log.info("\n=== ПОЛУЧЕН ЗАПРОС: /api/dealerships/with-transaction ===");
-
         long beforeCount = dealershipService.countDealerships();
         log.info("📊 До операции: салонов в БД = {}", beforeCount);
 
@@ -75,7 +73,7 @@ public class DealershipController {
             long afterCount = dealershipService.countDealerships();
             log.error("Ошибка при сохранении, транзакция откатилась: {}", e.getMessage());
             return String.format(
-                    "✅ ОТКАТ: %s\n📊 Салонов было: %d, стало: %d. Отлично! Транзакция сработала - салон НЕ сохранился!",
+                    "✅ ОТКАТ: %s%n📊 Салонов было: %d, стало: %d. Отлично! Транзакция сработала - салон НЕ сохранился!",
                     e.getMessage(), beforeCount, afterCount
             );
         }
