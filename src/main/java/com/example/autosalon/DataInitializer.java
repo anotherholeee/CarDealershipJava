@@ -7,7 +7,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import java.util.List;
 
-/*@Component
+/**@Component
 @RequiredArgsConstructor
 public class DataInitializer implements CommandLineRunner {
 
