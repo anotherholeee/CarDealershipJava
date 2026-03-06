@@ -4,8 +4,10 @@ import com.example.autosalon.dto.DealershipWithCarsRequest;
 import com.example.autosalon.entity.Dealership;
 import com.example.autosalon.service.DealershipService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/dealerships")
 @RequiredArgsConstructor
@@ -19,10 +21,10 @@ public class DealershipController {
      */
     @PostMapping("/without-transaction")
     public String createWithoutTransaction(@RequestBody DealershipWithCarsRequest request) {
-        System.out.println("\n=== ПОЛУЧЕН ЗАПРОС: /api/dealerships/without-transaction ===");
+        log.info("\n=== ПОЛУЧЕН ЗАПРОС: /api/dealerships/without-transaction ===");
 
         long beforeCount = dealershipService.countDealerships();
-        System.out.println("📊 До операции: салонов в БД = " + beforeCount);
+        log.info("📊 До операции: салонов в БД = {}", beforeCount);
 
         try {
             Dealership saved = dealershipService.createDealershipWithCarsWithoutTransaction(
@@ -38,6 +40,7 @@ public class DealershipController {
 
         } catch (Exception e) {
             long afterCount = dealershipService.countDealerships();
+            log.error("Ошибка при сохранении: {}", e.getMessage());  // ← добавил лог ошибки
             return String.format(
                     "❌ ОШИБКА: %s\n📊 Салонов было: %d, стало: %d. Видите? Салон сохранился, хотя должна была быть ошибка! Это частичное сохранение.",
                     e.getMessage(), beforeCount, afterCount
@@ -51,10 +54,10 @@ public class DealershipController {
      */
     @PostMapping("/with-transaction")
     public String createWithTransaction(@RequestBody DealershipWithCarsRequest request) {
-        System.out.println("\n=== ПОЛУЧЕН ЗАПРОС: /api/dealerships/with-transaction ===");
+        log.info("\n=== ПОЛУЧЕН ЗАПРОС: /api/dealerships/with-transaction ===");
 
         long beforeCount = dealershipService.countDealerships();
-        System.out.println("📊 До операции: салонов в БД = " + beforeCount);
+        log.info("📊 До операции: салонов в БД = {}", beforeCount);
 
         try {
             Dealership saved = dealershipService.createDealershipWithCarsWithTransaction(
@@ -70,6 +73,7 @@ public class DealershipController {
 
         } catch (Exception e) {
             long afterCount = dealershipService.countDealerships();
+            log.error("Ошибка при сохранении, транзакция откатилась: {}", e.getMessage());
             return String.format(
                     "✅ ОТКАТ: %s\n📊 Салонов было: %d, стало: %d. Отлично! Транзакция сработала - салон НЕ сохранился!",
                     e.getMessage(), beforeCount, afterCount
