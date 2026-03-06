@@ -40,7 +40,7 @@ public class DealershipController {
 
         } catch (Exception e) {
             long afterCount = dealershipService.countDealerships();
-            log.error("Ошибка при сохранении: {}", e.getMessage());  // ← добавил лог ошибки
+            log.error("Ошибка при сохранении: {}", e.getMessage());
             return String.format(
                     "❌ ОШИБКА: %s\n📊 Салонов было: %d, стало: %d. Видите? Салон сохранился, хотя должна была быть ошибка! Это частичное сохранение.",
                     e.getMessage(), beforeCount, afterCount
