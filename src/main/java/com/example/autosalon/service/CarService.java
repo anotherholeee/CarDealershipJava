@@ -1,14 +1,17 @@
 package com.example.autosalon.service;
 
 import com.example.autosalon.entity.Car;
+import com.example.autosalon.entity.Sale;
 import com.example.autosalon.repository.CarRepository;
 import com.example.autosalon.repository.CarRepositoryWithoutGraph;
-import java.util.List;
+import com.example.autosalon.repository.SaleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Lazy;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -17,7 +20,8 @@ public class CarService {
 
     private final CarRepository carRepository;
     private final CarRepositoryWithoutGraph carRepositoryWithout;
-    private final @Lazy CarService self;
+    private final SaleRepository saleRepository;
+    private final ObjectProvider<CarService> self;
 
     @Transactional(readOnly = true)
     public List<Car> getAllCars() {
@@ -39,7 +43,7 @@ public class CarService {
 
     @Transactional
     public Car updateCar(Long id, Car carDetails) {
-        Car existingCar = self.getCarById(id);  // ← просто вызываем напрямую
+        Car existingCar = self.getObject().getCarById(id);
 
         existingCar.setBrand(carDetails.getBrand());
         existingCar.setModel(carDetails.getModel());
@@ -52,11 +56,19 @@ public class CarService {
 
     @Transactional
     public void deleteCar(Long id) {
-        if (!carRepository.existsById(id)) {
-            throw new IllegalArgumentException(
-                    "Машина с id " + id + " не найдена");
+        Car car = getCarById(id);
+
+        if (car.getSale() != null) {
+            Sale sale = car.getSale();
+            sale.setCar(null);
+            saleRepository.save(sale);
         }
-        carRepository.deleteById(id);
+
+        car.getFeatures().clear();
+
+        carRepository.delete(car);
+
+        log.info("Машина с id {} успешно удалена", id);
     }
 
     @Transactional(readOnly = true)

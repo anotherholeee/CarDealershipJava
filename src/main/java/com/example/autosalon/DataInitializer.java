@@ -10,6 +10,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -37,6 +40,9 @@ public class DataInitializer implements CommandLineRunner {
         // 3. СОЗДАНИЕ МАШИН (CARS) - ВАЖНО: сначала фичи, потом машины
         createCars();
 
+        // 3.1. ГАРАНТИЯ СВЯЗЕЙ CAR-FEATURE (если машины уже были в БД)
+        ensureCarFeatures();
+
         // 4. СОЗДАНИЕ ПОКУПАТЕЛЕЙ (CUSTOMERS)
         createCustomers();
 
@@ -63,24 +69,24 @@ public class DataInitializer implements CommandLineRunner {
         System.out.println("\n🔧 СОЗДАНИЕ ОСОБЕННОСТЕЙ:");
 
         List<Feature> features = Arrays.asList(
-            createFeature("Полный привод", "4WD/AWD система", "Технологии"),
-            createFeature("Панорамная крыша", "Стеклянная крыша с люком", "Комфорт"),
-            createFeature("Автопилот", "Система автономного вождения 2 уровня", "Технологии"),
-            createFeature("Кожаный салон", "Натуральная кожа Nappa", "Комфорт"),
-            createFeature("Подогрев сидений", "Передние и задние сиденья", "Комфорт"),
-            createFeature("Вентиляция сидений", "Передние сиденья", "Комфорт"),
-            createFeature("Массаж сидений", "Передние сиденья с 5 режимами", "Комфорт"),
-            createFeature("Адаптивный круиз-контроль", "С функцией Stop&Go", "Безопасность"),
-            createFeature("Система ночного видения", "Распознавание пешеходов", "Безопасность"),
-            createFeature("360° камеры", "Круговой обзор", "Безопасность"),
-            createFeature("Парктроник", "Передний и задний", "Безопасность"),
-            createFeature("Беспроводная зарядка", "Для смартфонов", "Мультимедиа"),
-            createFeature("Apple CarPlay", "Беспроводное подключение", "Мультимедиа"),
-            createFeature("Android Auto", "Беспроводное подключение", "Мультимедиа"),
-            createFeature("Аудиосистема Bose", "14 динамиков", "Мультимедиа"),
-            createFeature("Спортивные сиденья", "С усиленной боковой поддержкой", "Спорт"),
-            createFeature("Спортивный режим", "Настройка подвески и двигателя", "Спорт"),
-            createFeature("Лаунч-контроль", "Система быстрого старта", "Спорт")
+                createFeature("Полный привод", "4WD/AWD система", "Технологии"),
+                createFeature("Панорамная крыша", "Стеклянная крыша с люком", "Комфорт"),
+                createFeature("Автопилот", "Система автономного вождения 2 уровня", "Технологии"),
+                createFeature("Кожаный салон", "Натуральная кожа Nappa", "Комфорт"),
+                createFeature("Подогрев сидений", "Передние и задние сиденья", "Комфорт"),
+                createFeature("Вентиляция сидений", "Передние сиденья", "Комфорт"),
+                createFeature("Массаж сидений", "Передние сиденья с 5 режимами", "Комфорт"),
+                createFeature("Адаптивный круиз-контроль", "С функцией Stop&Go", "Безопасность"),
+                createFeature("Система ночного видения", "Распознавание пешеходов", "Безопасность"),
+                createFeature("360° камеры", "Круговой обзор", "Безопасность"),
+                createFeature("Парктроник", "Передний и задний", "Безопасность"),
+                createFeature("Беспроводная зарядка", "Для смартфонов", "Мультимедиа"),
+                createFeature("Apple CarPlay", "Беспроводное подключение", "Мультимедиа"),
+                createFeature("Android Auto", "Беспроводное подключение", "Мультимедиа"),
+                createFeature("Аудиосистема Bose", "14 динамиков", "Мультимедиа"),
+                createFeature("Спортивные сиденья", "С усиленной боковой поддержкой", "Спорт"),
+                createFeature("Спортивный режим", "Настройка подвески и двигателя", "Спорт"),
+                createFeature("Лаунч-контроль", "Система быстрого старта", "Спорт")
         );
 
         featureRepository.saveAll(features);
@@ -96,11 +102,11 @@ public class DataInitializer implements CommandLineRunner {
         System.out.println("\n🏢 СОЗДАНИЕ АВТОСАЛОНОВ:");
 
         List<Dealership> dealerships = Arrays.asList(
-            createDealership("Автосалон Премиум", "г. Москва, ул. Тверская, 10", "+7 (495) 111-11-11"),
-            createDealership("Автомир Юг", "г. Москва, ул. Южная, 25", "+7 (495) 222-22-22"),
-            createDealership("СпортКар", "г. Москва, ул. Спортивная, 5", "+7 (495) 333-33-33"),
-            createDealership("ЭкономАвто", "г. Москва, ул. Северная, 15", "+7 (495) 444-44-44"),
-            createDealership("Дилерский Центр", "г. Москва, ул. Центральная, 30", "+7 (495) 555-55-55")
+                createDealership("Автосалон Премиум", "г. Москва, ул. Тверская, 10", "+7 (495) 111-11-11"),
+                createDealership("Автомир Юг", "г. Москва, ул. Южная, 25", "+7 (495) 222-22-22"),
+                createDealership("СпортКар", "г. Москва, ул. Спортивная, 5", "+7 (495) 333-33-33"),
+                createDealership("ЭкономАвто", "г. Москва, ул. Северная, 15", "+7 (495) 444-44-44"),
+                createDealership("Дилерский Центр", "г. Москва, ул. Центральная, 30", "+7 (495) 555-55-55")
         );
 
         dealershipRepository.saveAll(dealerships);
@@ -127,7 +133,7 @@ public class DataInitializer implements CommandLineRunner {
         System.out.println("   📋 Доступные фичи:");
         for (int i = 0; i < features.size(); i++) {
             System.out.println("      [" + i + "] " + features.get(i).getId() + ": " +
-                              features.get(i).getName() + " (" + features.get(i).getCategory() + ")");
+                    features.get(i).getName() + " (" + features.get(i).getCategory() + ")");
         }
 
         // Mercedes S-Class (id 1)
@@ -397,11 +403,133 @@ public class DataInitializer implements CommandLineRunner {
         List<Car> cars = carRepository.findAll();
         for (Car car : cars) {
             System.out.println("   " + car.getBrand() + " " + car.getModel() +
-                              ": фич = " + car.getFeatures().size());
+                    ": фич = " + car.getFeatures().size());
             for (Feature f : car.getFeatures()) {
                 System.out.println("      - " + f.getName());
             }
         }
+    }
+
+    private void ensureCarFeatures() {
+        System.out.println("\n🔗 ПРОВЕРКА/ВОССТАНОВЛЕНИЕ СВЯЗЕЙ CAR-FEATURE:");
+
+        List<Feature> allFeatures = featureRepository.findAll();
+        if (allFeatures.isEmpty()) {
+            System.out.println("   ❌ Особенности отсутствуют, нечего привязывать.");
+            return;
+        }
+
+        Map<String, Feature> featuresByName = allFeatures.stream()
+                .collect(Collectors.toMap(Feature::getName, Function.identity(), (a, b) -> a));
+
+        List<Car> cars = carRepository.findAll(); // @EntityGraph загрузит features, если они есть
+        if (cars.isEmpty()) {
+            System.out.println("   ❌ Машины отсутствуют, нечего привязывать.");
+            return;
+        }
+
+        int updated = 0;
+        for (Car car : cars) {
+            if (car.getFeatures() != null && !car.getFeatures().isEmpty()) {
+                continue;
+            }
+
+            List<Feature> toAdd = getFeaturesForCar(car, featuresByName);
+            if (toAdd.isEmpty()) {
+                continue;
+            }
+
+            for (Feature f : toAdd) {
+                car.addFeature(f);
+            }
+            updated++;
+        }
+
+        if (updated > 0) {
+            carRepository.saveAll(cars);
+            System.out.println("   ✅ Восстановлены связи для машин: " + updated);
+        } else {
+            System.out.println("   ✅ Все машины уже имеют фичи (или нет правил привязки).");
+        }
+    }
+
+    private List<Feature> getFeaturesForCar(Car car, Map<String, Feature> featuresByName) {
+        if (car.getBrand() == null || car.getModel() == null) {
+            return List.of();
+        }
+
+        String brand = car.getBrand().trim().toLowerCase();
+        String model = car.getModel().trim().toLowerCase();
+
+        // Подбираем фичи по тем же правилам, что и при первичном создании в createCars()
+        if (brand.equals("toyota") && model.equals("camry")) {
+            return pick(featuresByName, "Подогрев сидений", "Вентиляция сидений", "Парктроник", "Беспроводная зарядка");
+        }
+        if (brand.equals("kia") && model.equals("k5")) {
+            return pick(featuresByName, "Подогрев сидений", "Парктроник", "Беспроводная зарядка", "Apple CarPlay");
+        }
+        if (brand.equals("hyundai") && model.equals("sonata")) {
+            return pick(featuresByName, "Подогрев сидений", "Парктроник", "Беспроводная зарядка", "Android Auto");
+        }
+        if (brand.equals("mercedes") && model.equals("s-class")) {
+            return pick(featuresByName,
+                    "Полный привод", "Панорамная крыша", "Автопилот", "Кожаный салон", "Подогрев сидений",
+                    "Адаптивный круиз-контроль", "360° камеры", "Аудиосистема Bose");
+        }
+        if (brand.equals("bmw") && model.equals("7 series")) {
+            return pick(featuresByName,
+                    "Полный привод", "Панорамная крыша", "Кожаный салон", "Подогрев сидений",
+                    "Адаптивный круиз-контроль", "Система ночного видения", "360° камеры", "Apple CarPlay");
+        }
+        if (brand.equals("audi") && model.equals("a8")) {
+            return pick(featuresByName,
+                    "Полный привод", "Панорамная крыша", "Кожаный салон", "Вентиляция сидений",
+                    "Адаптивный круиз-контроль", "360° камеры", "Android Auto", "Аудиосистема Bose");
+        }
+        if (brand.equals("porsche") && model.equals("911 turbo s")) {
+            return pick(featuresByName,
+                    "Полный привод", "Спортивные сиденья", "Спортивный режим", "Лаунч-контроль",
+                    "Адаптивный круиз-контроль", "360° камеры", "Аудиосистема Bose");
+        }
+        if (brand.equals("bmw") && model.equals("m5 competition")) {
+            return pick(featuresByName,
+                    "Полный привод", "Спортивные сиденья", "Спортивный режим", "Лаунч-контроль",
+                    "Кожаный салон", "Подогрев сидений", "Аудиосистема Bose");
+        }
+        if (brand.equals("audi") && model.equals("rs7")) {
+            return pick(featuresByName,
+                    "Полный привод", "Спортивные сиденья", "Спортивный режим", "Лаунч-контроль",
+                    "Кожаный салон", "360° камеры", "Android Auto");
+        }
+        if (brand.equals("toyota") && model.equals("land cruiser 300")) {
+            return pick(featuresByName,
+                    "Полный привод", "Панорамная крыша", "Кожаный салон", "Подогрев сидений",
+                    "Адаптивный круиз-контроль", "Система ночного видения", "360° камеры", "Аудиосистема Bose");
+        }
+        if (brand.equals("lexus") && model.equals("lx600")) {
+            return pick(featuresByName,
+                    "Полный привод", "Панорамная крыша", "Кожаный салон", "Подогрев сидений", "Вентиляция сидений",
+                    "Адаптивный круиз-контроль", "360° камеры", "Аудиосистема Bose");
+        }
+        if (brand.equals("volvo") && model.equals("xc90")) {
+            return pick(featuresByName,
+                    "Полный привод", "Панорамная крыша", "Автопилот", "Кожаный салон", "Подогрев сидений",
+                    "Адаптивный круиз-контроль", "Система ночного видения", "360° камеры");
+        }
+        if (brand.equals("range rover") && model.equals("sport")) {
+            return pick(featuresByName,
+                    "Полный привод", "Панорамная крыша", "Автопилот", "Кожаный салон", "Подогрев сидений", "Вентиляция сидений",
+                    "Адаптивный круиз-контроль", "360° камеры");
+        }
+
+        return List.of();
+    }
+
+    private List<Feature> pick(Map<String, Feature> featuresByName, String... names) {
+        return Arrays.stream(names)
+                .map(featuresByName::get)
+                .filter(f -> f != null)
+                .toList();
     }
 
     private void createCustomers() {
@@ -413,16 +541,16 @@ public class DataInitializer implements CommandLineRunner {
         System.out.println("\n👥 СОЗДАНИЕ ПОКУПАТЕЛЕЙ:");
 
         List<Customer> customers = Arrays.asList(
-            createCustomer("Иван", "Иванов", "ivan.ivanov@email.com", "+7 (901) 111-11-11"),
-            createCustomer("Петр", "Петров", "petr.petrov@email.com", "+7 (902) 222-22-22"),
-            createCustomer("Сергей", "Сергеев", "sergey@email.com", "+7 (903) 333-33-33"),
-            createCustomer("Анна", "Смирнова", "anna.smirnova@email.com", "+7 (904) 444-44-44"),
-            createCustomer("Елена", "Козлова", "elena.kozlova@email.com", "+7 (905) 555-55-55"),
-            createCustomer("Дмитрий", "Морозов", "dmitry.morozov@email.com", "+7 (906) 666-66-66"),
-            createCustomer("Ольга", "Волкова", "olga.volkova@email.com", "+7 (907) 777-77-77"),
-            createCustomer("Алексей", "Соколов", "alexey.sokolov@email.com", "+7 (908) 888-88-88"),
-            createCustomer("Татьяна", "Михайлова", "tatiana@email.com", "+7 (909) 999-99-99"),
-            createCustomer("Николай", "Николаев", "nikolay@email.com", "+7 (910) 000-00-00")
+                createCustomer("Иван", "Иванов", "ivan.ivanov@email.com", "+7 (901) 111-11-11"),
+                createCustomer("Петр", "Петров", "petr.petrov@email.com", "+7 (902) 222-22-22"),
+                createCustomer("Сергей", "Сергеев", "sergey@email.com", "+7 (903) 333-33-33"),
+                createCustomer("Анна", "Смирнова", "anna.smirnova@email.com", "+7 (904) 444-44-44"),
+                createCustomer("Елена", "Козлова", "elena.kozlova@email.com", "+7 (905) 555-55-55"),
+                createCustomer("Дмитрий", "Морозов", "dmitry.morozov@email.com", "+7 (906) 666-66-66"),
+                createCustomer("Ольга", "Волкова", "olga.volkova@email.com", "+7 (907) 777-77-77"),
+                createCustomer("Алексей", "Соколов", "alexey.sokolov@email.com", "+7 (908) 888-88-88"),
+                createCustomer("Татьяна", "Михайлова", "tatiana@email.com", "+7 (909) 999-99-99"),
+                createCustomer("Николай", "Николаев", "nikolay@email.com", "+7 (910) 000-00-00")
         );
 
         customerRepository.saveAll(customers);
@@ -448,18 +576,18 @@ public class DataInitializer implements CommandLineRunner {
         LocalDateTime now = LocalDateTime.now();
 
         List<Sale> sales = Arrays.asList(
-            createSale(cars.get(0), customers.get(0), now.minusDays(14), 148000),
-            createSale(cars.get(1), customers.get(1), now.minusDays(13), 138000),
-            createSale(cars.get(2), customers.get(2), now.minusDays(12), 133000),
-            createSale(cars.get(3), customers.get(3), now.minusDays(11), 245000),
-            createSale(cars.get(4), customers.get(4), now.minusDays(10), 118000),
-            createSale(cars.get(5), customers.get(5), now.minusDays(6), 113000),
-            createSale(cars.get(6), customers.get(6), now.minusDays(5), 34000),
-            createSale(cars.get(7), customers.get(7), now.minusDays(4), 31000),
-            createSale(cars.get(8), customers.get(8), now.minusDays(3), 29500),
-            createSale(cars.get(9), customers.get(9), now.minusDays(2), 98000),
-            createSale(cars.get(10), customers.get(0), now.minusDays(1), 108000),
-            createSale(cars.get(11), customers.get(1), now, 83000)
+                createSale(cars.get(0), customers.get(0), now.minusDays(14), 148000),
+                createSale(cars.get(1), customers.get(1), now.minusDays(13), 138000),
+                createSale(cars.get(2), customers.get(2), now.minusDays(12), 133000),
+                createSale(cars.get(3), customers.get(3), now.minusDays(11), 245000),
+                createSale(cars.get(4), customers.get(4), now.minusDays(10), 118000),
+                createSale(cars.get(5), customers.get(5), now.minusDays(6), 113000),
+                createSale(cars.get(6), customers.get(6), now.minusDays(5), 34000),
+                createSale(cars.get(7), customers.get(7), now.minusDays(4), 31000),
+                createSale(cars.get(8), customers.get(8), now.minusDays(3), 29500),
+                createSale(cars.get(9), customers.get(9), now.minusDays(2), 98000),
+                createSale(cars.get(10), customers.get(0), now.minusDays(1), 108000),
+                createSale(cars.get(11), customers.get(1), now, 83000)
         );
 
         saleRepository.saveAll(sales);
@@ -509,16 +637,3 @@ public class DataInitializer implements CommandLineRunner {
         return sale;
     }
 }
-
-DELETE FROM car_features;
-DELETE FROM cars;
-DELETE FROM dealerships;
-DELETE FROM features;
-DELETE FROM customers;
-DELETE FROM sales;
-
-ALTER SEQUENCE cars_id_seq RESTART WITH 1;
-ALTER SEQUENCE dealerships_id_seq RESTART WITH 1;
-ALTER SEQUENCE features_id_seq RESTART WITH 1;
-ALTER SEQUENCE customers_id_seq RESTART WITH 1;
-ALTER SEQUENCE sales_id_seq RESTART WITH 1;

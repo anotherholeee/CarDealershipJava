@@ -464,10 +464,10 @@ public class Sale {
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
-    @Column(name = "sale_date", nullable = false)
+    @Column(name = "date", nullable = false)
     private LocalDateTime saleDate;
 
-    @Column(name = "sale_price")
+    @Column(name = "price")
     private double salePrice;
 }
 ```

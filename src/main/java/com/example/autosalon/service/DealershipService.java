@@ -2,13 +2,16 @@ package com.example.autosalon.service;
 
 import com.example.autosalon.entity.Car;
 import com.example.autosalon.entity.Dealership;
+import com.example.autosalon.entity.Sale;
 import com.example.autosalon.repository.CarRepository;
 import com.example.autosalon.repository.DealershipRepository;
-import java.util.List;
+import com.example.autosalon.repository.SaleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -17,84 +20,141 @@ public class DealershipService {
 
     private final DealershipRepository dealershipRepository;
     private final CarRepository carRepository;
+    private final SaleRepository saleRepository;
 
-    /**
-     * Метод БЕЗ @Transactional - при ошибке часть данных сохранится
-     * Демонстрация частичного сохранения
-     */
-    public Dealership createDealershipWithCarsWithoutTransaction(
-            Dealership dealership, List<Car> cars) {
-        log.info("\n");
-        log.info("========== ДЕМОНСТРАЦИЯ БЕЗ @Transactional ==========");
-        log.info("Начинаем сохранение автосалона и машин...");
 
-        Dealership savedDealership = dealershipRepository.save(dealership);
-        log.info(" Шаг 1: Автосалон '{}' сохранен в БД",
-                savedDealership.getName());
+    @Transactional(readOnly = true)
+    public List<Dealership> getAllDealerships() {
+        List<Dealership> dealerships = dealershipRepository.findAllWithCars();
 
-        for (int i = 0; i < cars.size(); i++) {
-            Car car = cars.get(i);
-            car.setDealership(savedDealership);
+        carRepository.findAll();
 
-            if (i == 1) {
-                log.error(" Шаг {}: ОШИБКА при сохранении машины {} {} !!!",
-                        i + 2, car.getBrand(), car.getModel());
-                throw new IllegalArgumentException(
-                        " Ошибка сохранения машины: "
-                                + car.getBrand() + " " + car.getModel());
+        for (Dealership d : dealerships) {
+            for (Car c : d.getCars()) {
+                c.getFeatures().size();
             }
-
-            Car savedCar = carRepository.save(car);
-            log.info(" Шаг {}: Машина {} {} сохранена",
-                    i + 2, savedCar.getBrand(), savedCar.getModel());
         }
 
-        log.info(" Все данные успешно сохранены!");
+        return dealerships;
+    }
+
+    @Transactional(readOnly = true)
+    public Dealership getDealershipById(Long id) {
+        return dealershipRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Автосалон с id " + id + " не найден"));
+    }
+
+    @Transactional(readOnly = true)
+    public Dealership getDealershipWithCars(Long id) {
+        Dealership dealership = getDealershipById(id);
+        if (!dealership.getCars().isEmpty()) {
+            log.debug("Автосалон {} содержит {} машин", dealership.getName(), dealership.getCars().size());
+            for (Car car : dealership.getCars()) {
+                car.getFeatures().size();
+            }
+        }
+        return dealership;
+    }
+
+    @Transactional
+    public Dealership createDealership(Dealership dealership) {
+        dealership.setId(null);
+        return dealershipRepository.save(dealership);
+    }
+
+    @Transactional
+    public Dealership updateDealership(Long id, Dealership dealershipDetails) {
+        Dealership existing = getDealershipById(id);
+        existing.setName(dealershipDetails.getName());
+        existing.setAddress(dealershipDetails.getAddress());
+        existing.setPhone(dealershipDetails.getPhone());
+        return existing;
+    }
+
+    @Transactional
+    public void deleteDealership(Long id) {
+        Dealership dealership = getDealershipById(id);
+
+        List<Car> cars = dealership.getCars();
+
+        for (Car car : cars) {
+            if (car.getSale() != null) {
+                Sale sale = car.getSale();
+                sale.setCar(null);
+                saleRepository.save(sale);
+                log.info("Связь с продажей {} разорвана", sale.getId());
+            }
+
+            car.getFeatures().clear();
+
+            car.setDealership(null);
+
+            carRepository.save(car);
+        }
+
+        dealership.getCars().clear();
+
+        dealershipRepository.delete(dealership);
+
+        log.info("Автосалон с id {} успешно удален", id);
+    }
+
+
+    @Transactional
+    public Dealership addCarToDealership(Long dealershipId, Long carId) {
+        Dealership dealership = getDealershipById(dealershipId);
+        Car car = carRepository.findById(carId)
+                .orElseThrow(() -> new IllegalArgumentException("Машина с id " + carId + " не найдена"));
+
+        dealership.addCar(car);
+        return dealership;
+    }
+
+    @Transactional
+    public Dealership removeCarFromDealership(Long dealershipId, Long carId) {
+        Dealership dealership = getDealershipById(dealershipId);
+        Car car = carRepository.findById(carId)
+                .orElseThrow(() -> new IllegalArgumentException("Машина с id " + carId + " не найдена"));
+
+        dealership.removeCar(car);
+        return dealership;
+    }
+
+
+    @Transactional(readOnly = true)
+    public long countDealerships() {
+        return dealershipRepository.count();
+    }
+
+    public Dealership createDealershipWithCarsWithoutTransaction(
+            Dealership dealership, List<Car> cars) {
+        Dealership savedDealership = dealershipRepository.save(dealership);
+        saveCarsWithErrorOnSecond(cars, savedDealership);
         return savedDealership;
     }
 
-    /**
-     * Метод С @Transactional - при ошибке все откатится
-     * Демонстрация полного отката
-     */
     @Transactional
     public Dealership createDealershipWithCarsWithTransaction(
             Dealership dealership, List<Car> cars) {
-        log.info("\n");
-        log.info("========== ДЕМОНСТРАЦИЯ С @Transactional ==========");
-        log.info("Начинаем сохранение автосалона и машин...");
-
         Dealership savedDealership = dealershipRepository.save(dealership);
-        log.info(" Шаг 1: Автосалон '{}' сохранен (в транзакции)",
-                savedDealership.getName());
-
-        for (int i = 0; i < cars.size(); i++) {
-            Car car = cars.get(i);
-            car.setDealership(savedDealership);
-
-            if (i == 1) {
-                log.error(" Шаг {}: ОШИБКА при сохранении машины {} {} !!!",
-                        i + 2, car.getBrand(), car.getModel());
-                log.info(" Транзакция откатывается... "
-                        + "Все изменения будут отменены!");
-                throw new IllegalArgumentException(
-                        " Ошибка сохранения машины: "
-                                + car.getBrand() + " " + car.getModel());
-            }
-
-            Car savedCar = carRepository.save(car);
-            log.info(" Шаг {}: Машина {} {} сохранена",
-                    i + 2, savedCar.getBrand(), savedCar.getModel());
-        }
-
-        log.info(" Все данные успешно сохранены!");
+        saveCarsWithErrorOnSecond(cars, savedDealership);
         return savedDealership;
     }
 
-    /**
-     * Метод для проверки количества салонов в БД
-     */
-    public long countDealerships() {
-        return dealershipRepository.count();
+    private void saveCarsWithErrorOnSecond(List<Car> cars, Dealership dealership) {
+        for (int i = 0; i < cars.size(); i++) {
+            Car car = cars.get(i);
+            car.setDealership(dealership);
+            car.setId(null);
+
+            if (i == 1) {
+                throw new IllegalArgumentException(
+                        String.format("Ошибка сохранения машины: %s %s",
+                                car.getBrand(), car.getModel())
+                );
+            }
+
+            carRepository.save(car);
+        }
     }
 }

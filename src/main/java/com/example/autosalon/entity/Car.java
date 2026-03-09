@@ -44,6 +44,7 @@ public class Car {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dealership_id")
+    @JsonIgnore
     private Dealership dealership;
 
     @ManyToMany

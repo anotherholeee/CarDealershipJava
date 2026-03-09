@@ -5,19 +5,12 @@ import com.example.autosalon.dto.CarResponseDto;
 import com.example.autosalon.entity.Car;
 import com.example.autosalon.mapper.CarMapper;
 import com.example.autosalon.service.CarService;
+import java.util.Comparator;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/cars")
@@ -39,6 +32,7 @@ public class CarController {
 
         List<CarResponseDto> responseDtos = cars.stream()
                 .map(carMapper::toResponseDto)
+                .sorted(Comparator.comparing(CarResponseDto::getId))
                 .toList();
 
         return ResponseEntity.ok(responseDtos);
@@ -82,6 +76,7 @@ public class CarController {
     @GetMapping("/features/problem")
     public ResponseEntity<List<Car>> demonstrateNplusOneProblem() {
         List<Car> cars = carService.getCarsWithNplusOneProblem();
+        cars.sort(Comparator.comparing(Car::getId));
         return ResponseEntity.ok(cars);
     }
 
@@ -92,6 +87,7 @@ public class CarController {
     @GetMapping("/features/solution")
     public ResponseEntity<List<Car>> demonstrateSolution() {
         List<Car> cars = carService.getCarsWithSolution();
+        cars.sort(Comparator.comparing(Car::getId));
         return ResponseEntity.ok(cars);
     }
 }
