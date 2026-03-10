@@ -3,6 +3,7 @@ package com.example.autosalon.service;
 import com.example.autosalon.entity.Sale;
 import com.example.autosalon.repository.SaleRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,6 +12,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class SaleService {
 
     private final SaleRepository saleRepository;
@@ -62,7 +64,8 @@ public class SaleService {
 
     @Transactional
     public Sale updateSale(Long id, Sale saleDetails) {
-        Sale existingSale = getSaleById(id);
+        Sale existingSale = saleRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Sale not found with id: " + id));
 
         existingSale.setSaleDate(saleDetails.getSaleDate());
         existingSale.setSalePrice(saleDetails.getSalePrice());
@@ -79,7 +82,8 @@ public class SaleService {
 
     @Transactional
     public void deleteSale(Long id) {
-        Sale sale = getSaleById(id);
+        Sale sale = saleRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Sale not found with id: " + id));
 
         if (sale.getCar() != null) {
             sale.getCar().setSale(null);
@@ -90,6 +94,6 @@ public class SaleService {
         }
 
         saleRepository.delete(sale);
-        System.out.println("Продажа с id " + id + " успешно удалена");
+        log.info("Продажа с id {} успешно удалена", id);
     }
 }

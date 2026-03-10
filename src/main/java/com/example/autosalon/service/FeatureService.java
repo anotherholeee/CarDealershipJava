@@ -5,6 +5,7 @@ import com.example.autosalon.entity.Feature;
 import com.example.autosalon.repository.CarRepository;
 import com.example.autosalon.repository.FeatureRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,6 +13,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class FeatureService {
 
     private final FeatureRepository featureRepository;
@@ -41,7 +43,8 @@ public class FeatureService {
 
     @Transactional
     public Feature updateFeature(Long id, Feature featureDetails) {
-        Feature existingFeature = getFeatureById(id);
+        Feature existingFeature = featureRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Feature not found with id: " + id));
 
         existingFeature.setName(featureDetails.getName());
         existingFeature.setDescription(featureDetails.getDescription());
@@ -52,15 +55,16 @@ public class FeatureService {
 
     @Transactional
     public Feature updateDescription(Long id, String description) {
-        Feature feature = getFeatureById(id);
+        Feature feature = featureRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Feature not found with id: " + id));
         feature.setDescription(description);
         return feature;
     }
 
     @Transactional
     public void deleteFeature(Long id) {
-        Feature feature = getFeatureById(id);
-
+        Feature feature = featureRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Feature not found with id: " + id));
 
         List<Car> carsWithFeature = carRepository.findAll().stream()
                 .filter(car -> car.getFeatures().contains(feature))
@@ -71,11 +75,10 @@ public class FeatureService {
                 car.removeFeature(feature);
                 carRepository.save(car);
             }
-            System.out.println("Особенность удалена из " + carsWithFeature.size() + " машин");
-
+            log.info("Особенность удалена из {} машин", carsWithFeature.size());
         }
 
         featureRepository.delete(feature);
-        System.out.println("Feature with id " + id + " successfully deleted");
+        log.info("Feature with id {} successfully deleted", id);
     }
 }
