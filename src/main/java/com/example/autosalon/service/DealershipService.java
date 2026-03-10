@@ -107,6 +107,7 @@ public class DealershipService {
                 .orElseThrow(() -> new IllegalArgumentException("Машина с id " + carId + " не найдена"));
 
         dealership.addCar(car);
+        dealership.getCars().size(); // инициализируем коллекцию для DTO-маппинга
         return dealership;
     }
 
@@ -117,6 +118,7 @@ public class DealershipService {
                 .orElseThrow(() -> new IllegalArgumentException("Машина с id " + carId + " не найдена"));
 
         dealership.removeCar(car);
+        dealership.getCars().size(); // инициализируем коллекцию для DTO-маппинга
         return dealership;
     }
 

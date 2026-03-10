@@ -116,7 +116,6 @@ public class DealershipWithCarsRequest {
 ```java
 package com.example.autosalon.controller;
 
-import com.example.autosalon.dto.DealershipWithCarsRequest;
 import com.example.autosalon.entity.Dealership;
 import com.example.autosalon.service.DealershipService;
 import lombok.RequiredArgsConstructor;

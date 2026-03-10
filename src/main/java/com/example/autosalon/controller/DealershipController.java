@@ -1,8 +1,15 @@
 package com.example.autosalon.controller;
 
+import com.example.autosalon.dto.DealershipRequestDto;
+import com.example.autosalon.dto.DealershipResponseDto;
 import com.example.autosalon.dto.DealershipWithCarsRequest;
+import com.example.autosalon.dto.DealershipWithCarsResponseDto;
+import com.example.autosalon.dto.CarRequestDto;
 import com.example.autosalon.entity.Dealership;
+import com.example.autosalon.mapper.DealershipMapper;
+import com.example.autosalon.mapper.CarMapper;
 import com.example.autosalon.service.DealershipService;
+import java.util.Collections;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -19,6 +26,8 @@ import java.util.List;
 public class DealershipController {
 
     private final DealershipService dealershipService;
+    private final DealershipMapper dealershipMapper;
+    private final CarMapper carMapper;
 
 
 
@@ -27,14 +36,17 @@ public class DealershipController {
      * GET /api/dealerships
      */
     @GetMapping
-    public ResponseEntity<List<Dealership>> getAllDealerships() {
+    public ResponseEntity<List<DealershipResponseDto>> getAllDealerships() {
         log.info("GET /api/dealerships - получение всех автосалонов");
         List<Dealership> dealerships = dealershipService.getAllDealerships();
 
 
-        dealerships.sort(Comparator.comparing(Dealership::getId));
+        List<DealershipResponseDto> response = dealerships.stream()
+                .sorted(Comparator.comparing(Dealership::getId))
+                .map(dealershipMapper::toResponseDto)
+                .toList();
 
-        return ResponseEntity.ok(dealerships);
+        return ResponseEntity.ok(response);
     }
 
     /**
@@ -42,9 +54,10 @@ public class DealershipController {
      * GET /api/dealerships/{id}
      */
     @GetMapping("/{id}")
-    public ResponseEntity<Dealership> getDealershipById(@PathVariable Long id) {
+    public ResponseEntity<DealershipResponseDto> getDealershipById(@PathVariable Long id) {
         log.info("GET /api/dealerships/{} - получение автосалона", id);
-        return ResponseEntity.ok(dealershipService.getDealershipById(id));
+        Dealership dealership = dealershipService.getDealershipById(id);
+        return ResponseEntity.ok(dealershipMapper.toResponseDto(dealership));
     }
 
     /**
@@ -52,9 +65,10 @@ public class DealershipController {
      * GET /api/dealerships/{id}/with-cars
      */
     @GetMapping("/{id}/with-cars")
-    public ResponseEntity<Dealership> getDealershipWithCars(@PathVariable Long id) {
+    public ResponseEntity<DealershipWithCarsResponseDto> getDealershipWithCars(@PathVariable Long id) {
         log.info("GET /api/dealerships/{}/with-cars - получение салона с машинами", id);
-        return ResponseEntity.ok(dealershipService.getDealershipWithCars(id));
+        Dealership dealership = dealershipService.getDealershipWithCars(id);
+        return ResponseEntity.ok(dealershipMapper.toWithCarsResponseDto(dealership));
     }
 
     /**
@@ -62,10 +76,10 @@ public class DealershipController {
      * POST /api/dealerships
      */
     @PostMapping
-    public ResponseEntity<Dealership> createDealership(@RequestBody Dealership dealership) {
-        log.info("POST /api/dealerships - создание нового автосалона: {}", dealership.getName());
-        Dealership created = dealershipService.createDealership(dealership);
-        return new ResponseEntity<>(created, HttpStatus.CREATED);
+    public ResponseEntity<DealershipResponseDto> createDealership(@RequestBody DealershipRequestDto requestDto) {
+        log.info("POST /api/dealerships - создание нового автосалона: {}", requestDto.getName());
+        Dealership created = dealershipService.createDealership(dealershipMapper.toEntity(requestDto));
+        return new ResponseEntity<>(dealershipMapper.toResponseDto(created), HttpStatus.CREATED);
     }
 
     /**
@@ -73,11 +87,12 @@ public class DealershipController {
      * PUT /api/dealerships/{id}
      */
     @PutMapping("/{id}")
-    public ResponseEntity<Dealership> updateDealership(
+    public ResponseEntity<DealershipResponseDto> updateDealership(
             @PathVariable Long id,
-            @RequestBody Dealership dealership) {
+            @RequestBody DealershipRequestDto requestDto) {
         log.info("PUT /api/dealerships/{} - обновление автосалона", id);
-        return ResponseEntity.ok(dealershipService.updateDealership(id, dealership));
+        Dealership updated = dealershipService.updateDealership(id, dealershipMapper.toEntity(requestDto));
+        return ResponseEntity.ok(dealershipMapper.toResponseDto(updated));
     }
 
     /**
@@ -96,11 +111,12 @@ public class DealershipController {
      * POST /api/dealerships/{dealershipId}/cars/{carId}
      */
     @PostMapping("/{dealershipId}/cars/{carId}")
-    public ResponseEntity<Dealership> addCarToDealership(
+    public ResponseEntity<DealershipWithCarsResponseDto> addCarToDealership(
             @PathVariable Long dealershipId,
             @PathVariable Long carId) {
         log.info("POST /api/dealerships/{}/cars/{} - добавление машины в салон", dealershipId, carId);
-        return ResponseEntity.ok(dealershipService.addCarToDealership(dealershipId, carId));
+        Dealership dealership = dealershipService.addCarToDealership(dealershipId, carId);
+        return ResponseEntity.ok(dealershipMapper.toWithCarsResponseDto(dealership));
     }
 
     /**
@@ -108,11 +124,12 @@ public class DealershipController {
      * DELETE /api/dealerships/{dealershipId}/cars/{carId}
      */
     @DeleteMapping("/{dealershipId}/cars/{carId}")
-    public ResponseEntity<Dealership> removeCarFromDealership(
+    public ResponseEntity<DealershipWithCarsResponseDto> removeCarFromDealership(
             @PathVariable Long dealershipId,
             @PathVariable Long carId) {
         log.info("DELETE /api/dealerships/{}/cars/{} - удаление машины из салона", dealershipId, carId);
-        return ResponseEntity.ok(dealershipService.removeCarFromDealership(dealershipId, carId));
+        Dealership dealership = dealershipService.removeCarFromDealership(dealershipId, carId);
+        return ResponseEntity.ok(dealershipMapper.toWithCarsResponseDto(dealership));
     }
 
 
@@ -128,11 +145,11 @@ public class DealershipController {
         log.info(" До операции: салонов в БД = {}", beforeCount);
 
         try {
-            Dealership saved = dealershipService
-                    .createDealershipWithCarsWithoutTransaction(
-                            request.getDealership(),
-                            request.getCars()
-                    );
+            List<CarRequestDto> cars = request.getCars() == null ? Collections.emptyList() : request.getCars();
+            Dealership saved = dealershipService.createDealershipWithCarsWithoutTransaction(
+                    dealershipMapper.toEntity(request.getDealership()),
+                    cars.stream().map(carMapper::toEntity).toList()
+            );
 
             long afterCount = dealershipService.countDealerships();
             return String.format(
@@ -163,9 +180,10 @@ public class DealershipController {
         log.info(" До операции: салонов в БД = {}", beforeCount);
 
         try {
+            List<CarRequestDto> cars = request.getCars() == null ? Collections.emptyList() : request.getCars();
             dealershipService.createDealershipWithCarsWithTransaction(
-                    request.getDealership(),
-                    request.getCars()
+                    dealershipMapper.toEntity(request.getDealership()),
+                    cars.stream().map(carMapper::toEntity).toList()
             );
 
             long afterCount = dealershipService.countDealerships();
