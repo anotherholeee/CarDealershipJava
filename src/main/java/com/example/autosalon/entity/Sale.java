@@ -45,9 +45,9 @@ public class Sale {
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
-    @Column(name = "date", nullable = false)  // ← Используем существующую колонку date
-    private LocalDateTime saleDate;  // ← Поле в коде называется saleDate, но в БД date
+    @Column(name = "date", nullable = false)
+    private LocalDateTime saleDate;
 
-    @Column(name = "price")  // ← Используем существующую колонку price
-    private double salePrice;  // ← Поле в коде называется salePrice, но в БД price
+    @Column(name = "price")
+    private double salePrice;
 }
