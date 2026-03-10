@@ -43,7 +43,7 @@
 ### Ссылка на SonarQube проверку
 https://sonarcloud.io/summary/new_code?id=anotherholeee_CarDealershipJava&branch=main
 
-![ER-диграмма](images/ER-diagram.png)
+![ER-диграмма](images/https://github.com/anotherholeee/CarDealershipJava/wiki/ER%E2%80%90diagram)
 ---
 
 ## Этап 2: JPA (Hibernate/Spring Data)
