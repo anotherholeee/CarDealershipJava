@@ -21,6 +21,7 @@ public class DealershipService {
     private final DealershipRepository dealershipRepository;
     private final CarRepository carRepository;
     private final SaleRepository saleRepository;
+    private final DealershipTransactionalService dealershipTransactionalService;
 
 
     @Transactional(readOnly = true)
@@ -137,9 +138,7 @@ public class DealershipService {
     @Transactional
     public Dealership createDealershipWithCarsWithTransaction(
             Dealership dealership, List<Car> cars) {
-        Dealership savedDealership = dealershipRepository.save(dealership);
-        saveCarsWithErrorOnSecond(cars, savedDealership);
-        return savedDealership;
+        return dealershipTransactionalService.createDealershipWithCarsWithTransaction(dealership, cars);
     }
 
     private void saveCarsWithErrorOnSecond(List<Car> cars, Dealership dealership) {
