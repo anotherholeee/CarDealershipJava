@@ -3,6 +3,7 @@ package com.example.autosalon.service;
 import com.example.autosalon.entity.Customer;
 import com.example.autosalon.repository.CustomerRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +14,7 @@ import java.util.List;
 public class CustomerService {
 
     private final CustomerRepository customerRepository;
+    private final ObjectProvider<CustomerService> self;
 
     @Transactional(readOnly = true)
     public List<Customer> getAllCustomers() {
@@ -39,7 +41,7 @@ public class CustomerService {
 
     @Transactional
     public Customer updateCustomer(Long id, Customer customerDetails) {
-        Customer existingCustomer = getCustomerById(id);
+        Customer existingCustomer = self.getObject().getCustomerById(id);
 
         existingCustomer.setFirstName(customerDetails.getFirstName());
         existingCustomer.setLastName(customerDetails.getLastName());
@@ -51,7 +53,7 @@ public class CustomerService {
 
     @Transactional
     public Customer updatePhone(Long id, String phone) {
-        Customer customer = getCustomerById(id);
+        Customer customer = self.getObject().getCustomerById(id);
         customer.setPhone(phone);
         return customer;
     }

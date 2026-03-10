@@ -56,7 +56,7 @@ public class CarService {
 
     @Transactional
     public void deleteCar(Long id) {
-        Car car = getCarById(id);
+        Car car = self.getObject().getCarById(id);
 
         if (car.getSale() != null) {
             Sale sale = car.getSale();
