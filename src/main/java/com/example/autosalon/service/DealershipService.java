@@ -111,7 +111,7 @@ public class DealershipService {
                         "Машина с id " + carId + " не найдена"));
 
         dealership.addCar(car);
-        dealership.getCars().size(); // инициализируем коллекцию для DTO-маппинга
+        dealership.getCars().size();
         return dealership;
     }
 
@@ -123,7 +123,7 @@ public class DealershipService {
                         "Машина с id " + carId + " не найдена"));
 
         dealership.removeCar(car);
-        dealership.getCars().size(); // инициализируем коллекцию для DTO-маппинга
+        dealership.getCars().size();
         return dealership;
     }
 
