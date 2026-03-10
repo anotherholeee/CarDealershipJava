@@ -2,12 +2,11 @@ package com.example.autosalon.service;
 
 import com.example.autosalon.entity.Customer;
 import com.example.autosalon.repository.CustomerRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -24,13 +23,15 @@ public class CustomerService {
     @Transactional(readOnly = true)
     public Customer getCustomerById(Long id) {
         return customerRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Customer not found with id: " + id));
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Customer not found with id: " + id));
     }
 
     @Transactional(readOnly = true)
     public Customer getCustomerByEmail(String email) {
         return customerRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("Customer not found with email: " + email));
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Customer not found with email: " + email));
     }
 
     @Transactional

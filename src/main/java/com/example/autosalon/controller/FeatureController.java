@@ -5,12 +5,19 @@ import com.example.autosalon.dto.FeatureResponseDto;
 import com.example.autosalon.entity.Feature;
 import com.example.autosalon.mapper.FeatureMapper;
 import com.example.autosalon.service.FeatureService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping("/api/features")
@@ -34,17 +41,23 @@ public class FeatureController {
     }
 
     @GetMapping("/category/{category}")
-    public ResponseEntity<List<FeatureResponseDto>> getFeaturesByCategory(@PathVariable String category) {
-        List<FeatureResponseDto> response = featureService.getFeaturesByCategory(category).stream()
+    public ResponseEntity<List<FeatureResponseDto>> getFeaturesByCategory(
+            @PathVariable String category) {
+        List<FeatureResponseDto> response = featureService
+                .getFeaturesByCategory(category).stream()
                 .map(featureMapper::toResponseDto)
                 .toList();
         return ResponseEntity.ok(response);
     }
 
     @PostMapping
-    public ResponseEntity<FeatureResponseDto> createFeature(@RequestBody FeatureRequestDto requestDto) {
-        Feature createdFeature = featureService.createFeature(featureMapper.toEntity(requestDto));
-        return new ResponseEntity<>(featureMapper.toResponseDto(createdFeature), HttpStatus.CREATED);
+    public ResponseEntity<FeatureResponseDto> createFeature(
+            @RequestBody FeatureRequestDto requestDto) {
+        Feature createdFeature =
+                featureService.createFeature(featureMapper.toEntity(requestDto));
+        return new ResponseEntity<>(
+                featureMapper.toResponseDto(createdFeature),
+                HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
@@ -52,7 +65,10 @@ public class FeatureController {
             @PathVariable Long id,
             @RequestBody FeatureRequestDto requestDto) {
         return ResponseEntity.ok(
-                featureMapper.toResponseDto(featureService.updateFeature(id, featureMapper.toEntity(requestDto)))
+                featureMapper.toResponseDto(
+                        featureService.updateFeature(
+                                id,
+                                featureMapper.toEntity(requestDto)))
         );
     }
 
@@ -60,7 +76,9 @@ public class FeatureController {
     public ResponseEntity<FeatureResponseDto> updateFeatureDescription(
             @PathVariable Long id,
             @RequestParam String description) {
-        return ResponseEntity.ok(featureMapper.toResponseDto(featureService.updateDescription(id, description)));
+        return ResponseEntity.ok(
+                featureMapper.toResponseDto(
+                        featureService.updateDescription(id, description)));
     }
 
     @DeleteMapping("/{id}")

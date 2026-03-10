@@ -1,9 +1,9 @@
 package com.example.autosalon.repository;
 
 import com.example.autosalon.entity.Feature;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import java.util.List;
 
 /**
  * Репозиторий для работы с сущностью Feature (особенности автомобилей)

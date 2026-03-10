@@ -4,11 +4,10 @@ import com.example.autosalon.entity.Car;
 import com.example.autosalon.entity.Dealership;
 import com.example.autosalon.repository.CarRepository;
 import com.example.autosalon.repository.DealershipRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -18,7 +17,9 @@ public class DealershipTransactionalService {
     private final CarRepository carRepository;
 
     @Transactional
-    public Dealership createDealershipWithCarsWithTransaction(Dealership dealership, List<Car> cars) {
+    public Dealership createDealershipWithCarsWithTransaction(
+            Dealership dealership,
+            List<Car> cars) {
         Dealership savedDealership = dealershipRepository.save(dealership);
         saveCarsWithErrorOnSecond(cars, savedDealership);
         return savedDealership;

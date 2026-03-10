@@ -5,13 +5,12 @@ import com.example.autosalon.entity.Sale;
 import com.example.autosalon.repository.CarRepository;
 import com.example.autosalon.repository.CarRepositoryWithoutGraph;
 import com.example.autosalon.repository.SaleRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Slf4j
 @Service

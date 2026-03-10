@@ -35,7 +35,9 @@ public class SaleMapper {
 
         if (sale.getCustomer() != null) {
             dto.setCustomerId(sale.getCustomer().getId());
-            dto.setCustomerName(sale.getCustomer().getFirstName() + " " + sale.getCustomer().getLastName());
+            dto.setCustomerName(
+                    sale.getCustomer().getFirstName() + " "
+                            + sale.getCustomer().getLastName());
         }
 
         return dto;

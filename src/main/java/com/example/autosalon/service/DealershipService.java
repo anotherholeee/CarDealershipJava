@@ -6,12 +6,11 @@ import com.example.autosalon.entity.Sale;
 import com.example.autosalon.repository.CarRepository;
 import com.example.autosalon.repository.DealershipRepository;
 import com.example.autosalon.repository.SaleRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Slf4j
 @Service
@@ -41,14 +40,18 @@ public class DealershipService {
 
     public Dealership getDealershipById(Long id) {
         return dealershipRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Автосалон с id " + id + " не найден"));
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Автосалон с id " + id + " не найден"));
     }
 
     @Transactional(readOnly = true)
     public Dealership getDealershipWithCars(Long id) {
         Dealership dealership = getDealershipById(id);
         if (!dealership.getCars().isEmpty()) {
-            log.debug("Автосалон {} содержит {} машин", dealership.getName(), dealership.getCars().size());
+            log.debug(
+                    "Автосалон {} содержит {} машин",
+                    dealership.getName(),
+                    dealership.getCars().size());
             for (Car car : dealership.getCars()) {
                 car.getFeatures().size();
             }
@@ -104,7 +107,8 @@ public class DealershipService {
     public Dealership addCarToDealership(Long dealershipId, Long carId) {
         Dealership dealership = getDealershipById(dealershipId);
         Car car = carRepository.findById(carId)
-                .orElseThrow(() -> new IllegalArgumentException("Машина с id " + carId + " не найдена"));
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Машина с id " + carId + " не найдена"));
 
         dealership.addCar(car);
         dealership.getCars().size(); // инициализируем коллекцию для DTO-маппинга
@@ -115,7 +119,8 @@ public class DealershipService {
     public Dealership removeCarFromDealership(Long dealershipId, Long carId) {
         Dealership dealership = getDealershipById(dealershipId);
         Car car = carRepository.findById(carId)
-                .orElseThrow(() -> new IllegalArgumentException("Машина с id " + carId + " не найдена"));
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Машина с id " + carId + " не найдена"));
 
         dealership.removeCar(car);
         dealership.getCars().size(); // инициализируем коллекцию для DTO-маппинга
@@ -138,7 +143,8 @@ public class DealershipService {
     @Transactional
     public Dealership createDealershipWithCarsWithTransaction(
             Dealership dealership, List<Car> cars) {
-        return dealershipTransactionalService.createDealershipWithCarsWithTransaction(dealership, cars);
+        return dealershipTransactionalService
+                .createDealershipWithCarsWithTransaction(dealership, cars);
     }
 
     private void saveCarsWithErrorOnSecond(List<Car> cars, Dealership dealership) {

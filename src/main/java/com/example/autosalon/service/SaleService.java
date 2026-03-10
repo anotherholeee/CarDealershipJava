@@ -2,13 +2,12 @@ package com.example.autosalon.service;
 
 import com.example.autosalon.entity.Sale;
 import com.example.autosalon.repository.SaleRepository;
+import java.time.LocalDateTime;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -35,7 +34,8 @@ public class SaleService {
     @Transactional(readOnly = true)
     public Sale getSaleByCarId(Long carId) {
         return saleRepository.findByCarId(carId)
-                .orElseThrow(() -> new IllegalArgumentException("Sale not found for car id: " + carId));
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Sale not found for car id: " + carId));
     }
 
     @Transactional(readOnly = true)

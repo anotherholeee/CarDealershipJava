@@ -5,15 +5,21 @@ import com.example.autosalon.dto.SaleResponseDto;
 import com.example.autosalon.entity.Sale;
 import com.example.autosalon.mapper.SaleMapper;
 import com.example.autosalon.service.SaleService;
+import java.time.LocalDateTime;
+import java.util.Comparator;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDateTime;
-import java.util.Comparator;
-import java.util.List;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping("/api/sales")
@@ -46,7 +52,8 @@ public class SaleController {
     }
 
     @GetMapping("/customer/{customerId}")
-    public ResponseEntity<List<SaleResponseDto>> getSalesByCustomerId(@PathVariable Long customerId) {
+    public ResponseEntity<List<SaleResponseDto>> getSalesByCustomerId(
+            @PathVariable Long customerId) {
         List<Sale> sales = saleService.getSalesByCustomerId(customerId);
         List<SaleResponseDto> responseDtos = sales.stream()
                 .map(saleMapper::toResponseDto)
@@ -76,7 +83,9 @@ public class SaleController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<SaleResponseDto> updateSale(@PathVariable Long id, @RequestBody SaleRequestDto updateDto) {
+    public ResponseEntity<SaleResponseDto> updateSale(
+            @PathVariable Long id,
+            @RequestBody SaleRequestDto updateDto) {
         Sale saleDetails = saleMapper.toEntity(updateDto);
         Sale updatedSale = saleService.updateSale(id, saleDetails);
         return ResponseEntity.ok(saleMapper.toResponseDto(updatedSale));

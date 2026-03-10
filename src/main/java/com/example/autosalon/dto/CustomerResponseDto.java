@@ -1,5 +1,7 @@
 package com.example.autosalon.dto;
+
 import lombok.Data;
+
 @Data
 public class CustomerResponseDto {
     private Long id;
