@@ -16,6 +16,8 @@ import java.util.List;
 @Slf4j
 public class FeatureService {
 
+    private static final String FEATURE_NOT_FOUND_MESSAGE = "Feature not found with id: ";
+
     private final FeatureRepository featureRepository;
     private final CarRepository carRepository;
 
@@ -27,7 +29,7 @@ public class FeatureService {
     @Transactional(readOnly = true)
     public Feature getFeatureById(Long id) {
         return featureRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Feature not found with id: " + id));
+                .orElseThrow(() -> new IllegalArgumentException(FEATURE_NOT_FOUND_MESSAGE + id));
     }
 
     @Transactional(readOnly = true)
@@ -44,7 +46,7 @@ public class FeatureService {
     @Transactional
     public Feature updateFeature(Long id, Feature featureDetails) {
         Feature existingFeature = featureRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Feature not found with id: " + id));
+                .orElseThrow(() -> new IllegalArgumentException(FEATURE_NOT_FOUND_MESSAGE + id));
 
         existingFeature.setName(featureDetails.getName());
         existingFeature.setDescription(featureDetails.getDescription());
@@ -56,7 +58,7 @@ public class FeatureService {
     @Transactional
     public Feature updateDescription(Long id, String description) {
         Feature feature = featureRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Feature not found with id: " + id));
+                .orElseThrow(() -> new IllegalArgumentException(FEATURE_NOT_FOUND_MESSAGE + id));
         feature.setDescription(description);
         return feature;
     }
@@ -64,7 +66,7 @@ public class FeatureService {
     @Transactional
     public void deleteFeature(Long id) {
         Feature feature = featureRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Feature not found with id: " + id));
+                .orElseThrow(() -> new IllegalArgumentException(FEATURE_NOT_FOUND_MESSAGE + id));
 
         List<Car> carsWithFeature = carRepository.findAll().stream()
                 .filter(car -> car.getFeatures().contains(feature))

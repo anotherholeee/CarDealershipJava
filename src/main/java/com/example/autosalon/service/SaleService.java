@@ -15,6 +15,8 @@ import java.util.List;
 @Slf4j
 public class SaleService {
 
+    private static final String SALE_NOT_FOUND_MESSAGE = "Sale not found with id: ";
+
     private final SaleRepository saleRepository;
     private final CarService carService;
     private final CustomerService customerService;
@@ -27,7 +29,7 @@ public class SaleService {
     @Transactional(readOnly = true)
     public Sale getSaleById(Long id) {
         return saleRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Sale not found with id: " + id));
+                .orElseThrow(() -> new IllegalArgumentException(SALE_NOT_FOUND_MESSAGE + id));
     }
 
     @Transactional(readOnly = true)
@@ -65,7 +67,7 @@ public class SaleService {
     @Transactional
     public Sale updateSale(Long id, Sale saleDetails) {
         Sale existingSale = saleRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Sale not found with id: " + id));
+                .orElseThrow(() -> new IllegalArgumentException(SALE_NOT_FOUND_MESSAGE + id));
 
         existingSale.setSaleDate(saleDetails.getSaleDate());
         existingSale.setSalePrice(saleDetails.getSalePrice());
@@ -83,7 +85,7 @@ public class SaleService {
     @Transactional
     public void deleteSale(Long id) {
         Sale sale = saleRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Sale not found with id: " + id));
+                .orElseThrow(() -> new IllegalArgumentException(SALE_NOT_FOUND_MESSAGE + id));
 
         if (sale.getCar() != null) {
             sale.getCar().setSale(null);
