@@ -38,7 +38,6 @@ public class DealershipService {
         return dealerships;
     }
 
-    @Transactional(readOnly = true)
     public Dealership getDealershipById(Long id) {
         return dealershipRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Автосалон с id " + id + " не найден"));
