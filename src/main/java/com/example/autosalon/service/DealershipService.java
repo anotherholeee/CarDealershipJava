@@ -2,10 +2,8 @@ package com.example.autosalon.service;
 
 import com.example.autosalon.entity.Car;
 import com.example.autosalon.entity.Dealership;
-import com.example.autosalon.entity.Sale;
 import com.example.autosalon.repository.CarRepository;
 import com.example.autosalon.repository.DealershipRepository;
-import com.example.autosalon.repository.SaleRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +17,7 @@ public class DealershipService {
 
     private final DealershipRepository dealershipRepository;
     private final CarRepository carRepository;
-    private final SaleRepository saleRepository;
+    private final CarService carService;
     private final DealershipTransactionalService dealershipTransactionalService;
 
 
@@ -78,24 +76,13 @@ public class DealershipService {
     public void deleteDealership(Long id) {
         Dealership dealership = getDealershipById(id);
 
+        // Удаляем все машины автосалона, используя общую бизнес-логику CarService.
+        // Если какая-то машина уже продана, CarService.deleteCar выбросит исключение
+        // и автосалон не будет удалён, что защищает инвариант "проданную машину нельзя удалить".
         List<Car> cars = dealership.getCars();
-
         for (Car car : cars) {
-            if (car.getSale() != null) {
-                Sale sale = car.getSale();
-                sale.setCar(null);
-                saleRepository.save(sale);
-                log.info("Связь с продажей {} разорвана", sale.getId());
-            }
-
-            car.getFeatures().clear();
-
-            car.setDealership(null);
-
-            carRepository.save(car);
+            carService.deleteCar(car.getId());
         }
-
-        dealership.getCars().clear();
 
         dealershipRepository.delete(dealership);
 

@@ -59,14 +59,28 @@ public class CarService {
 
         if (car.getSale() != null) {
             Sale sale = car.getSale();
-            sale.setCar(null);
-            saleRepository.save(sale);
+            String errorMessage = String.format(
+                    "Невозможно удалить машину ID=%d %s %s %d - она уже продана! " +
+                            "(ID продажи: %d, дата продажи: %s, покупатель: %s %s)",
+                    car.getId(),
+                    car.getBrand(),
+                    car.getModel(),
+                    car.getYear(),
+                    sale.getId(),
+                    sale.getSaleDate().toLocalDate(),
+                    sale.getCustomer() != null ? sale.getCustomer().getFirstName() : "неизвестно",
+                    sale.getCustomer() != null ? sale.getCustomer().getLastName() : "неизвестно"
+            );
+
+            log.error(errorMessage);
+            throw new IllegalStateException(errorMessage);
         }
 
+        log.info("Удаление машины ID={} {} {} (не продана)",
+                car.getId(), car.getBrand(), car.getModel());
+
         car.getFeatures().clear();
-
         carRepository.delete(car);
-
         log.info("Машина с id {} успешно удалена", id);
     }
 

@@ -61,9 +61,18 @@ public class CustomerService {
 
     @Transactional
     public void deleteCustomer(Long id) {
-        if (!customerRepository.existsById(id)) {
-            throw new IllegalArgumentException("Customer not found with id: " + id);
+        Customer customer = self.getObject().getCustomerById(id);
+
+        if (!customer.getSales().isEmpty()) {
+            throw new IllegalStateException(
+                    String.format(
+                            "Невозможно удалить покупателя ID=%d %s %s - у него есть продажи (количество: %d)",
+                            customer.getId(),
+                            customer.getFirstName(),
+                            customer.getLastName(),
+                            customer.getSales().size()));
         }
-        customerRepository.deleteById(id);
+
+        customerRepository.delete(customer);
     }
 }

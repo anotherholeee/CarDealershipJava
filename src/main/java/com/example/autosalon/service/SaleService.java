@@ -1,5 +1,7 @@
 package com.example.autosalon.service;
 
+import com.example.autosalon.entity.Car;
+import com.example.autosalon.entity.Customer;
 import com.example.autosalon.entity.Sale;
 import com.example.autosalon.repository.SaleRepository;
 import java.time.LocalDateTime;
@@ -52,14 +54,32 @@ public class SaleService {
     public Sale createSale(Sale sale) {
         sale.setId(null);
 
-
-        if (sale.getCar() != null && sale.getCar().getId() != null) {
-            carService.getCarById(sale.getCar().getId());
+        if (sale.getCar() == null || sale.getCar().getId() == null) {
+            throw new IllegalArgumentException("Car must be specified for sale");
+        }
+        if (sale.getCustomer() == null || sale.getCustomer().getId() == null) {
+            throw new IllegalArgumentException("Customer must be specified for sale");
         }
 
-        if (sale.getCustomer() != null && sale.getCustomer().getId() != null) {
-            customerService.getCustomerById(sale.getCustomer().getId());
+        Car car = carService.getCarById(sale.getCar().getId());
+        if (car.getSale() != null) {
+            throw new IllegalStateException(
+                    String.format("Машина ID=%d %s %s %d уже продана (ID продажи: %d)",
+                            car.getId(),
+                            car.getBrand(),
+                            car.getModel(),
+                            car.getYear(),
+                            car.getSale().getId()));
         }
+
+        Customer customer = customerService.getCustomerById(sale.getCustomer().getId());
+
+        // Устанавливаем связи с обеих сторон
+        sale.setCar(car);
+        car.setSale(sale);
+
+        sale.setCustomer(customer);
+        customer.getSales().add(sale);
 
         return saleRepository.save(sale);
     }
@@ -72,11 +92,28 @@ public class SaleService {
         existingSale.setSaleDate(saleDetails.getSaleDate());
         existingSale.setSalePrice(saleDetails.getSalePrice());
 
-        if (saleDetails.getCar() != null) {
-            existingSale.setCar(saleDetails.getCar());
+        // Запрещаем менять проданную машину через обновление продажи
+        if (saleDetails.getCar() != null
+                && saleDetails.getCar().getId() != null
+                && !saleDetails.getCar().getId().equals(
+                        existingSale.getCar() != null ? existingSale.getCar().getId() : null)) {
+            throw new IllegalStateException("Нельзя изменить машину у существующей продажи");
         }
-        if (saleDetails.getCustomer() != null) {
-            existingSale.setCustomer(saleDetails.getCustomer());
+
+        // Разрешаем смену покупателя с корректным обновлением двусторонней связи
+        if (saleDetails.getCustomer() != null && saleDetails.getCustomer().getId() != null) {
+            Customer newCustomer = customerService.getCustomerById(
+                    saleDetails.getCustomer().getId());
+
+            Customer oldCustomer = existingSale.getCustomer();
+            if (oldCustomer != null && !oldCustomer.equals(newCustomer)) {
+                oldCustomer.getSales().remove(existingSale);
+            }
+
+            existingSale.setCustomer(newCustomer);
+            if (!newCustomer.getSales().contains(existingSale)) {
+                newCustomer.getSales().add(existingSale);
+            }
         }
 
         return existingSale;
