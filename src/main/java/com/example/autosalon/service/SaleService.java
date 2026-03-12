@@ -74,7 +74,6 @@ public class SaleService {
 
         Customer customer = customerService.getCustomerById(sale.getCustomer().getId());
 
-        // Устанавливаем связи с обеих сторон
         sale.setCar(car);
         car.setSale(sale);
 
@@ -92,7 +91,6 @@ public class SaleService {
         existingSale.setSaleDate(saleDetails.getSaleDate());
         existingSale.setSalePrice(saleDetails.getSalePrice());
 
-        // Запрещаем менять проданную машину через обновление продажи
         if (saleDetails.getCar() != null
                 && saleDetails.getCar().getId() != null
                 && !saleDetails.getCar().getId().equals(
@@ -100,7 +98,6 @@ public class SaleService {
             throw new IllegalStateException("Нельзя изменить машину у существующей продажи");
         }
 
-        // Разрешаем смену покупателя с корректным обновлением двусторонней связи
         if (saleDetails.getCustomer() != null && saleDetails.getCustomer().getId() != null) {
             Customer newCustomer = customerService.getCustomerById(
                     saleDetails.getCustomer().getId());

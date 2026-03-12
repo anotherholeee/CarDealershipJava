@@ -76,9 +76,7 @@ public class DealershipService {
     public void deleteDealership(Long id) {
         Dealership dealership = getDealershipById(id);
 
-        // Удаляем все машины автосалона, используя общую бизнес-логику CarService.
-        // Если какая-то машина уже продана, CarService.deleteCar выбросит исключение
-        // и автосалон не будет удалён, что защищает инвариант "проданную машину нельзя удалить".
+
         List<Car> cars = dealership.getCars();
         for (Car car : cars) {
             carService.deleteCar(car.getId());
