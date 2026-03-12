@@ -66,7 +66,8 @@ public class CustomerService {
         if (!customer.getSales().isEmpty()) {
             throw new IllegalStateException(
                     String.format(
-                            "Невозможно удалить покупателя ID=%d %s %s - у него есть продажи (количество: %d)",
+                            "Невозможно удалить покупателя ID=%d %s %s - "
+                                    + "у него есть продажи (количество: %d)",
                             customer.getId(),
                             customer.getFirstName(),
                             customer.getLastName(),
