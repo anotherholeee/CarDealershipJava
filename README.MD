@@ -124,3 +124,66 @@ https://sonarcloud.io/summary/new_code?id=anotherholeee_CarDealershipJava&branch
 - Ни одна запись не сохраняется в БД
 - Демонстрирует атомарность операций
 
+---
+
+## Этап 3: Data caching (JPQL + Native + Pageable)
+
+### Описание задачи
+На третьем этапе в проекте реализованы сложные `GET`-запросы для поиска `Car` по параметрам, которые зависят от вложенной сущности `Feature` (фильтрация по `Feature.category`), а также кэширование результатов пагинированных запросов в памяти.
+
+---
+
+### 1. Сложный GET с фильтрацией по вложенной сущности (JPQL via @Query)
+Реализован поиск автомобилей по категории особенностей:
+
+- `GET /api/cars/search/jpql?category={category}`
+
+Логика запроса: выбираются `Car`, у которых в коллекции `features` присутствует `Feature` с `category = :category`.
+
+---
+
+### 2. Аналогичный запрос через native query
+Добавлена native-реализация (аналогичный смысл, но на уровне SQL):
+
+- `GET /api/cars/search/native?category={category}`
+
+---
+
+### 3. Пагинация (Pageable)
+Для обоих подходов (JPQL и native) реализована пагинация с `Pageable`:
+
+- `GET /api/cars/pagination/jpql`
+  - пример: `/api/cars/pagination/jpql?featureCategory=Комфорт&page=0&size=2`
+- `GET /api/cars/pagination/native`
+  - пример: `/api/cars/pagination/native?featureCategory=Комфорт&page=0&size=2`
+
+Параметры запроса (`CarSearchRequest`), которые поддерживаются эндпоинтами пагинации:
+- `featureCategory` (фильтр по `Feature.category`)
+- `page`
+- `size`
+- `sortBy`
+- `sortDirection`
+
+---
+
+### 4. In-memory индекс результатов (HashMap<K,V>) для ранее запрошенных данных
+Результаты пагинации кэшируются в памяти через `ConcurrentHashMap<CarCacheKey, PageResponseDto<CarResponseDto>>`:
+
+- ключ (`CarCacheKey`) составной и формируется из параметров запроса:
+  - `featureCategory`, `page`, `size`, `sortBy`, `sortDirection`
+- корректная работа индекса обеспечена за счет реализации `equals()` и `hashCode()` для `CarCacheKey` (генерация через Lombok)
+
+В `CarService` сначала выполняется попытка `cache.get(key)`, и только при `cache miss` идет запрос в БД.
+
+---
+
+### 5. Инвалидация индекса при изменении данных
+Кеш инвалидацируется при изменениях данных `Car`:
+- `POST /api/cars` (создание) -> кеш очищается
+- `PUT /api/cars/{id}` (обновление) -> кеш очищается
+- `DELETE /api/cars/{id}` (удаление) -> кеш очищается
+
+Также реализованы дополнительные эндпоинты для управления кешем:
+- `GET /api/cache/info` — информация о размере кеша
+- `GET /api/cache/clear` — принудительная очистка кеша
+
