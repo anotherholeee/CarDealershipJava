@@ -26,9 +26,9 @@ public class CarSearchCache {
         PageResponseDto<CarResponseDto> result = cache.get(key);
 
         if (result != null) {
-            log.info("✅ КЭШ HIT: ключ={}", key);
+            log.info(" КЭШ HIT: ключ={}", key);
         } else {
-            log.info("❌ КЭШ MISS: ключ={}", key);
+            log.info(" КЭШ MISS: ключ={}", key);
         }
 
         return result;
@@ -41,7 +41,7 @@ public class CarSearchCache {
      */
     public void put(CarCacheKey key, PageResponseDto<CarResponseDto> value) {
         cache.put(key, value);
-        log.info("💾 КЭШ СОХРАНЕН: ключ={}, размер кэша={}", key, cache.size());
+        log.info(" КЭШ СОХРАНЕН: ключ={}, размер кэша={}", key, cache.size());
     }
 
     /**
@@ -49,7 +49,7 @@ public class CarSearchCache {
      */
     public void clear() {
         cache.clear();
-        log.info("🧹 КЭШ ОЧИЩЕН");
+        log.info(" КЭШ ОЧИЩЕН");
     }
 
     /**
@@ -57,7 +57,7 @@ public class CarSearchCache {
      */
     public void remove(CarCacheKey key) {
         cache.remove(key);
-        log.info("🗑️ КЭШ УДАЛЕН: ключ={}", key);
+        log.info("🗑 КЭШ УДАЛЕН: ключ={}", key);
     }
 
     /**

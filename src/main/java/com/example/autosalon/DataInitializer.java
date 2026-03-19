@@ -637,16 +637,3 @@ public class DataInitializer implements CommandLineRunner {
         return sale;
     }
 }
-
-DELETE FROM car_features;
-DELETE FROM cars;
-DELETE FROM dealerships;
-DELETE FROM features;
-DELETE FROM customers;
-DELETE FROM sales;
-
-ALTER SEQUENCE cars_id_seq RESTART WITH 1;
-ALTER SEQUENCE dealerships_id_seq RESTART WITH 1;
-ALTER SEQUENCE features_id_seq RESTART WITH 1;
-ALTER SEQUENCE customers_id_seq RESTART WITH 1;
-ALTER SEQUENCE sales_id_seq RESTART WITH 1;

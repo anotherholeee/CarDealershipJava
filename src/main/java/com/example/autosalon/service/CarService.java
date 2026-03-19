@@ -49,7 +49,7 @@ public class CarService {
         car.setId(null);
         Car saved = carRepository.save(car);
         searchCache.clear();
-        log.info("🚗 Создана новая машина, кэш очищен");
+        log.info(" Создана новая машина, кэш очищен");
         return saved;
     }
 
@@ -64,7 +64,7 @@ public class CarService {
         existingCar.setPrice(carDetails.getPrice());
 
         searchCache.clear();
-        log.info("🔄 Машина обновлена, кэш очищен");
+        log.info(" Машина обновлена, кэш очищен");
 
         return existingCar;
     }
@@ -115,9 +115,9 @@ public class CarService {
 
     @Transactional(readOnly = true)
     public List<Car> getCarsByFeatureCategoryJpql(String category) {
-        log.info("🔵 JPQL: Поиск автомобилей с категорией особенностей: {}", category);
+        log.info(" JPQL: Поиск автомобилей с категорией особенностей: {}", category);
         List<Car> cars = carRepository.findCarsByFeatureCategoryJpql(category);
-        log.info("🔵 JPQL: Найдено {} автомобилей", cars.size());
+        log.info(" JPQL: Найдено {} автомобилей", cars.size());
         return cars;
     }
 
@@ -147,12 +147,12 @@ public class CarService {
 
         PageResponseDto<CarResponseDto> cachedResult = searchCache.get(cacheKey);
         if (cachedResult != null) {
-            log.info("📋 ОТВЕТ ИЗ КЭША для {}", cacheKey);
+            log.info(" ОТВЕТ ИЗ КЭША для {}", cacheKey);
             return cachedResult;
         }
 
 
-        log.info("🔍 Ищем в БД для {}", cacheKey);
+        log.info(" Ищем в БД для {}", cacheKey);
 
         long startTime = System.currentTimeMillis();
 
@@ -165,8 +165,8 @@ public class CarService {
         );
 
         long dbTime = System.currentTimeMillis() - startTime;
-        log.info("⏱️ БД вернула результат за {} мс", dbTime);
-        log.info("📄 JPQL: Найдено {} машин на странице, всего {} машин",
+        log.info(" БД вернула результат за {} мс", dbTime);
+        log.info(" JPQL: Найдено {} машин на странице, всего {} машин",
                 carPage.getNumberOfElements(),
                 carPage.getTotalElements());
 
@@ -195,12 +195,12 @@ public class CarService {
 
         PageResponseDto<CarResponseDto> cachedResult = searchCache.get(cacheKey);
         if (cachedResult != null) {
-            log.info("📋 NATIVE: ответ из кэша для {}", cacheKey);
+            log.info(" NATIVE: ответ из кэша для {}", cacheKey);
             return cachedResult;
         }
 
 
-        log.info("🔍 NATIVE: ищем в БД для {}", cacheKey);
+        log.info(" NATIVE: ищем в БД для {}", cacheKey);
 
         Sort sort = Sort.by(request.getSortDirection(), request.getSortBy());
         Pageable pageable = PageRequest.of(request.getPage(), request.getSize(), sort);
@@ -210,7 +210,7 @@ public class CarService {
                 pageable
         );
 
-        log.info("📄 NATIVE: Найдено {} машин на странице, всего {} машин",
+        log.info(" NATIVE: Найдено {} машин на странице, всего {} машин",
                 carPage.getNumberOfElements(),
                 carPage.getTotalElements());
 

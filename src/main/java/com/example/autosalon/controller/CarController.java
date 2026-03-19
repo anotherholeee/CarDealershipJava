@@ -125,7 +125,7 @@ public class CarController {
     public ResponseEntity<PageResponseDto<CarResponseDto>> getCarsWithPaginationNative(
             @ModelAttribute CarSearchRequest request) {
 
-        log.info("📄 NATIVE С ПАГИНАЦИЕЙ: {}", request);
+        log.info(" NATIVE С ПАГИНАЦИЕЙ: {}", request);
         PageResponseDto<CarResponseDto> response = carService.findCarsWithPaginationNative(request);
         return ResponseEntity.ok(response);
     }
