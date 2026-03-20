@@ -40,7 +40,7 @@ public class CarSearchCache {
      * @param value результат запроса
      */
     public void put(CarCacheKey key, PageResponseDto<CarResponseDto> value) {
-        cache.put(key, value)
+        cache.put(key, value);
         log.info(" КЭШ СОХРАНЕН: ключ={}, размер кэша={}", key, cache.size());
     }
 
