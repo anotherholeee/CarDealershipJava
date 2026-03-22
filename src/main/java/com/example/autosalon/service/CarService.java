@@ -34,7 +34,7 @@ public class CarService {
 
     @Transactional(readOnly = true)
     public List<Car> getAllCars() {
-        return carRepository.findAll();
+        return carRepository.findAllWithAllRelations();
     }
 
     @Transactional(readOnly = true)
@@ -76,8 +76,8 @@ public class CarService {
         if (car.getSale() != null) {
             Sale sale = car.getSale();
             String errorMessage = String.format(
-                    "Невозможно удалить машину ID=%d %s %s %d - она уже продана! "
-                            + "(ID продажи: %d, дата продажи: %s, покупатель: %s %s)",
+                    "Невозможно удалить машину ID=%d %s %s %d - она уже продана! " +
+                            "(ID продажи: %d, дата продажи: %s, покупатель: %s %s)",
                     car.getId(),
                     car.getBrand(),
                     car.getModel(),
@@ -110,7 +110,7 @@ public class CarService {
     @Transactional(readOnly = true)
     public List<Car> getCarsWithSolution() {
         log.info("=== РЕШЕНИЕ: findAll с @EntityGraph ===");
-        return carRepository.findAll();
+        return carRepository.findAllWithAllRelations();
     }
 
     @Transactional(readOnly = true)
@@ -135,7 +135,6 @@ public class CarService {
     @Transactional(readOnly = true)
     public PageResponseDto<CarResponseDto> findCarsWithPaginationJpql(CarSearchRequest request) {
 
-
         CarCacheKey cacheKey = new CarCacheKey(
                 request.getFeatureCategory(),
                 request.getPage(),
@@ -144,13 +143,11 @@ public class CarService {
                 request.getSortDirection()
         );
 
-
         PageResponseDto<CarResponseDto> cachedResult = searchCache.get(cacheKey);
         if (cachedResult != null) {
             log.info(" ОТВЕТ ИЗ КЭША для {}", cacheKey);
             return cachedResult;
         }
-
 
         log.info(" Ищем в БД для {}", cacheKey);
 
@@ -170,7 +167,6 @@ public class CarService {
                 carPage.getNumberOfElements(),
                 carPage.getTotalElements());
 
-
         PageResponseDto<CarResponseDto> response = mapToPageResponse(carPage);
         searchCache.put(cacheKey, response);
 
@@ -183,7 +179,6 @@ public class CarService {
     @Transactional(readOnly = true)
     public PageResponseDto<CarResponseDto> findCarsWithPaginationNative(CarSearchRequest request) {
 
-
         CarCacheKey cacheKey = new CarCacheKey(
                 request.getFeatureCategory(),
                 request.getPage(),
@@ -192,13 +187,11 @@ public class CarService {
                 request.getSortDirection()
         );
 
-
         PageResponseDto<CarResponseDto> cachedResult = searchCache.get(cacheKey);
         if (cachedResult != null) {
             log.info(" NATIVE: ответ из кэша для {}", cacheKey);
             return cachedResult;
         }
-
 
         log.info(" NATIVE: ищем в БД для {}", cacheKey);
 
@@ -213,7 +206,6 @@ public class CarService {
         log.info(" NATIVE: Найдено {} машин на странице, всего {} машин",
                 carPage.getNumberOfElements(),
                 carPage.getTotalElements());
-
 
         PageResponseDto<CarResponseDto> response = mapToPageResponse(carPage);
         searchCache.put(cacheKey, response);

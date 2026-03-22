@@ -61,7 +61,9 @@ public class CustomerService {
 
     @Transactional
     public void deleteCustomer(Long id) {
-        Customer customer = self.getObject().getCustomerById(id);
+        Customer customer = customerRepository.findByIdWithSales(id)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Customer not found with id: " + id));
 
         if (!customer.getSales().isEmpty()) {
             throw new IllegalStateException(

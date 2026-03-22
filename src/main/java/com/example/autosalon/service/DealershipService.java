@@ -23,19 +23,10 @@ public class DealershipService {
 
     @Transactional(readOnly = true)
     public List<Dealership> getAllDealerships() {
-        List<Dealership> dealerships = dealershipRepository.findAllWithCars();
-
-        carRepository.findAll();
-
-        for (Dealership d : dealerships) {
-            for (Car c : d.getCars()) {
-                c.getFeatures().size();
-            }
-        }
-
-        return dealerships;
+        return dealershipRepository.findAll();
     }
 
+    @Transactional(readOnly = true)
     public Dealership getDealershipById(Long id) {
         return dealershipRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException(
@@ -44,17 +35,9 @@ public class DealershipService {
 
     @Transactional(readOnly = true)
     public Dealership getDealershipWithCars(Long id) {
-        Dealership dealership = getDealershipById(id);
-        if (!dealership.getCars().isEmpty()) {
-            log.debug(
-                    "Автосалон {} содержит {} машин",
-                    dealership.getName(),
-                    dealership.getCars().size());
-            for (Car car : dealership.getCars()) {
-                car.getFeatures().size();
-            }
-        }
-        return dealership;
+        return dealershipRepository.findByIdWithCars(id)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Автосалон с id " + id + " не найден"));
     }
 
     @Transactional
@@ -74,8 +57,9 @@ public class DealershipService {
 
     @Transactional
     public void deleteDealership(Long id) {
-        Dealership dealership = getDealershipById(id);
-
+        Dealership dealership = dealershipRepository.findByIdWithCars(id)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Автосалон с id " + id + " не найден"));
 
         List<Car> cars = dealership.getCars();
         for (Car car : cars) {
@@ -90,25 +74,27 @@ public class DealershipService {
 
     @Transactional
     public Dealership addCarToDealership(Long dealershipId, Long carId) {
-        Dealership dealership = getDealershipById(dealershipId);
+        Dealership dealership = dealershipRepository.findByIdWithCars(dealershipId)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Автосалон с id " + dealershipId + " не найден"));
         Car car = carRepository.findById(carId)
                 .orElseThrow(() -> new IllegalArgumentException(
                         "Машина с id " + carId + " не найдена"));
 
         dealership.addCar(car);
-        dealership.getCars().size();
         return dealership;
     }
 
     @Transactional
     public Dealership removeCarFromDealership(Long dealershipId, Long carId) {
-        Dealership dealership = getDealershipById(dealershipId);
+        Dealership dealership = dealershipRepository.findByIdWithCars(dealershipId)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Автосалон с id " + dealershipId + " не найден"));
         Car car = carRepository.findById(carId)
                 .orElseThrow(() -> new IllegalArgumentException(
                         "Машина с id " + carId + " не найдена"));
 
         dealership.removeCar(car);
-        dealership.getCars().size();
         return dealership;
     }
 

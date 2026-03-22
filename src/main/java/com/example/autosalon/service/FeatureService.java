@@ -67,14 +67,11 @@ public class FeatureService {
         Feature feature = featureRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException(FEATURE_NOT_FOUND_MESSAGE + id));
 
-        List<Car> carsWithFeature = carRepository.findAll().stream()
-                .filter(car -> car.getFeatures().contains(feature))
-                .toList();
+        List<Car> carsWithFeature = carRepository.findCarsByFeatureId(id);
 
         if (!carsWithFeature.isEmpty()) {
             for (Car car : carsWithFeature) {
                 car.removeFeature(feature);
-                carRepository.save(car);
             }
             log.info("Особенность удалена из {} машин", carsWithFeature.size());
         }
