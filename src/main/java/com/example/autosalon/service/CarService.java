@@ -77,8 +77,8 @@ public class CarService {
         if (car.getSale() != null) {
             Sale sale = car.getSale();
             String errorMessage = String.format(
-                    "Невозможно удалить машину ID=%d %s %s %d - она уже продана! " +
-                            "(ID продажи: %d, дата продажи: %s, покупатель: %s %s)",
+                    "Невозможно удалить машину ID=%d %s %s %d - она уже продана! "
+                            + "(ID продажи: %d, дата продажи: %s, покупатель: %s %s)",
                     car.getId(),
                     car.getBrand(),
                     car.getModel(),

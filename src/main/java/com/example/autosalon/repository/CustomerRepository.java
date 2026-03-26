@@ -1,7 +1,6 @@
 package com.example.autosalon.repository;
 
 import com.example.autosalon.entity.Customer;
-
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.EntityGraph;
