@@ -42,6 +42,7 @@ public class CarService {
         return carRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException(
                         "Машина с id " + id + " не найдена"));
+
     }
 
     @Transactional
