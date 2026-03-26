@@ -16,6 +16,13 @@ public class DealershipTransactionalService {
     private final DealershipRepository dealershipRepository;
     private final CarRepository carRepository;
 
+    @Transactional(readOnly = true)
+    public Dealership getDealershipById(Long id) {
+        return dealershipRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        String.format(DealershipService.DEALERSHIP_NOT_FOUND_MESSAGE, id)));
+    }
+
     @Transactional
     public Dealership createDealershipWithCarsWithTransaction(
             Dealership dealership,
