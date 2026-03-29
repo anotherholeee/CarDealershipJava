@@ -1,0 +1,821 @@
+2026-03-29 21:04:05.965 [restartedMain] INFO  c.e.autosalon.AutosalonApplication - Starting AutosalonApplication using Java 25.0.2 with PID 8540 (C:\Users\roiko\IdeaProjects\autosalon\target\classes started by roiko in C:\Users\roiko\IdeaProjects\autosalon)
+2026-03-29 21:04:05.966 [restartedMain] DEBUG c.e.autosalon.AutosalonApplication - Running with Spring Boot v3.3.10, Spring v6.1.18
+2026-03-29 21:04:05.966 [restartedMain] INFO  c.e.autosalon.AutosalonApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-29 21:04:06.020 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-03-29 21:04:06.021 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-03-29 21:04:07.593 [restartedMain] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: java.lang.IllegalStateException: Error processing condition on org.springdoc.webmvc.ui.SwaggerConfig.springWebProvider
+2026-03-29 21:04:07.604 [restartedMain] INFO  o.s.b.a.l.ConditionEvaluationReportLogger - 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2026-03-29 21:04:07.634 [restartedMain] ERROR o.s.boot.SpringApplication - Application run failed
+java.lang.IllegalStateException: Error processing condition on org.springdoc.webmvc.ui.SwaggerConfig.springWebProvider
+	at org.springframework.boot.autoconfigure.condition.SpringBootCondition.matches(SpringBootCondition.java:60)
+	at org.springframework.context.annotation.ConditionEvaluator.shouldSkip(ConditionEvaluator.java:108)
+	at org.springframework.context.annotation.ConfigurationClassBeanDefinitionReader.loadBeanDefinitionsForBeanMethod(ConfigurationClassBeanDefinitionReader.java:182)
+	at org.springframework.context.annotation.ConfigurationClassBeanDefinitionReader.loadBeanDefinitionsForConfigurationClass(ConfigurationClassBeanDefinitionReader.java:143)
+	at org.springframework.context.annotation.ConfigurationClassBeanDefinitionReader.loadBeanDefinitions(ConfigurationClassBeanDefinitionReader.java:119)
+	at org.springframework.context.annotation.ConfigurationClassPostProcessor.processConfigBeanDefinitions(ConfigurationClassPostProcessor.java:429)
+	at org.springframework.context.annotation.ConfigurationClassPostProcessor.postProcessBeanDefinitionRegistry(ConfigurationClassPostProcessor.java:290)
+	at org.springframework.context.support.PostProcessorRegistrationDelegate.invokeBeanDefinitionRegistryPostProcessors(PostProcessorRegistrationDelegate.java:349)
+	at org.springframework.context.support.PostProcessorRegistrationDelegate.invokeBeanFactoryPostProcessors(PostProcessorRegistrationDelegate.java:118)
+	at org.springframework.context.support.AbstractApplicationContext.invokeBeanFactoryPostProcessors(AbstractApplicationContext.java:789)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:607)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:754)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:456)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:335)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1363)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1352)
+	at com.example.autosalon.AutosalonApplication.main(AutosalonApplication.java:10)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at org.springframework.boot.devtools.restart.RestartLauncher.run(RestartLauncher.java:50)
+Caused by: java.lang.IllegalStateException: Failed to introspect Class [org.springdoc.webmvc.ui.SwaggerConfig] from ClassLoader [jdk.internal.loader.ClassLoaders$AppClassLoader@764c12b6]
+	at org.springframework.util.ReflectionUtils.getDeclaredMethods(ReflectionUtils.java:483)
+	at org.springframework.util.ReflectionUtils.doWithMethods(ReflectionUtils.java:360)
+	at org.springframework.util.ReflectionUtils.getUniqueDeclaredMethods(ReflectionUtils.java:417)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.lambda$getTypeForFactoryMethod$1(AbstractAutowireCapableBeanFactory.java:750)
+	at java.base/java.util.concurrent.ConcurrentHashMap.computeIfAbsent(ConcurrentHashMap.java:1756)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.getTypeForFactoryMethod(AbstractAutowireCapableBeanFactory.java:749)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.determineTargetType(AbstractAutowireCapableBeanFactory.java:682)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.predictBeanType(AbstractAutowireCapableBeanFactory.java:653)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.isFactoryBean(AbstractBeanFactory.java:1687)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doGetBeanNamesForType(DefaultListableBeanFactory.java:562)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.getBeanNamesForType(DefaultListableBeanFactory.java:534)
+	at org.springframework.boot.autoconfigure.condition.OnBeanCondition.collectBeanNamesForType(OnBeanCondition.java:247)
+	at org.springframework.boot.autoconfigure.condition.OnBeanCondition.getBeanNamesForType(OnBeanCondition.java:240)
+	at org.springframework.boot.autoconfigure.condition.OnBeanCondition.getBeanNamesForType(OnBeanCondition.java:230)
+	at org.springframework.boot.autoconfigure.condition.OnBeanCondition.getMatchingBeans(OnBeanCondition.java:183)
+	at org.springframework.boot.autoconfigure.condition.OnBeanCondition.getMatchOutcome(OnBeanCondition.java:158)
+	at org.springframework.boot.autoconfigure.condition.SpringBootCondition.matches(SpringBootCondition.java:47)
+	... 20 common frames omitted
+Caused by: java.lang.NoClassDefFoundError: org/springframework/web/servlet/resource/LiteWebJarsResourceResolver
+	at java.base/java.lang.ClassLoader.defineClass1(Native Method)
+	at java.base/java.lang.ClassLoader.defineClass(ClassLoader.java:962)
+	at java.base/java.security.SecureClassLoader.defineClass(SecureClassLoader.java:144)
+	at java.base/jdk.internal.loader.BuiltinClassLoader.defineClass(BuiltinClassLoader.java:776)
+	at java.base/jdk.internal.loader.BuiltinClassLoader.findClassOnClassPathOrNull(BuiltinClassLoader.java:691)
+	at java.base/jdk.internal.loader.BuiltinClassLoader.loadClassOrNull(BuiltinClassLoader.java:620)
+	at java.base/jdk.internal.loader.BuiltinClassLoader.loadClass(BuiltinClassLoader.java:578)
+	at java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:490)
+	at java.base/java.lang.Class.getDeclaredMethods0(Native Method)
+	at java.base/java.lang.Class.privateGetDeclaredMethods(Class.java:3010)
+	at java.base/java.lang.Class.getDeclaredMethods(Class.java:2329)
+	at org.springframework.util.ReflectionUtils.getDeclaredMethods(ReflectionUtils.java:465)
+	... 36 common frames omitted
+Caused by: java.lang.ClassNotFoundException: org.springframework.web.servlet.resource.LiteWebJarsResourceResolver
+	at java.base/jdk.internal.loader.BuiltinClassLoader.loadClass(BuiltinClassLoader.java:580)
+	at java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:490)
+	... 48 common frames omitted
+2026-03-29 21:06:39.505 [restartedMain] INFO  c.e.autosalon.AutosalonApplication - Starting AutosalonApplication using Java 25.0.2 with PID 22672 (C:\Users\roiko\IdeaProjects\autosalon\target\classes started by roiko in C:\Users\roiko\IdeaProjects\autosalon)
+2026-03-29 21:06:39.507 [restartedMain] DEBUG c.e.autosalon.AutosalonApplication - Running with Spring Boot v3.3.10, Spring v6.1.18
+2026-03-29 21:06:39.507 [restartedMain] INFO  c.e.autosalon.AutosalonApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-29 21:06:39.597 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-03-29 21:06:39.597 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-03-29 21:06:40.665 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-03-29 21:06:40.748 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 73 ms. Found 5 JPA repository interfaces.
+2026-03-29 21:06:41.659 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-03-29 21:06:41.675 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-29 21:06:41.677 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-03-29 21:06:41.677 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.39]
+2026-03-29 21:06:41.752 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-03-29 21:06:41.753 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 2155 ms
+2026-03-29 21:06:42.558 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-03-29 21:06:42.600 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-03-29 21:06:42.905 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@40e55bd1
+2026-03-29 21:06:42.907 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-29 21:06:45.052 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-03-29 21:06:45.543 [restartedMain] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-03-29 21:06:46.762 [restartedMain] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-29 21:06:47.778 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2026-03-29 21:06:47.809 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-29 21:06:47.851 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2026-03-29 21:06:47.863 [restartedMain] INFO  c.e.autosalon.AutosalonApplication - Started AutosalonApplication in 8.995 seconds (process running for 9.879)
+2026-03-29 21:06:47.958 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Feature x */ select
+            count(*) 
+        from
+            features f1_0
+2026-03-29 21:06:47.967 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Dealership x */ select
+            count(*) 
+        from
+            dealerships d1_0
+2026-03-29 21:06:47.971 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Car x */ select
+            count(*) 
+        from
+            cars c1_0
+2026-03-29 21:06:47.996 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        f1_0.id,
+        f1_0.category,
+        f1_0.description,
+        f1_0.name 
+    from
+        features f1_0
+2026-03-29 21:06:48.051 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        c1_0.id,
+        c1_0.brand,
+        c1_0.color,
+        d1_0.id,
+        d1_0.address,
+        d1_0.name,
+        d1_0.phone,
+        f1_0.car_id,
+        f1_1.id,
+        f1_1.category,
+        f1_1.description,
+        f1_1.name,
+        c1_0.model,
+        c1_0.price,
+        s1_0.id,
+        s1_0.customer_id,
+        s1_0.date,
+        s1_0.price,
+        c1_0.year 
+    from
+        cars c1_0 
+    left join
+        dealerships d1_0 
+            on d1_0.id=c1_0.dealership_id 
+    left join
+        car_features f1_0 
+            on c1_0.id=f1_0.car_id 
+    left join
+        features f1_1 
+            on f1_1.id=f1_0.feature_id 
+    left join
+        sales s1_0 
+            on c1_0.id=s1_0.car_id
+2026-03-29 21:06:48.105 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Customer x */ select
+            count(*) 
+        from
+            customers c1_0
+2026-03-29 21:06:48.111 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Sale x */ select
+            count(*) 
+        from
+            sales s1_0
+2026-03-29 21:06:48.115 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Feature x */ select
+            count(*) 
+        from
+            features f1_0
+2026-03-29 21:06:48.119 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Dealership x */ select
+            count(*) 
+        from
+            dealerships d1_0
+2026-03-29 21:06:48.123 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Car x */ select
+            count(*) 
+        from
+            cars c1_0
+2026-03-29 21:06:48.125 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Customer x */ select
+            count(*) 
+        from
+            customers c1_0
+2026-03-29 21:06:48.128 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Sale x */ select
+            count(*) 
+        from
+            sales s1_0
+2026-03-29 21:06:48.132 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        c1_0.id,
+        c1_0.brand,
+        c1_0.color,
+        d1_0.id,
+        d1_0.address,
+        d1_0.name,
+        d1_0.phone,
+        f1_0.car_id,
+        f1_1.id,
+        f1_1.category,
+        f1_1.description,
+        f1_1.name,
+        c1_0.model,
+        c1_0.price,
+        s1_0.id,
+        s1_0.customer_id,
+        s1_0.date,
+        s1_0.price,
+        c1_0.year 
+    from
+        cars c1_0 
+    left join
+        dealerships d1_0 
+            on d1_0.id=c1_0.dealership_id 
+    left join
+        car_features f1_0 
+            on c1_0.id=f1_0.car_id 
+    left join
+        features f1_1 
+            on f1_1.id=f1_0.feature_id 
+    left join
+        sales s1_0 
+            on c1_0.id=s1_0.car_id
+2026-03-29 21:07:41.979 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-03-29 21:07:41.979 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-03-29 21:07:41.985 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 6 ms
+2026-03-29 21:07:43.065 [http-nio-8080-exec-9] INFO  o.s.api.AbstractOpenApiResource - Init duration for springdoc-openapi is: 603 ms
+2026-03-29 21:08:43.616 [http-nio-8080-exec-4] WARN  o.s.web.servlet.PageNotFound - No mapping for GET /favicon.ico
+2026-03-29 21:08:43.625 [http-nio-8080-exec-4] ERROR c.e.autosalon.GlobalExceptionHandler - Endpoint not found: /favicon.ico
+2026-03-29 21:08:43.642 [http-nio-8080-exec-4] WARN  o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.web.servlet.NoHandlerFoundException: No endpoint GET /favicon.ico.]
+2026-03-29 21:58:28.078 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=2m44s322ms663µs500ns).
+2026-03-29 22:09:33.820 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=5m35s670ms199µs400ns).
+2026-03-29 22:27:25.529 [File Watcher] INFO  o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Restarting due to 15 class path changes (0 additions, 15 deletions, 0 modifications)
+2026-03-29 22:27:25.547 [Thread-5] INFO  o.a.coyote.http11.Http11NioProtocol - Stopping ProtocolHandler ["http-nio-8080"]
+2026-03-29 22:27:25.584 [Thread-5] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-03-29 22:27:25.603 [Thread-5] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-03-29 22:27:25.606 [Thread-5] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-03-29 22:27:25.869 [restartedMain] INFO  c.e.autosalon.AutosalonApplication - Starting AutosalonApplication using Java 25.0.2 with PID 22672 (C:\Users\roiko\IdeaProjects\autosalon\target\classes started by roiko in C:\Users\roiko\IdeaProjects\autosalon)
+2026-03-29 22:27:25.871 [restartedMain] DEBUG c.e.autosalon.AutosalonApplication - Running with Spring Boot v3.3.10, Spring v6.1.18
+2026-03-29 22:27:25.871 [restartedMain] INFO  c.e.autosalon.AutosalonApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-29 22:27:26.430 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-03-29 22:27:26.465 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 34 ms. Found 5 JPA repository interfaces.
+2026-03-29 22:27:26.736 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-03-29 22:27:26.739 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-29 22:27:26.746 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-03-29 22:27:26.747 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.39]
+2026-03-29 22:27:26.883 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-03-29 22:27:26.885 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1008 ms
+2026-03-29 22:27:27.093 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-03-29 22:27:27.097 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Starting...
+2026-03-29 22:27:27.236 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-2 - Added connection org.postgresql.jdbc.PgConnection@70a1b226
+2026-03-29 22:27:27.239 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Start completed.
+2026-03-29 22:27:28.047 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-03-29 22:27:28.357 [restartedMain] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'customerController': Lookup method resolution failed
+2026-03-29 22:27:28.359 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-03-29 22:27:28.359 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Shutdown initiated...
+2026-03-29 22:27:28.511 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Shutdown completed.
+2026-03-29 22:27:28.511 [restartedMain] INFO  o.a.catalina.core.StandardService - Stopping service [Tomcat]
+2026-03-29 22:27:28.523 [restartedMain] INFO  o.s.b.a.l.ConditionEvaluationReportLogger - 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2026-03-29 22:27:28.570 [restartedMain] ERROR o.s.boot.SpringApplication - Application run failed
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'customerController': Lookup method resolution failed
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.checkLookupMethods(AutowiredAnnotationBeanPostProcessor.java:498)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.determineCandidateConstructors(AutowiredAnnotationBeanPostProcessor.java:368)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.determineConstructorsFromBeanPostProcessors(AbstractAutowireCapableBeanFactory.java:1314)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1209)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:562)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:522)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:337)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:335)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:975)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:971)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:625)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:754)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:456)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:335)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1363)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1352)
+	at com.example.autosalon.AutosalonApplication.main(AutosalonApplication.java:10)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at org.springframework.boot.devtools.restart.RestartLauncher.run(RestartLauncher.java:50)
+Caused by: java.lang.IllegalStateException: Failed to introspect Class [com.example.autosalon.controller.CustomerController] from ClassLoader [org.springframework.boot.devtools.restart.classloader.RestartClassLoader@2dea1a6f]
+	at org.springframework.util.ReflectionUtils.getDeclaredMethods(ReflectionUtils.java:483)
+	at org.springframework.util.ReflectionUtils.doWithLocalMethods(ReflectionUtils.java:320)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.checkLookupMethods(AutowiredAnnotationBeanPostProcessor.java:476)
+	... 22 common frames omitted
+Caused by: java.lang.NoClassDefFoundError: com/example/autosalon/dto/CustomerRequestDto
+	at java.base/java.lang.Class.getDeclaredMethods0(Native Method)
+	at java.base/java.lang.Class.privateGetDeclaredMethods(Class.java:3010)
+	at java.base/java.lang.Class.getDeclaredMethods(Class.java:2329)
+	at org.springframework.util.ReflectionUtils.getDeclaredMethods(ReflectionUtils.java:465)
+	... 24 common frames omitted
+Caused by: java.lang.ClassNotFoundException: com.example.autosalon.dto.CustomerRequestDto
+	at java.base/jdk.internal.loader.BuiltinClassLoader.loadClass(BuiltinClassLoader.java:580)
+	at java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:490)
+	at java.base/java.lang.Class.forName0(Native Method)
+	at java.base/java.lang.Class.forName(Class.java:547)
+	at org.springframework.boot.devtools.restart.classloader.RestartClassLoader.loadClass(RestartClassLoader.java:121)
+	at java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:490)
+	... 28 common frames omitted
+2026-03-29 22:27:31.995 [restartedMain] INFO  c.e.autosalon.AutosalonApplication - Starting AutosalonApplication using Java 25.0.2 with PID 22672 (C:\Users\roiko\IdeaProjects\autosalon\target\classes started by roiko in C:\Users\roiko\IdeaProjects\autosalon)
+2026-03-29 22:27:31.995 [restartedMain] DEBUG c.e.autosalon.AutosalonApplication - Running with Spring Boot v3.3.10, Spring v6.1.18
+2026-03-29 22:27:31.995 [restartedMain] INFO  c.e.autosalon.AutosalonApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-29 22:27:33.038 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-03-29 22:27:33.069 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 29 ms. Found 5 JPA repository interfaces.
+2026-03-29 22:27:33.383 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-03-29 22:27:33.387 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-29 22:27:33.387 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-03-29 22:27:33.388 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.39]
+2026-03-29 22:27:33.431 [restartedMain] INFO  o.a.c.c.C.[Tomcat-1].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-03-29 22:27:33.432 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1433 ms
+2026-03-29 22:27:33.556 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-03-29 22:27:33.557 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-3 - Starting...
+2026-03-29 22:27:33.623 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-3 - Added connection org.postgresql.jdbc.PgConnection@6163cafd
+2026-03-29 22:27:33.624 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-3 - Start completed.
+2026-03-29 22:27:34.024 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-03-29 22:27:34.727 [restartedMain] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-29 22:27:35.388 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2026-03-29 22:27:35.406 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-29 22:27:35.411 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2026-03-29 22:27:35.419 [restartedMain] INFO  c.e.autosalon.AutosalonApplication - Started AutosalonApplication in 3.478 seconds (process running for 4857.435)
+2026-03-29 22:27:35.427 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Feature x */ select
+            count(*) 
+        from
+            features f1_0
+2026-03-29 22:27:35.429 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Dealership x */ select
+            count(*) 
+        from
+            dealerships d1_0
+2026-03-29 22:27:35.432 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Car x */ select
+            count(*) 
+        from
+            cars c1_0
+2026-03-29 22:27:35.435 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        f1_0.id,
+        f1_0.category,
+        f1_0.description,
+        f1_0.name 
+    from
+        features f1_0
+2026-03-29 22:27:35.446 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        c1_0.id,
+        c1_0.brand,
+        c1_0.color,
+        d1_0.id,
+        d1_0.address,
+        d1_0.name,
+        d1_0.phone,
+        f1_0.car_id,
+        f1_1.id,
+        f1_1.category,
+        f1_1.description,
+        f1_1.name,
+        c1_0.model,
+        c1_0.price,
+        s1_0.id,
+        s1_0.customer_id,
+        s1_0.date,
+        s1_0.price,
+        c1_0.year 
+    from
+        cars c1_0 
+    left join
+        dealerships d1_0 
+            on d1_0.id=c1_0.dealership_id 
+    left join
+        car_features f1_0 
+            on c1_0.id=f1_0.car_id 
+    left join
+        features f1_1 
+            on f1_1.id=f1_0.feature_id 
+    left join
+        sales s1_0 
+            on c1_0.id=s1_0.car_id
+2026-03-29 22:27:35.474 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Customer x */ select
+            count(*) 
+        from
+            customers c1_0
+2026-03-29 22:27:35.482 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Sale x */ select
+            count(*) 
+        from
+            sales s1_0
+2026-03-29 22:27:35.485 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Feature x */ select
+            count(*) 
+        from
+            features f1_0
+2026-03-29 22:27:35.489 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Dealership x */ select
+            count(*) 
+        from
+            dealerships d1_0
+2026-03-29 22:27:35.491 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Car x */ select
+            count(*) 
+        from
+            cars c1_0
+2026-03-29 22:27:35.494 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Customer x */ select
+            count(*) 
+        from
+            customers c1_0
+2026-03-29 22:27:35.499 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Sale x */ select
+            count(*) 
+        from
+            sales s1_0
+2026-03-29 22:27:35.504 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        c1_0.id,
+        c1_0.brand,
+        c1_0.color,
+        d1_0.id,
+        d1_0.address,
+        d1_0.name,
+        d1_0.phone,
+        f1_0.car_id,
+        f1_1.id,
+        f1_1.category,
+        f1_1.description,
+        f1_1.name,
+        c1_0.model,
+        c1_0.price,
+        s1_0.id,
+        s1_0.customer_id,
+        s1_0.date,
+        s1_0.price,
+        c1_0.year 
+    from
+        cars c1_0 
+    left join
+        dealerships d1_0 
+            on d1_0.id=c1_0.dealership_id 
+    left join
+        car_features f1_0 
+            on c1_0.id=f1_0.car_id 
+    left join
+        features f1_1 
+            on f1_1.id=f1_0.feature_id 
+    left join
+        sales s1_0 
+            on c1_0.id=s1_0.car_id
+2026-03-29 22:27:35.514 [restartedMain] INFO  o.s.b.d.a.ConditionEvaluationDeltaLoggingListener - Condition evaluation unchanged
+2026-03-29 22:42:09.492 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-03-29 22:42:09.492 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-3 - Shutdown initiated...
+2026-03-29 22:42:09.493 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-3 - Shutdown completed.
+2026-03-29 22:42:32.546 [restartedMain] INFO  c.e.autosalon.AutosalonApplication - Starting AutosalonApplication using Java 25.0.2 with PID 10748 (C:\Users\roiko\IdeaProjects\autosalon\target\classes started by roiko in C:\Users\roiko\IdeaProjects\autosalon)
+2026-03-29 22:42:32.547 [restartedMain] DEBUG c.e.autosalon.AutosalonApplication - Running with Spring Boot v3.3.10, Spring v6.1.18
+2026-03-29 22:42:32.547 [restartedMain] INFO  c.e.autosalon.AutosalonApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-29 22:42:32.577 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-03-29 22:42:32.578 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-03-29 22:42:33.163 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-03-29 22:42:33.208 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 39 ms. Found 5 JPA repository interfaces.
+2026-03-29 22:42:33.728 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-03-29 22:42:33.739 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-29 22:42:33.740 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-03-29 22:42:33.740 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.39]
+2026-03-29 22:42:33.785 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-03-29 22:42:33.785 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1207 ms
+2026-03-29 22:42:34.268 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-03-29 22:42:34.294 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-03-29 22:42:34.420 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@6bb2d482
+2026-03-29 22:42:34.421 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-29 22:42:35.487 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-03-29 22:42:35.700 [restartedMain] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-03-29 22:42:36.261 [restartedMain] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-29 22:42:36.657 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2026-03-29 22:42:36.671 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-29 22:42:36.687 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2026-03-29 22:42:36.693 [restartedMain] INFO  c.e.autosalon.AutosalonApplication - Started AutosalonApplication in 4.552 seconds (process running for 5.174)
+2026-03-29 22:42:36.741 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Feature x */ select
+            count(*) 
+        from
+            features f1_0
+2026-03-29 22:42:36.745 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Dealership x */ select
+            count(*) 
+        from
+            dealerships d1_0
+2026-03-29 22:42:36.746 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Car x */ select
+            count(*) 
+        from
+            cars c1_0
+2026-03-29 22:42:36.761 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        f1_0.id,
+        f1_0.category,
+        f1_0.description,
+        f1_0.name 
+    from
+        features f1_0
+2026-03-29 22:42:36.792 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        c1_0.id,
+        c1_0.brand,
+        c1_0.color,
+        d1_0.id,
+        d1_0.address,
+        d1_0.name,
+        d1_0.phone,
+        f1_0.car_id,
+        f1_1.id,
+        f1_1.category,
+        f1_1.description,
+        f1_1.name,
+        c1_0.model,
+        c1_0.price,
+        s1_0.id,
+        s1_0.customer_id,
+        s1_0.date,
+        s1_0.price,
+        c1_0.year 
+    from
+        cars c1_0 
+    left join
+        dealerships d1_0 
+            on d1_0.id=c1_0.dealership_id 
+    left join
+        car_features f1_0 
+            on c1_0.id=f1_0.car_id 
+    left join
+        features f1_1 
+            on f1_1.id=f1_0.feature_id 
+    left join
+        sales s1_0 
+            on c1_0.id=s1_0.car_id
+2026-03-29 22:42:36.813 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Customer x */ select
+            count(*) 
+        from
+            customers c1_0
+2026-03-29 22:42:36.815 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Sale x */ select
+            count(*) 
+        from
+            sales s1_0
+2026-03-29 22:42:36.818 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Feature x */ select
+            count(*) 
+        from
+            features f1_0
+2026-03-29 22:42:36.820 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Dealership x */ select
+            count(*) 
+        from
+            dealerships d1_0
+2026-03-29 22:42:36.822 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Car x */ select
+            count(*) 
+        from
+            cars c1_0
+2026-03-29 22:42:36.823 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Customer x */ select
+            count(*) 
+        from
+            customers c1_0
+2026-03-29 22:42:36.825 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Sale x */ select
+            count(*) 
+        from
+            sales s1_0
+2026-03-29 22:42:36.827 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        c1_0.id,
+        c1_0.brand,
+        c1_0.color,
+        d1_0.id,
+        d1_0.address,
+        d1_0.name,
+        d1_0.phone,
+        f1_0.car_id,
+        f1_1.id,
+        f1_1.category,
+        f1_1.description,
+        f1_1.name,
+        c1_0.model,
+        c1_0.price,
+        s1_0.id,
+        s1_0.customer_id,
+        s1_0.date,
+        s1_0.price,
+        c1_0.year 
+    from
+        cars c1_0 
+    left join
+        dealerships d1_0 
+            on d1_0.id=c1_0.dealership_id 
+    left join
+        car_features f1_0 
+            on c1_0.id=f1_0.car_id 
+    left join
+        features f1_1 
+            on f1_1.id=f1_0.feature_id 
+    left join
+        sales s1_0 
+            on c1_0.id=s1_0.car_id
+2026-03-29 22:43:12.272 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-03-29 22:43:12.278 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-03-29 22:43:12.279 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2026-03-29 22:43:13.209 [http-nio-8080-exec-8] INFO  o.s.api.AbstractOpenApiResource - Init duration for springdoc-openapi is: 645 ms
+2026-03-29 22:43:27.420 [http-nio-8080-exec-9] INFO  c.e.autosalon.aspect.LoggingAspect - ▶ ВЫЗОВ: CarService.getCarById
+2026-03-29 22:43:27.434 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.id,
+        c1_0.brand,
+        c1_0.color,
+        d1_0.id,
+        d1_0.address,
+        d1_0.name,
+        d1_0.phone,
+        c1_0.model,
+        c1_0.price,
+        s1_0.id,
+        s1_0.customer_id,
+        s1_0.date,
+        s1_0.price,
+        c1_0.year,
+        f1_0.car_id,
+        f1_1.id,
+        f1_1.category,
+        f1_1.description,
+        f1_1.name 
+    from
+        cars c1_0 
+    left join
+        dealerships d1_0 
+            on d1_0.id=c1_0.dealership_id 
+    left join
+        sales s1_0 
+            on c1_0.id=s1_0.car_id 
+    left join
+        car_features f1_0 
+            on c1_0.id=f1_0.car_id 
+    left join
+        features f1_1 
+            on f1_1.id=f1_0.feature_id 
+    where
+        c1_0.id=?
+2026-03-29 22:43:27.441 [http-nio-8080-exec-9] INFO  c.e.autosalon.aspect.LoggingAspect - ◀ ВЫПОЛНЕН: CarService.getCarById за 21 мс
+2026-03-29 22:44:01.803 [http-nio-8080-exec-10] INFO  c.e.autosalon.aspect.LoggingAspect - ▶ ВЫЗОВ: CarService.getCarsByBrand
+2026-03-29 22:44:01.826 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        c1_0.id,
+        c1_0.brand,
+        c1_0.color,
+        c1_0.dealership_id,
+        f1_0.car_id,
+        f1_1.id,
+        f1_1.category,
+        f1_1.description,
+        f1_1.name,
+        c1_0.model,
+        c1_0.price,
+        c1_0.year 
+    from
+        cars c1_0 
+    left join
+        car_features f1_0 
+            on c1_0.id=f1_0.car_id 
+    left join
+        features f1_1 
+            on f1_1.id=f1_0.feature_id 
+    where
+        upper(c1_0.brand)=upper(?)
+2026-03-29 22:44:01.838 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        s1_0.id,
+        s1_0.car_id,
+        s1_0.customer_id,
+        s1_0.date,
+        s1_0.price 
+    from
+        sales s1_0 
+    where
+        s1_0.car_id=?
+2026-03-29 22:44:01.839 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        s1_0.id,
+        s1_0.car_id,
+        s1_0.customer_id,
+        s1_0.date,
+        s1_0.price 
+    from
+        sales s1_0 
+    where
+        s1_0.car_id=?
+2026-03-29 22:44:01.844 [http-nio-8080-exec-10] INFO  c.e.autosalon.aspect.LoggingAspect - ◀ ВЫПОЛНЕН: CarService.getCarsByBrand за 41 мс
+2026-03-29 22:44:18.982 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        f1_0.id,
+        f1_0.category,
+        f1_0.description,
+        f1_0.name 
+    from
+        features f1_0 
+    where
+        f1_0.id in (?)
+2026-03-29 22:44:18.985 [http-nio-8080-exec-6] INFO  c.e.autosalon.aspect.LoggingAspect - ▶ ВЫЗОВ: CarService.createCar
+2026-03-29 22:44:19.004 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car */insert 
+    into
+        cars (brand, color, dealership_id, model, price, year) 
+    values
+        (?, ?, ?, ?, ?, ?) 
+    returning id
+2026-03-29 22:44:19.037 [http-nio-8080-exec-6] INFO  c.e.autosalon.cache.CarSearchCache -  КЭШ ОЧИЩЕН
+2026-03-29 22:44:19.037 [http-nio-8080-exec-6] INFO  c.e.autosalon.service.CarService -  Создана новая машина, кэш очищен
+2026-03-29 22:44:19.038 [http-nio-8080-exec-6] INFO  c.e.autosalon.aspect.LoggingAspect - ◀ ВЫПОЛНЕН: CarService.createCar за 53 мс
+2026-03-29 22:44:19.045 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-29 22:44:58.649 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-03-29 22:44:58.652 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-03-29 22:44:58.653 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.

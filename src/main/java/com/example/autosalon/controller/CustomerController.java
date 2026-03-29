@@ -5,7 +5,11 @@ import com.example.autosalon.dto.CustomerResponseDto;
 import com.example.autosalon.entity.Customer;
 import com.example.autosalon.mapper.CustomerMapper;
 import com.example.autosalon.service.CustomerService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
+
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,12 +27,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/customers")
 @RequiredArgsConstructor
+@Tag(name = "Customers", description = "Операции с клиентами")
 public class CustomerController {
 
     private final CustomerService customerService;
     private final CustomerMapper customerMapper;
 
     @GetMapping
+    @Operation(summary = "Получить список клиентов")
     public ResponseEntity<List<CustomerResponseDto>> getAllCustomers() {
         List<Customer> customers = customerService.getAllCustomers();
         List<CustomerResponseDto> response = customers.stream()
@@ -38,20 +44,23 @@ public class CustomerController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Получить клиента по ID")
     public ResponseEntity<CustomerResponseDto> getCustomerById(@PathVariable Long id) {
         Customer customer = customerService.getCustomerById(id);
         return ResponseEntity.ok(customerMapper.toResponseDto(customer));
     }
 
     @GetMapping("/email/{email}")
+    @Operation(summary = "Получить клиента по email")
     public ResponseEntity<CustomerResponseDto> getCustomerByEmail(@PathVariable String email) {
         Customer customer = customerService.getCustomerByEmail(email);
         return ResponseEntity.ok(customerMapper.toResponseDto(customer));
     }
 
     @PostMapping
+    @Operation(summary = "Создать клиента")
     public ResponseEntity<CustomerResponseDto> createCustomer(
-            @RequestBody CustomerRequestDto requestDto) {
+            @Valid @RequestBody CustomerRequestDto requestDto) {
         Customer customer = customerMapper.toEntity(requestDto);
         Customer createdCustomer = customerService.createCustomer(customer);
         CustomerResponseDto responseDto = customerMapper.toResponseDto(createdCustomer);
@@ -59,9 +68,10 @@ public class CustomerController {
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Обновить клиента")
     public ResponseEntity<CustomerResponseDto> updateCustomer(
             @PathVariable Long id,
-            @RequestBody CustomerRequestDto requestDto) {
+            @Valid @RequestBody CustomerRequestDto requestDto) {
         Customer customerDetails = customerMapper.toEntity(requestDto);
         Customer updatedCustomer = customerService.updateCustomer(id, customerDetails);
         CustomerResponseDto responseDto = customerMapper.toResponseDto(updatedCustomer);
@@ -69,6 +79,7 @@ public class CustomerController {
     }
 
     @PatchMapping("/{id}/phone")
+    @Operation(summary = "Обновить телефон клиента")
     public ResponseEntity<CustomerResponseDto> updateCustomerPhone(
             @PathVariable Long id,
             @RequestParam String phone) {
@@ -78,6 +89,7 @@ public class CustomerController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Удалить клиента")
     public ResponseEntity<Void> deleteCustomer(@PathVariable Long id) {
         customerService.deleteCustomer(id);
         return ResponseEntity.noContent().build();

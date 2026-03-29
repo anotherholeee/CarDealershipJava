@@ -29,12 +29,7 @@ public interface CarRepository extends JpaRepository<Car, Long> {
     @Query("SELECT DISTINCT c FROM Car c JOIN c.features f WHERE f.category = :category")
     List<Car> findCarsByFeatureCategoryJpql(@Param("category") String category);
 
-    @Query(value = "SELECT DISTINCT c.* FROM cars c "
-            + "INNER JOIN car_features cf ON c.id = cf.car_id "
-            + "INNER JOIN features f ON cf.feature_id = f.id "
-            + "WHERE f.category = :category",
-            nativeQuery = true)
-    List<Car> findCarsByFeatureCategoryNative(@Param("category") String category);
+    // УДАЛЕН native метод findCarsByFeatureCategoryNative
 
     @EntityGraph(attributePaths = {"features", "sale", "dealership"})
     @Query("SELECT DISTINCT c FROM Car c LEFT JOIN c.features f "
@@ -43,18 +38,7 @@ public interface CarRepository extends JpaRepository<Car, Long> {
             @Param("category") String category,
             Pageable pageable);
 
-    @Query(value = "SELECT DISTINCT c.* FROM cars c "
-            + "LEFT JOIN car_features cf ON c.id = cf.car_id "
-            + "LEFT JOIN features f ON cf.feature_id = f.id "
-            + "WHERE (:category IS NULL OR f.category = :category)",
-            countQuery = "SELECT COUNT(DISTINCT c.id) FROM cars c "
-                    + "LEFT JOIN car_features cf ON c.id = cf.car_id "
-                    + "LEFT JOIN features f ON cf.feature_id = f.id "
-                    + "WHERE (:category IS NULL OR f.category = :category)",
-            nativeQuery = true)
-    Page<Car> findCarsByFeatureCategoryNativeWithPagination(
-            @Param("category") String category,
-            Pageable pageable);
+    // УДАЛЕН native метод findCarsByFeatureCategoryNativeWithPagination
 
     @EntityGraph(attributePaths = {"features"})
     @Query("SELECT c FROM Car c")

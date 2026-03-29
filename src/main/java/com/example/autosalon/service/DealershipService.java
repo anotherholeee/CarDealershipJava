@@ -21,7 +21,6 @@ public class DealershipService {
     private final CarService carService;
     private final DealershipTransactionalService dealershipTransactionalService;
 
-
     @Transactional(readOnly = true)
     public List<Dealership> getAllDealerships() {
         return dealershipRepository.findAll();
@@ -72,7 +71,6 @@ public class DealershipService {
         log.info("Автосалон с id {} успешно удален", id);
     }
 
-
     @Transactional
     public Dealership addCarToDealership(Long dealershipId, Long carId) {
         Dealership dealership = dealershipRepository.findByIdWithCars(dealershipId)
@@ -99,40 +97,12 @@ public class DealershipService {
         return dealership;
     }
 
-
     @Transactional(readOnly = true)
     public long countDealerships() {
         return dealershipRepository.count();
     }
 
-    public Dealership createDealershipWithCarsWithoutTransaction(
-            Dealership dealership, List<Car> cars) {
-        Dealership savedDealership = dealershipRepository.save(dealership);
-        saveCarsWithErrorOnSecond(cars, savedDealership);
-        return savedDealership;
-    }
-
-    @Transactional
-    public Dealership createDealershipWithCarsWithTransaction(
-            Dealership dealership, List<Car> cars) {
-        return dealershipTransactionalService
-                .createDealershipWithCarsWithTransaction(dealership, cars);
-    }
-
-    private void saveCarsWithErrorOnSecond(List<Car> cars, Dealership dealership) {
-        for (int i = 0; i < cars.size(); i++) {
-            Car car = cars.get(i);
-            car.setDealership(dealership);
-            car.setId(null);
-
-            if (i == 1) {
-                throw new IllegalArgumentException(
-                        String.format("Ошибка сохранения машины: %s %s",
-                                car.getBrand(), car.getModel())
-                );
-            }
-
-            carRepository.save(car);
-        }
-    }
+    // УДАЛЕНЫ методы:
+    // - createDealershipWithCarsWithoutTransaction
+    // - saveCarsWithErrorOnSecond
 }

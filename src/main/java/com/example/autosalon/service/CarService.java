@@ -108,25 +108,13 @@ public class CarService {
         return carRepository.findByBrandIgnoreCase(brand);
     }
 
-    @Transactional(readOnly = true)
-    public List<Car> getCarsWithSolution() {
-        log.info("=== РЕШЕНИЕ: findAll с @EntityGraph ===");
-        return carRepository.findAllWithAllRelations();
-    }
+    // УДАЛЕН метод getCarsWithSolution()
 
     @Transactional(readOnly = true)
     public List<Car> getCarsByFeatureCategoryJpql(String category) {
         log.info(" JPQL: Поиск автомобилей с категорией особенностей: {}", category);
         List<Car> cars = carRepository.findCarsByFeatureCategoryJpql(category);
         log.info(" JPQL: Найдено {} автомобилей", cars.size());
-        return cars;
-    }
-
-    @Transactional(readOnly = true)
-    public List<Car> getCarsByFeatureCategoryNative(String category) {
-        log.info("🟢 NATIVE: Поиск автомобилей с категорией особенностей: {}", category);
-        List<Car> cars = carRepository.findCarsByFeatureCategoryNative(category);
-        log.info("🟢 NATIVE: Найдено {} автомобилей", cars.size());
         return cars;
     }
 
@@ -165,46 +153,6 @@ public class CarService {
         long dbTime = System.currentTimeMillis() - startTime;
         log.info(" БД вернула результат за {} мс", dbTime);
         log.info(" JPQL: Найдено {} машин на странице, всего {} машин",
-                carPage.getNumberOfElements(),
-                carPage.getTotalElements());
-
-        PageResponseDto<CarResponseDto> response = mapToPageResponse(carPage);
-        searchCache.put(cacheKey, response);
-
-        return response;
-    }
-
-    /**
-     * Native Query с пагинацией и кэшированием
-     */
-    @Transactional(readOnly = true)
-    public PageResponseDto<CarResponseDto> findCarsWithPaginationNative(CarSearchRequest request) {
-
-        CarCacheKey cacheKey = new CarCacheKey(
-                request.getFeatureCategory(),
-                request.getPage(),
-                request.getSize(),
-                request.getSortBy(),
-                request.getSortDirection()
-        );
-
-        PageResponseDto<CarResponseDto> cachedResult = searchCache.get(cacheKey);
-        if (cachedResult != null) {
-            log.info(" NATIVE: ответ из кэша для {}", cacheKey);
-            return cachedResult;
-        }
-
-        log.info(" NATIVE: ищем в БД для {}", cacheKey);
-
-        Sort sort = Sort.by(request.getSortDirection(), request.getSortBy());
-        Pageable pageable = PageRequest.of(request.getPage(), request.getSize(), sort);
-
-        Page<Car> carPage = carRepository.findCarsByFeatureCategoryNativeWithPagination(
-                request.getFeatureCategory(),
-                pageable
-        );
-
-        log.info(" NATIVE: Найдено {} машин на странице, всего {} машин",
                 carPage.getNumberOfElements(),
                 carPage.getTotalElements());
 

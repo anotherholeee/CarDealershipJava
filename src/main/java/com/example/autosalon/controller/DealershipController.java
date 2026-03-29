@@ -9,9 +9,13 @@ import com.example.autosalon.entity.Dealership;
 import com.example.autosalon.mapper.CarMapper;
 import com.example.autosalon.mapper.DealershipMapper;
 import com.example.autosalon.service.DealershipService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -29,6 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/dealerships")
 @RequiredArgsConstructor
+@Tag(name = "Dealerships", description = "Операции с автосалонами")
 public class DealershipController {
 
     private final DealershipService dealershipService;
@@ -40,10 +45,10 @@ public class DealershipController {
      * GET /api/dealerships
      */
     @GetMapping
+    @Operation(summary = "Получить список автосалонов")
     public ResponseEntity<List<DealershipResponseDto>> getAllDealerships() {
         log.info("GET /api/dealerships - получение всех автосалонов");
         List<Dealership> dealerships = dealershipService.getAllDealerships();
-
 
         List<DealershipResponseDto> response = dealerships.stream()
                 .sorted(Comparator.comparing(Dealership::getId))
@@ -58,6 +63,7 @@ public class DealershipController {
      * GET /api/dealerships/{id}
      */
     @GetMapping("/{id}")
+    @Operation(summary = "Получить автосалон по ID")
     public ResponseEntity<DealershipResponseDto> getDealershipById(@PathVariable Long id) {
         log.info("GET /api/dealerships/{} - получение автосалона", id);
         Dealership dealership = dealershipService.getDealershipById(id);
@@ -69,11 +75,10 @@ public class DealershipController {
      * GET /api/dealerships/{id}/with-cars
      */
     @GetMapping("/{id}/with-cars")
+    @Operation(summary = "Получить автосалон вместе с машинами")
     public ResponseEntity<DealershipWithCarsResponseDto> getDealershipWithCars(
             @PathVariable Long id) {
-        log.info(
-                "GET /api/dealerships/{}/with-cars - получение салона с машинами",
-                id);
+        log.info("GET /api/dealerships/{}/with-cars - получение салона с машинами", id);
         Dealership dealership = dealershipService.getDealershipWithCars(id);
         return ResponseEntity.ok(dealershipMapper.toWithCarsResponseDto(dealership));
     }
@@ -83,11 +88,10 @@ public class DealershipController {
      * POST /api/dealerships
      */
     @PostMapping
+    @Operation(summary = "Создать автосалон")
     public ResponseEntity<DealershipResponseDto> createDealership(
-            @RequestBody DealershipRequestDto requestDto) {
-        log.info(
-                "POST /api/dealerships - создание нового автосалона: {}",
-                requestDto.getName());
+            @Valid @RequestBody DealershipRequestDto requestDto) {
+        log.info("POST /api/dealerships - создание нового автосалона: {}", requestDto.getName());
         Dealership created = dealershipService.createDealership(
                 dealershipMapper.toEntity(requestDto));
         return new ResponseEntity<>(
@@ -100,9 +104,10 @@ public class DealershipController {
      * PUT /api/dealerships/{id}
      */
     @PutMapping("/{id}")
+    @Operation(summary = "Обновить автосалон")
     public ResponseEntity<DealershipResponseDto> updateDealership(
             @PathVariable Long id,
-            @RequestBody DealershipRequestDto requestDto) {
+            @Valid @RequestBody DealershipRequestDto requestDto) {
         log.info("PUT /api/dealerships/{} - обновление автосалона", id);
         Dealership updated = dealershipService.updateDealership(
                 id,
@@ -115,10 +120,9 @@ public class DealershipController {
      * DELETE /api/dealerships/{id}
      */
     @DeleteMapping("/{id}")
+    @Operation(summary = "Удалить автосалон")
     public ResponseEntity<Void> deleteDealership(@PathVariable Long id) {
-        log.info(
-                "DELETE /api/dealerships/{} - удаление автосалона",
-                id);
+        log.info("DELETE /api/dealerships/{} - удаление автосалона", id);
         dealershipService.deleteDealership(id);
         return ResponseEntity.noContent().build();
     }
@@ -128,16 +132,12 @@ public class DealershipController {
      * POST /api/dealerships/{dealershipId}/cars/{carId}
      */
     @PostMapping("/{dealershipId}/cars/{carId}")
+    @Operation(summary = "Добавить автомобиль в автосалон")
     public ResponseEntity<DealershipWithCarsResponseDto> addCarToDealership(
             @PathVariable Long dealershipId,
             @PathVariable Long carId) {
-        log.info(
-                "POST /api/dealerships/{}/cars/{} - добавление машины в салон",
-                dealershipId,
-                carId);
-        Dealership dealership = dealershipService.addCarToDealership(
-                dealershipId,
-                carId);
+        log.info("POST /api/dealerships/{}/cars/{} - добавление машины в салон", dealershipId, carId);
+        Dealership dealership = dealershipService.addCarToDealership(dealershipId, carId);
         return ResponseEntity.ok(dealershipMapper.toWithCarsResponseDto(dealership));
     }
 
@@ -146,102 +146,13 @@ public class DealershipController {
      * DELETE /api/dealerships/{dealershipId}/cars/{carId}
      */
     @DeleteMapping("/{dealershipId}/cars/{carId}")
+    @Operation(summary = "Удалить автомобиль из автосалона")
     public ResponseEntity<DealershipWithCarsResponseDto> removeCarFromDealership(
             @PathVariable Long dealershipId,
             @PathVariable Long carId) {
-        log.info(
-                "DELETE /api/dealerships/{}/cars/{} - удаление машины из салона",
-                dealershipId,
-                carId);
-        Dealership dealership = dealershipService.removeCarFromDealership(
-                dealershipId,
-                carId);
+        log.info("DELETE /api/dealerships/{}/cars/{} - удаление машины из салона", dealershipId, carId);
+        Dealership dealership = dealershipService.removeCarFromDealership(dealershipId, carId);
         return ResponseEntity.ok(dealershipMapper.toWithCarsResponseDto(dealership));
     }
 
-
-
-    /**
-     * Демонстрация БЕЗ транзакции (частичное сохранение)
-     * POST /api/dealerships/without-transaction
-     */
-    @PostMapping("/without-transaction")
-    public String createWithoutTransaction(@RequestBody DealershipWithCarsRequest request) {
-        log.info(
-                "\n=== ПОЛУЧЕН ЗАПРОС: /api/dealerships/without-transaction ===");
-        long beforeCount = dealershipService.countDealerships();
-        log.info(" До операции: салонов в БД = {}", beforeCount);
-
-        try {
-            List<CarRequestDto> cars = request.getCars() == null
-                    ? Collections.emptyList()
-                    : request.getCars();
-            Dealership saved =
-                    dealershipService.createDealershipWithCarsWithoutTransaction(
-                            dealershipMapper.toEntity(request.getDealership()),
-                            cars.stream()
-                                    .map(carMapper::toEntity)
-                                    .toList());
-
-            long afterCount = dealershipService.countDealerships();
-            return String.format(
-                    " УСПЕХ! (хотя не должно было) Салонов было: %d, стало: %d. "
-                            + "Салон '%s' сохранен! (Проблема: машины не сохранились, "
-                            + "но салон остался)",
-                    beforeCount, afterCount, saved.getName()
-            );
-
-        } catch (Exception e) {
-            long afterCount = dealershipService.countDealerships();
-            log.error(
-                    "Ошибка при сохранении: {}",
-                    e.getMessage());
-            return String.format(
-                    "️ ОШИБКА: %s%n Салонов было: %d, стало: %d. "
-                            + "(Данные сохранились частично - салон остался в БД!)",
-                    e.getMessage(), beforeCount, afterCount
-            );
-        }
-    }
-
-    /**
-     * Демонстрация С транзакцией (полный откат)
-     * POST /api/dealerships/with-transaction
-     */
-    @PostMapping("/with-transaction")
-    public String createWithTransaction(@RequestBody DealershipWithCarsRequest request) {
-        log.info(
-                "\n=== ПОЛУЧЕН ЗАПРОС: /api/dealerships/with-transaction ===");
-        long beforeCount = dealershipService.countDealerships();
-        log.info(" До операции: салонов в БД = {}", beforeCount);
-
-        try {
-            List<CarRequestDto> cars = request.getCars() == null
-                    ? Collections.emptyList()
-                    : request.getCars();
-            dealershipService.createDealershipWithCarsWithTransaction(
-                    dealershipMapper.toEntity(request.getDealership()),
-                    cars.stream()
-                            .map(carMapper::toEntity)
-                            .toList());
-
-            long afterCount = dealershipService.countDealerships();
-            return String.format(
-                    " УСПЕХ! (хотя не должно было) Салонов было: %d, стало: %d. "
-                            + "(Этого не должно произойти с @Transactional!)",
-                    beforeCount, afterCount
-            );
-
-        } catch (Exception e) {
-            long afterCount = dealershipService.countDealerships();
-            log.error(
-                    "Ошибка при сохранении, транзакция откатилась: {}",
-                    e.getMessage());
-            return String.format(
-                    " ОТКАТ: %s%n Салонов было: %d, стало: %d. "
-                            + "Отлично! Транзакция сработала - салон НЕ сохранился!",
-                    e.getMessage(), beforeCount, afterCount
-            );
-        }
-    }
 }

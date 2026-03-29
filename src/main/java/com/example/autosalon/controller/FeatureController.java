@@ -5,7 +5,11 @@ import com.example.autosalon.dto.FeatureResponseDto;
 import com.example.autosalon.entity.Feature;
 import com.example.autosalon.mapper.FeatureMapper;
 import com.example.autosalon.service.FeatureService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
+
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,12 +27,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/features")
 @RequiredArgsConstructor
+@Tag(name = "Features", description = "Операции с опциями автомобилей")
 public class FeatureController {
 
     private final FeatureService featureService;
     private final FeatureMapper featureMapper;
 
     @GetMapping
+    @Operation(summary = "Получить список опций")
     public ResponseEntity<List<FeatureResponseDto>> getAllFeatures() {
         List<FeatureResponseDto> response = featureService.getAllFeatures().stream()
                 .map(featureMapper::toResponseDto)
@@ -37,11 +43,13 @@ public class FeatureController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Получить опцию по ID")
     public ResponseEntity<FeatureResponseDto> getFeatureById(@PathVariable Long id) {
         return ResponseEntity.ok(featureMapper.toResponseDto(featureService.getFeatureById(id)));
     }
 
     @GetMapping("/category/{category}")
+    @Operation(summary = "Получить опции по категории")
     public ResponseEntity<List<FeatureResponseDto>> getFeaturesByCategory(
             @PathVariable String category) {
         List<FeatureResponseDto> response = featureService
@@ -52,8 +60,9 @@ public class FeatureController {
     }
 
     @PostMapping
+    @Operation(summary = "Создать опцию")
     public ResponseEntity<FeatureResponseDto> createFeature(
-            @RequestBody FeatureRequestDto requestDto) {
+            @Valid @RequestBody FeatureRequestDto requestDto) {
         Feature createdFeature =
                 featureService.createFeature(featureMapper.toEntity(requestDto));
         return new ResponseEntity<>(
@@ -62,9 +71,10 @@ public class FeatureController {
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Обновить опцию")
     public ResponseEntity<FeatureResponseDto> updateFeature(
             @PathVariable Long id,
-            @RequestBody FeatureRequestDto requestDto) {
+            @Valid @RequestBody FeatureRequestDto requestDto) {
         return ResponseEntity.ok(
                 featureMapper.toResponseDto(
                         featureService.updateFeature(
@@ -74,6 +84,7 @@ public class FeatureController {
     }
 
     @PatchMapping("/{id}/description")
+    @Operation(summary = "Обновить описание опции")
     public ResponseEntity<FeatureResponseDto> updateFeatureDescription(
             @PathVariable Long id,
             @RequestParam String description) {
@@ -83,6 +94,7 @@ public class FeatureController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Удалить опцию")
     public ResponseEntity<Void> deleteFeature(@PathVariable Long id) {
         featureService.deleteFeature(id);
         return ResponseEntity.noContent().build();
