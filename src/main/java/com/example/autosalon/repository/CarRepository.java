@@ -29,16 +29,12 @@ public interface CarRepository extends JpaRepository<Car, Long> {
     @Query("SELECT DISTINCT c FROM Car c JOIN c.features f WHERE f.category = :category")
     List<Car> findCarsByFeatureCategoryJpql(@Param("category") String category);
 
-    // УДАЛЕН native метод findCarsByFeatureCategoryNative
-
     @EntityGraph(attributePaths = {"features", "sale", "dealership"})
     @Query("SELECT DISTINCT c FROM Car c LEFT JOIN c.features f "
             + "WHERE (:category IS NULL OR f.category = :category)")
     Page<Car> findCarsByFeatureCategoryWithPagination(
             @Param("category") String category,
             Pageable pageable);
-
-    // УДАЛЕН native метод findCarsByFeatureCategoryNativeWithPagination
 
     @EntityGraph(attributePaths = {"features"})
     @Query("SELECT c FROM Car c")

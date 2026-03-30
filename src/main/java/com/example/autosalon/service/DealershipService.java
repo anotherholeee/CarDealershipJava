@@ -102,7 +102,4 @@ public class DealershipService {
         return dealershipRepository.count();
     }
 
-    // УДАЛЕНЫ методы:
-    // - createDealershipWithCarsWithoutTransaction
-    // - saveCarsWithErrorOnSecond
 }

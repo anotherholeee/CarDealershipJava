@@ -129,5 +129,4 @@ public class CarController {
         return ResponseEntity.noContent().build();
     }
 
-    // УДАЛЕН эндпоинт /features/solution
 }

@@ -1,4 +1,3 @@
-// exception/GlobalExceptionHandler.java
 package com.example.autosalon;
 
 import com.example.autosalon.dto.ErrorResponseDto;

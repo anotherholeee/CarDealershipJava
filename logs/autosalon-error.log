@@ -103,3 +103,5 @@ Caused by: java.lang.ClassNotFoundException: com.example.autosalon.dto.CustomerR
 	at org.springframework.boot.devtools.restart.classloader.RestartClassLoader.loadClass(RestartClassLoader.java:121)
 	at java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:490)
 	... 28 common frames omitted
+2026-03-29 23:17:54.012 [http-nio-8080-exec-5] ERROR c.e.autosalon.aspect.LoggingAspect - ✗ ОШИБКА: CarService.getCarById после 15 мс - Машина с id 88888888888888888 не найдена
+2026-03-29 23:17:54.016 [http-nio-8080-exec-5] ERROR c.e.autosalon.GlobalExceptionHandler - IllegalArgumentException: Машина с id 88888888888888888 не найдена

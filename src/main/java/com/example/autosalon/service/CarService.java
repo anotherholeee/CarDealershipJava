@@ -108,7 +108,6 @@ public class CarService {
         return carRepository.findByBrandIgnoreCase(brand);
     }
 
-    // УДАЛЕН метод getCarsWithSolution()
 
     @Transactional(readOnly = true)
     public List<Car> getCarsByFeatureCategoryJpql(String category) {

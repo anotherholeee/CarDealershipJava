@@ -650,3 +650,6 @@ ALTER SEQUENCE dealerships_id_seq RESTART WITH 1;
 ALTER SEQUENCE features_id_seq RESTART WITH 1;
 ALTER SEQUENCE customers_id_seq RESTART WITH 1;
 ALTER SEQUENCE sales_id_seq RESTART WITH 1;
+
+Swagger UI: http://localhost:8080/swagger-ui/index.html
+OpenAPI JSON: http://localhost:8080/v3/api-docs
