@@ -11,9 +11,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class LoggingAspect {
 
-    /**
-     * Логирует время выполнения всех публичных методов в пакете service и его подпакетах.
-     */
+
     @Around("execution(* com.example.autosalon.service..*.*(..))")
     public Object logExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {
         long start = System.currentTimeMillis();

@@ -6,10 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * DTO для ответа с пагинацией
- * @param <T> тип данных на странице
- */
+
 @Data
 @Builder
 @NoArgsConstructor

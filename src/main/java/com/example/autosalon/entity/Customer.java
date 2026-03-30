@@ -15,13 +15,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-/**
- * Сущность "Покупатель"
- * Таблица: customers
- *
- * Связи:
- * 1. @OneToMany с Sale - один покупатель может совершить много покупок
- */
+
 @Entity
 @Table(name = "customers")
 @Data
@@ -50,19 +44,12 @@ public class Customer {
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Sale> sales = new ArrayList<>();
 
-    /**
-     * Добавляет продажу покупателю
-     * Устанавливает связь с двух сторон
-     */
+
     public void addSale(Sale sale) {
         sales.add(sale);
         sale.setCustomer(this);
     }
 
-    /**
-     * Удаляет продажу у покупателя
-     * Убирает связь с двух сторон
-     */
     public void removeSale(Sale sale) {
         sales.remove(sale);
         sale.setCustomer(null);

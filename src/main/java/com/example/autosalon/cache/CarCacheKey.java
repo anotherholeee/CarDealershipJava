@@ -4,11 +4,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.springframework.data.domain.Sort;
 
-/**
- * Составной ключ для кэша
- * Содержит ВСЕ параметры запроса
- * equals() и hashCode() генерируются Lombok (@EqualsAndHashCode)
- */
+
 @Getter
 @EqualsAndHashCode
 public class CarCacheKey {
@@ -27,9 +23,7 @@ public class CarCacheKey {
         this.direction = direction;
     }
 
-    /**
-     * Переопределяем toString для читаемых ключей
-     */
+
     @Override
     public String toString() {
         return String.format("CarCacheKey{category=%s, page=%d, size=%d, sortBy=%s, direction=%s}",

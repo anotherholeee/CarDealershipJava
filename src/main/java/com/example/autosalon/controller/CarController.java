@@ -65,9 +65,7 @@ public class CarController {
         return ResponseEntity.ok(responseDto);
     }
 
-    /**
-     * JPQL версия без пагинации
-     */
+
     @GetMapping("/search/jpql")
     @Operation(summary = "Поиск автомобилей по категории опции (JPQL)")
     public ResponseEntity<List<CarResponseDto>> getCarsByFeatureCategoryJpql(
@@ -85,13 +83,7 @@ public class CarController {
         return ResponseEntity.ok(responseDtos);
     }
 
-    /**
-     * JPQL с пагинацией
-     * Примеры использования:
-     * - /api/cars/pagination/jpql?featureCategory=Комфорт&page=0&size=2
-     * - /api/cars/pagination/jpql?featureCategory=Безопасность&page=1&size=3&sortBy=price&sortDirection=DESC
-     * - /api/cars/pagination/jpql?page=0&size=5 (без фильтрации)
-     */
+
     @GetMapping("/pagination/jpql")
     @Operation(summary = "Поиск автомобилей с пагинацией (JPQL)")
     public ResponseEntity<PageResponseDto<CarResponseDto>> getCarsWithPaginationJpql(

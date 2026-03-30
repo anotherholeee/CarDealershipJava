@@ -3,9 +3,7 @@ package com.example.autosalon.dto;
 import lombok.Data;
 import org.springframework.data.domain.Sort;
 
-/**
- * DTO для запроса поиска автомобилей с фильтрацией и пагинацией
- */
+
 @Data
 public class CarSearchRequest {
 

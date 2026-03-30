@@ -117,9 +117,7 @@ public class CarService {
         return cars;
     }
 
-    /**
-     * JPQL с пагинацией и кэшированием
-     */
+
     @Transactional(readOnly = true)
     public PageResponseDto<CarResponseDto> findCarsWithPaginationJpql(CarSearchRequest request) {
 
@@ -161,9 +159,7 @@ public class CarService {
         return response;
     }
 
-    /**
-     * Вспомогательный метод для преобразования Page<Car> в PageResponseDto<CarResponseDto>
-     */
+
     private PageResponseDto<CarResponseDto> mapToPageResponse(Page<Car> carPage) {
         List<CarResponseDto> content = carPage.getContent().stream()
                 .map(carMapper::toResponseDto)

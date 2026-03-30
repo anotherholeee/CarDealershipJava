@@ -18,10 +18,7 @@ public class CacheController {
 
     private final CarSearchCache carSearchCache;
 
-    /**
-     * Получить информацию о кэше
-     * GET /api/cache/info
-     */
+
     @GetMapping("/info")
     public ResponseEntity<Map<String, Object>> getCacheInfo() {
         Map<String, Object> info = new HashMap<>();
@@ -30,10 +27,7 @@ public class CacheController {
         return ResponseEntity.ok(info);
     }
 
-    /**
-     * Очистить кэш
-     * GET /api/cache/clear
-     */
+
     @GetMapping("/clear")
     public ResponseEntity<String> clearCache() {
         carSearchCache.clear();

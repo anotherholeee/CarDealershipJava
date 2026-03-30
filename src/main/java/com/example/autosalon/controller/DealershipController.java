@@ -40,10 +40,7 @@ public class DealershipController {
     private final DealershipMapper dealershipMapper;
     private final CarMapper carMapper;
 
-    /**
-     * Получить все автосалоны
-     * GET /api/dealerships
-     */
+
     @GetMapping
     @Operation(summary = "Получить список автосалонов")
     public ResponseEntity<List<DealershipResponseDto>> getAllDealerships() {
@@ -58,10 +55,7 @@ public class DealershipController {
         return ResponseEntity.ok(response);
     }
 
-    /**
-     * Получить автосалон по ID
-     * GET /api/dealerships/{id}
-     */
+
     @GetMapping("/{id}")
     @Operation(summary = "Получить автосалон по ID")
     public ResponseEntity<DealershipResponseDto> getDealershipById(@PathVariable Long id) {
@@ -70,10 +64,7 @@ public class DealershipController {
         return ResponseEntity.ok(dealershipMapper.toResponseDto(dealership));
     }
 
-    /**
-     * Получить автосалон с машинами
-     * GET /api/dealerships/{id}/with-cars
-     */
+
     @GetMapping("/{id}/with-cars")
     @Operation(summary = "Получить автосалон вместе с машинами")
     public ResponseEntity<DealershipWithCarsResponseDto> getDealershipWithCars(
@@ -83,10 +74,7 @@ public class DealershipController {
         return ResponseEntity.ok(dealershipMapper.toWithCarsResponseDto(dealership));
     }
 
-    /**
-     * Создать новый автосалон
-     * POST /api/dealerships
-     */
+
     @PostMapping
     @Operation(summary = "Создать автосалон")
     public ResponseEntity<DealershipResponseDto> createDealership(
@@ -99,10 +87,7 @@ public class DealershipController {
                 HttpStatus.CREATED);
     }
 
-    /**
-     * Полностью обновить автосалон
-     * PUT /api/dealerships/{id}
-     */
+
     @PutMapping("/{id}")
     @Operation(summary = "Обновить автосалон")
     public ResponseEntity<DealershipResponseDto> updateDealership(
@@ -115,10 +100,7 @@ public class DealershipController {
         return ResponseEntity.ok(dealershipMapper.toResponseDto(updated));
     }
 
-    /**
-     * УДАЛИТЬ автосалон по ID
-     * DELETE /api/dealerships/{id}
-     */
+
     @DeleteMapping("/{id}")
     @Operation(summary = "Удалить автосалон")
     public ResponseEntity<Void> deleteDealership(@PathVariable Long id) {
@@ -127,10 +109,7 @@ public class DealershipController {
         return ResponseEntity.noContent().build();
     }
 
-    /**
-     * Добавить машину в автосалон
-     * POST /api/dealerships/{dealershipId}/cars/{carId}
-     */
+
     @PostMapping("/{dealershipId}/cars/{carId}")
     @Operation(summary = "Добавить автомобиль в автосалон")
     public ResponseEntity<DealershipWithCarsResponseDto> addCarToDealership(
@@ -141,10 +120,7 @@ public class DealershipController {
         return ResponseEntity.ok(dealershipMapper.toWithCarsResponseDto(dealership));
     }
 
-    /**
-     * УДАЛИТЬ машину из автосалона
-     * DELETE /api/dealerships/{dealershipId}/cars/{carId}
-     */
+
     @DeleteMapping("/{dealershipId}/cars/{carId}")
     @Operation(summary = "Удалить автомобиль из автосалона")
     public ResponseEntity<DealershipWithCarsResponseDto> removeCarFromDealership(

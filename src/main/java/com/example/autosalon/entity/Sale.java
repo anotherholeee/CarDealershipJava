@@ -16,14 +16,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * Сущность "Продажа"
- * Таблица: sales
- *
- * Связи:
- * 1. @OneToOne с Car - одна продажа относится к одной машине
- * 2. @ManyToOne с Customer - много продаж могут быть у одного покупателя
- */
+
 @Entity
 @Table(name = "sales")
 @Data
