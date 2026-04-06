@@ -135,8 +135,26 @@ class SaleServiceTest {
     }
 
     @Test
+    void createSale_withoutCarId_throws() {
+        sale.setCar(new Car());
+
+        assertThatThrownBy(() -> saleService.createSale(sale))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Car must be specified");
+    }
+
+    @Test
     void createSale_withoutCustomer_throws() {
         sale.setCustomer(null);
+
+        assertThatThrownBy(() -> saleService.createSale(sale))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Customer must be specified");
+    }
+
+    @Test
+    void createSale_withoutCustomerId_throws() {
+        sale.setCustomer(new Customer());
 
         assertThatThrownBy(() -> saleService.createSale(sale))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -194,6 +212,53 @@ class SaleServiceTest {
     }
 
     @Test
+    void updateSale_changeCar_whenExistingCarIsNull_throws() {
+        sale.setCar(null);
+        Car anotherCar = new Car();
+        anotherCar.setId(99L);
+
+        Sale updatedDetails = new Sale();
+        updatedDetails.setCar(anotherCar);
+        updatedDetails.setSaleDate(LocalDateTime.now());
+        updatedDetails.setSalePrice(53000.0);
+
+        when(saleRepository.findById(10L)).thenReturn(Optional.of(sale));
+
+        assertThatThrownBy(() -> saleService.updateSale(10L, updatedDetails))
+                .isInstanceOf(IllegalStateException.class);
+    }
+
+    @Test
+    void updateSale_withCarButNullCarId_shouldNotThrow() {
+        Sale updatedDetails = new Sale();
+        updatedDetails.setCar(new Car());
+        updatedDetails.setSaleDate(LocalDateTime.now().plusDays(2));
+        updatedDetails.setSalePrice(52000.0);
+
+        when(saleRepository.findById(10L)).thenReturn(Optional.of(sale));
+
+        Sale result = saleService.updateSale(10L, updatedDetails);
+
+        assertThat(result.getSalePrice()).isEqualTo(52000.0);
+    }
+
+    @Test
+    void updateSale_withSameCarId_shouldNotThrow() {
+        Car sameCar = new Car();
+        sameCar.setId(1L);
+        Sale updatedDetails = new Sale();
+        updatedDetails.setCar(sameCar);
+        updatedDetails.setSaleDate(LocalDateTime.now().plusDays(4));
+        updatedDetails.setSalePrice(52500.0);
+
+        when(saleRepository.findById(10L)).thenReturn(Optional.of(sale));
+
+        Sale result = saleService.updateSale(10L, updatedDetails);
+
+        assertThat(result.getSalePrice()).isEqualTo(52500.0);
+    }
+
+    @Test
     void updateSale_withoutCustomerChange_updatesMainFields() {
         Sale updatedDetails = new Sale();
         updatedDetails.setSaleDate(LocalDateTime.now().plusDays(1));
@@ -206,6 +271,58 @@ class SaleServiceTest {
         assertThat(result.getSaleDate()).isEqualTo(updatedDetails.getSaleDate());
         assertThat(result.getSalePrice()).isEqualTo(51000.0);
         assertThat(result.getCustomer()).isEqualTo(customer);
+    }
+
+    @Test
+    void updateSale_withCustomerButNullCustomerId_shouldSkipCustomerUpdate() {
+        Sale updatedDetails = new Sale();
+        updatedDetails.setCustomer(new Customer());
+        updatedDetails.setSaleDate(LocalDateTime.now().plusDays(3));
+        updatedDetails.setSalePrice(51500.0);
+
+        when(saleRepository.findById(10L)).thenReturn(Optional.of(sale));
+
+        Sale result = saleService.updateSale(10L, updatedDetails);
+
+        assertThat(result.getCustomer()).isEqualTo(customer);
+        verify(customerService, never()).getCustomerById(anyLong());
+    }
+
+    @Test
+    void updateSale_changeCustomer_whenOldCustomerIsNull() {
+        sale.setCustomer(null);
+        Customer newCustomer = new Customer();
+        newCustomer.setId(4L);
+        newCustomer.setSales(new ArrayList<>());
+        Sale updatedDetails = new Sale();
+        updatedDetails.setCustomer(newCustomer);
+        updatedDetails.setSaleDate(LocalDateTime.now());
+        updatedDetails.setSalePrice(54000.0);
+
+        when(saleRepository.findById(10L)).thenReturn(Optional.of(sale));
+        when(customerService.getCustomerById(4L)).thenReturn(newCustomer);
+
+        Sale result = saleService.updateSale(10L, updatedDetails);
+
+        assertThat(result.getCustomer()).isEqualTo(newCustomer);
+        assertThat(newCustomer.getSales()).contains(result);
+    }
+
+    @Test
+    void updateSale_changeCustomer_whenSameCustomerAndSaleAlreadyPresent() {
+        customer.setSales(new ArrayList<>(List.of(sale)));
+        Sale updatedDetails = new Sale();
+        updatedDetails.setCustomer(customer);
+        updatedDetails.setSaleDate(LocalDateTime.now());
+        updatedDetails.setSalePrice(55000.0);
+
+        when(saleRepository.findById(10L)).thenReturn(Optional.of(sale));
+        when(customerService.getCustomerById(2L)).thenReturn(customer);
+
+        Sale result = saleService.updateSale(10L, updatedDetails);
+
+        assertThat(result.getCustomer()).isEqualTo(customer);
+        assertThat(customer.getSales()).hasSize(1);
     }
 
     @Test

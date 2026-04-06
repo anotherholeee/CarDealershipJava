@@ -7,6 +7,7 @@ import com.example.autosalon.dto.CarResponseDto;
 import com.example.autosalon.dto.CarSearchRequest;
 import com.example.autosalon.dto.PageResponseDto;
 import com.example.autosalon.entity.Car;
+import com.example.autosalon.entity.Customer;
 import com.example.autosalon.entity.Sale;
 import com.example.autosalon.mapper.CarMapper;
 import com.example.autosalon.repository.CarRepository;
@@ -127,6 +128,26 @@ class CarServiceTest {
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("уже продана");
         verify(searchCache, never()).clear();
+    }
+
+    @Test
+    void deleteCar_shouldThrowIfSold_withKnownCustomerInMessage() {
+        Sale sale = new Sale();
+        sale.setId(10L);
+        sale.setSaleDate(LocalDateTime.now());
+        Customer customer = new Customer();
+        customer.setFirstName("Ivan");
+        customer.setLastName("Petrov");
+        sale.setCustomer(customer);
+        car.setSale(sale);
+
+        when(carRepository.findById(1L)).thenReturn(Optional.of(car));
+        when(selfProvider.getObject()).thenReturn(carService);
+
+        assertThatThrownBy(() -> carService.deleteCar(1L))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("Ivan")
+                .hasMessageContaining("Petrov");
     }
 
     @Test
@@ -258,6 +279,44 @@ class CarServiceTest {
         List<CarResponseDto> result = carService.createCarsBulk(requests);
 
         assertThat(result).hasSize(1); // только один из дубликатов
+    }
+
+    @Test
+    void createCarsBulk_shouldSave_whenExistingCarsDifferByModelOrYear() {
+        CarRequestDto incoming = createRequestDto("BMW", "X5", 2023);
+        Car mapped = new Car();
+        mapped.setBrand("BMW");
+        mapped.setModel("X5");
+        mapped.setYear(2023);
+
+        Car existingDifferentModel = new Car();
+        existingDifferentModel.setId(100L);
+        existingDifferentModel.setBrand("BMW");
+        existingDifferentModel.setModel("X3");
+        existingDifferentModel.setYear(2023);
+
+        Car existingDifferentYear = new Car();
+        existingDifferentYear.setId(101L);
+        existingDifferentYear.setBrand("BMW");
+        existingDifferentYear.setModel("X5");
+        existingDifferentYear.setYear(2022);
+
+        Car existingDifferentBrand = new Car();
+        existingDifferentBrand.setId(102L);
+        existingDifferentBrand.setBrand("Audi");
+        existingDifferentBrand.setModel("A6");
+        existingDifferentBrand.setYear(2023);
+
+        when(carMapper.toEntity(incoming)).thenReturn(mapped);
+        when(carRepository.findAll())
+                .thenReturn(List.of(existingDifferentBrand, existingDifferentModel, existingDifferentYear));
+        when(carRepository.saveAll(anyList())).thenReturn(List.of(mapped));
+        when(carMapper.toResponseDto(mapped)).thenReturn(responseDto);
+
+        List<CarResponseDto> result = carService.createCarsBulk(List.of(incoming));
+
+        assertThat(result).hasSize(1);
+        verify(carRepository).saveAll(anyList());
     }
 
     @Test
