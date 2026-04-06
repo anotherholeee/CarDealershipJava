@@ -58,6 +58,15 @@ class DealershipServiceTest {
     }
 
     @Test
+    void getDealershipById_shouldReturnDealership() {
+        when(dealershipRepository.findById(1L)).thenReturn(Optional.of(dealership));
+
+        Dealership result = dealershipService.getDealershipById(1L);
+
+        assertThat(result).isEqualTo(dealership);
+    }
+
+    @Test
     void createDealership_shouldSave() {
         when(dealershipRepository.save(any(Dealership.class))).thenReturn(dealership);
         Dealership created = dealershipService.createDealership(dealership);
@@ -69,6 +78,14 @@ class DealershipServiceTest {
         when(dealershipRepository.findByIdWithCars(1L)).thenReturn(Optional.of(dealership));
         Dealership result = dealershipService.getDealershipWithCars(1L);
         assertThat(result).isEqualTo(dealership);
+    }
+
+    @Test
+    void getDealershipWithCars_notFound_throws() {
+        when(dealershipRepository.findByIdWithCars(99L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> dealershipService.getDealershipWithCars(99L))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -103,6 +120,14 @@ class DealershipServiceTest {
     }
 
     @Test
+    void addCarToDealership_dealershipNotFound_throws() {
+        when(dealershipRepository.findByIdWithCars(99L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> dealershipService.addCarToDealership(99L, 10L))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
     void removeCarFromDealership_shouldRemove() {
         dealership.addCar(car);
         when(dealershipRepository.findByIdWithCars(1L)).thenReturn(Optional.of(dealership));
@@ -110,6 +135,23 @@ class DealershipServiceTest {
         Dealership updated = dealershipService.removeCarFromDealership(1L, 10L);
         assertThat(updated.getCars()).doesNotContain(car);
         assertThat(car.getDealership()).isNull();
+    }
+
+    @Test
+    void removeCarFromDealership_dealershipNotFound_throws() {
+        when(dealershipRepository.findByIdWithCars(99L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> dealershipService.removeCarFromDealership(99L, 10L))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void removeCarFromDealership_carNotFound_throws() {
+        when(dealershipRepository.findByIdWithCars(1L)).thenReturn(Optional.of(dealership));
+        when(carRepository.findById(99L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> dealershipService.removeCarFromDealership(1L, 99L))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -126,5 +168,13 @@ class DealershipServiceTest {
         dealershipService.deleteDealership(1L);
         verify(carService).deleteCar(10L);
         verify(dealershipRepository).delete(dealership);
+    }
+
+    @Test
+    void deleteDealership_notFound_throws() {
+        when(dealershipRepository.findByIdWithCars(99L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> dealershipService.deleteDealership(99L))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 }

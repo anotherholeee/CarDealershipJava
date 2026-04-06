@@ -17,7 +17,7 @@
 
     <properties>
         <java.version>17</java.version>
-        <jacoco.version>0.8.11</jacoco.version>
+        <jacoco.version>0.8.13</jacoco.version>
 
         <!-- Настройки Sonar: отключаем автоматическую проверку -->
         <sonar.qualitygate.wait>false</sonar.qualitygate.wait>
@@ -27,7 +27,7 @@
         <sonar.jacoco.reportPaths>${project.build.directory}/jacoco.exec</sonar.jacoco.reportPaths>
 
         <!-- Исключаем из отчёта покрытия всё, кроме сервисов (однострочное значение) -->
-        <sonar.coverage.exclusions>**/dto/**,**/entity/**,**/repository/**,**/controller/**,**/config/**,**/aspect/**,**/cache/**,**/mapper/**,**/AutosalonApplication.java</sonar.coverage.exclusions>
+        <sonar.coverage.exclusions>**/dto/**,**/entity/**,**/repository/**,**/controller/**,**/config/**,**/aspect/**,**/cache/**,**/mapper/**,**/AutosalonApplication.java,**/DataInitializer.java,**/GlobalExceptionHandler.java</sonar.coverage.exclusions>
     </properties>
 
     <dependencies>
@@ -177,6 +177,8 @@
                                 <exclude>**/cache/**</exclude>
                                 <exclude>**/mapper/**</exclude>
                                 <exclude>**/AutosalonApplication.class</exclude>
+                                <exclude>**/DataInitializer.class</exclude>
+                                <exclude>**/GlobalExceptionHandler.class</exclude>
                             </excludes>
                         </configuration>
                     </execution>
@@ -213,6 +215,8 @@
                                 <exclude>**/cache/**</exclude>
                                 <exclude>**/mapper/**</exclude>
                                 <exclude>**/AutosalonApplication.class</exclude>
+                                <exclude>**/DataInitializer.class</exclude>
+                                <exclude>**/GlobalExceptionHandler.class</exclude>
                             </excludes>
                         </configuration>
                     </execution>
