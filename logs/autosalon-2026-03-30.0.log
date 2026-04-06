@@ -1,0 +1,2181 @@
+2026-03-30 13:46:47.174 [restartedMain] INFO  c.e.autosalon.AutosalonApplication - Starting AutosalonApplication using Java 25.0.2 with PID 18276 (C:\Users\roiko\IdeaProjects\autosalon\target\classes started by roiko in C:\Users\roiko\IdeaProjects\autosalon)
+2026-03-30 13:46:47.179 [restartedMain] DEBUG c.e.autosalon.AutosalonApplication - Running with Spring Boot v3.3.10, Spring v6.1.18
+2026-03-30 13:46:47.179 [restartedMain] INFO  c.e.autosalon.AutosalonApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-30 13:46:47.240 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-03-30 13:46:47.240 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-03-30 13:46:48.830 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-03-30 13:46:48.914 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 74 ms. Found 5 JPA repository interfaces.
+2026-03-30 13:46:49.917 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-03-30 13:46:49.959 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-30 13:46:49.961 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-03-30 13:46:49.962 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.39]
+2026-03-30 13:46:50.032 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-03-30 13:46:50.033 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 2791 ms
+2026-03-30 13:46:50.878 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-03-30 13:46:50.921 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-03-30 13:46:51.239 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@5ea43beb
+2026-03-30 13:46:51.242 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-30 13:46:53.458 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-03-30 13:46:53.934 [restartedMain] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-03-30 13:46:55.080 [restartedMain] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-30 13:46:55.975 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2026-03-30 13:46:56.001 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-30 13:46:56.035 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2026-03-30 13:46:56.047 [restartedMain] INFO  c.e.autosalon.AutosalonApplication - Started AutosalonApplication in 9.665 seconds (process running for 11.613)
+2026-03-30 13:46:56.134 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Feature x */ select
+            count(*) 
+        from
+            features f1_0
+2026-03-30 13:46:56.142 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Dealership x */ select
+            count(*) 
+        from
+            dealerships d1_0
+2026-03-30 13:46:56.146 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Car x */ select
+            count(*) 
+        from
+            cars c1_0
+2026-03-30 13:46:56.167 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        f1_0.id,
+        f1_0.category,
+        f1_0.description,
+        f1_0.name 
+    from
+        features f1_0
+2026-03-30 13:46:56.228 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        c1_0.id,
+        c1_0.brand,
+        c1_0.color,
+        d1_0.id,
+        d1_0.address,
+        d1_0.name,
+        d1_0.phone,
+        f1_0.car_id,
+        f1_1.id,
+        f1_1.category,
+        f1_1.description,
+        f1_1.name,
+        c1_0.model,
+        c1_0.price,
+        s1_0.id,
+        s1_0.customer_id,
+        s1_0.date,
+        s1_0.price,
+        c1_0.year 
+    from
+        cars c1_0 
+    left join
+        dealerships d1_0 
+            on d1_0.id=c1_0.dealership_id 
+    left join
+        car_features f1_0 
+            on c1_0.id=f1_0.car_id 
+    left join
+        features f1_1 
+            on f1_1.id=f1_0.feature_id 
+    left join
+        sales s1_0 
+            on c1_0.id=s1_0.car_id
+2026-03-30 13:46:56.282 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Customer x */ select
+            count(*) 
+        from
+            customers c1_0
+2026-03-30 13:46:56.289 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Sale x */ select
+            count(*) 
+        from
+            sales s1_0
+2026-03-30 13:46:56.294 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Feature x */ select
+            count(*) 
+        from
+            features f1_0
+2026-03-30 13:46:56.299 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Dealership x */ select
+            count(*) 
+        from
+            dealerships d1_0
+2026-03-30 13:46:56.302 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Car x */ select
+            count(*) 
+        from
+            cars c1_0
+2026-03-30 13:46:56.304 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Customer x */ select
+            count(*) 
+        from
+            customers c1_0
+2026-03-30 13:46:56.307 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Sale x */ select
+            count(*) 
+        from
+            sales s1_0
+2026-03-30 13:46:56.313 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        c1_0.id,
+        c1_0.brand,
+        c1_0.color,
+        d1_0.id,
+        d1_0.address,
+        d1_0.name,
+        d1_0.phone,
+        f1_0.car_id,
+        f1_1.id,
+        f1_1.category,
+        f1_1.description,
+        f1_1.name,
+        c1_0.model,
+        c1_0.price,
+        s1_0.id,
+        s1_0.customer_id,
+        s1_0.date,
+        s1_0.price,
+        c1_0.year 
+    from
+        cars c1_0 
+    left join
+        dealerships d1_0 
+            on d1_0.id=c1_0.dealership_id 
+    left join
+        car_features f1_0 
+            on c1_0.id=f1_0.car_id 
+    left join
+        features f1_1 
+            on f1_1.id=f1_0.feature_id 
+    left join
+        sales s1_0 
+            on c1_0.id=s1_0.car_id
+2026-03-30 13:48:14.657 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-03-30 13:48:14.657 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-03-30 13:48:14.658 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2026-03-30 13:48:15.871 [http-nio-8080-exec-8] INFO  o.s.api.AbstractOpenApiResource - Init duration for springdoc-openapi is: 841 ms
+2026-03-30 13:48:33.039 [http-nio-8080-exec-9] ERROR c.e.autosalon.GlobalExceptionHandler - Type mismatch: Параметр 'id' должен быть типа Long
+2026-03-30 13:48:33.053 [http-nio-8080-exec-9] WARN  o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.web.method.annotation.MethodArgumentTypeMismatchException: Method parameter 'id': Failed to convert value of type 'java.lang.String' to required type 'java.lang.Long'; For input string: "5555555555555555555555555555555"]
+2026-03-30 14:09:38.518 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m17s27ms390µs600ns).
+2026-03-30 14:11:29.500 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-03-30 14:11:29.504 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-03-30 14:11:29.510 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-03-30 14:15:12.315 [restartedMain] INFO  c.e.autosalon.AutosalonApplication - Starting AutosalonApplication using Java 25.0.2 with PID 12684 (C:\Users\roiko\IdeaProjects\autosalon\target\classes started by roiko in C:\Users\roiko\IdeaProjects\autosalon)
+2026-03-30 14:15:12.315 [restartedMain] DEBUG c.e.autosalon.AutosalonApplication - Running with Spring Boot v3.3.10, Spring v6.1.18
+2026-03-30 14:15:12.316 [restartedMain] INFO  c.e.autosalon.AutosalonApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-30 14:15:12.368 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-03-30 14:15:12.369 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-03-30 14:15:13.317 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-03-30 14:15:13.393 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 68 ms. Found 5 JPA repository interfaces.
+2026-03-30 14:15:14.145 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-03-30 14:15:14.158 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-30 14:15:14.160 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-03-30 14:15:14.160 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.39]
+2026-03-30 14:15:14.219 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-03-30 14:15:14.219 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1850 ms
+2026-03-30 14:15:14.958 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-03-30 14:15:15.004 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-03-30 14:15:15.191 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@49145366
+2026-03-30 14:15:15.193 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-30 14:15:16.887 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-03-30 14:15:17.238 [restartedMain] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-03-30 14:15:18.165 [restartedMain] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-30 14:15:18.837 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2026-03-30 14:15:18.860 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-30 14:15:18.878 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2026-03-30 14:15:18.889 [restartedMain] INFO  c.e.autosalon.AutosalonApplication - Started AutosalonApplication in 7.227 seconds (process running for 8.194)
+2026-03-30 14:15:18.959 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Feature x */ select
+            count(*) 
+        from
+            features f1_0
+2026-03-30 14:15:18.964 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Dealership x */ select
+            count(*) 
+        from
+            dealerships d1_0
+2026-03-30 14:15:18.966 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Car x */ select
+            count(*) 
+        from
+            cars c1_0
+2026-03-30 14:15:18.986 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        f1_0.id,
+        f1_0.category,
+        f1_0.description,
+        f1_0.name 
+    from
+        features f1_0
+2026-03-30 14:15:19.029 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        c1_0.id,
+        c1_0.brand,
+        c1_0.color,
+        d1_0.id,
+        d1_0.address,
+        d1_0.name,
+        d1_0.phone,
+        f1_0.car_id,
+        f1_1.id,
+        f1_1.category,
+        f1_1.description,
+        f1_1.name,
+        c1_0.model,
+        c1_0.price,
+        s1_0.id,
+        s1_0.customer_id,
+        s1_0.date,
+        s1_0.price,
+        c1_0.year 
+    from
+        cars c1_0 
+    left join
+        dealerships d1_0 
+            on d1_0.id=c1_0.dealership_id 
+    left join
+        car_features f1_0 
+            on c1_0.id=f1_0.car_id 
+    left join
+        features f1_1 
+            on f1_1.id=f1_0.feature_id 
+    left join
+        sales s1_0 
+            on c1_0.id=s1_0.car_id
+2026-03-30 14:15:19.068 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Customer x */ select
+            count(*) 
+        from
+            customers c1_0
+2026-03-30 14:15:19.076 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Sale x */ select
+            count(*) 
+        from
+            sales s1_0
+2026-03-30 14:15:19.081 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Feature x */ select
+            count(*) 
+        from
+            features f1_0
+2026-03-30 14:15:19.085 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Dealership x */ select
+            count(*) 
+        from
+            dealerships d1_0
+2026-03-30 14:15:19.088 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Car x */ select
+            count(*) 
+        from
+            cars c1_0
+2026-03-30 14:15:19.091 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Customer x */ select
+            count(*) 
+        from
+            customers c1_0
+2026-03-30 14:15:19.093 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Sale x */ select
+            count(*) 
+        from
+            sales s1_0
+2026-03-30 14:15:19.097 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        c1_0.id,
+        c1_0.brand,
+        c1_0.color,
+        d1_0.id,
+        d1_0.address,
+        d1_0.name,
+        d1_0.phone,
+        f1_0.car_id,
+        f1_1.id,
+        f1_1.category,
+        f1_1.description,
+        f1_1.name,
+        c1_0.model,
+        c1_0.price,
+        s1_0.id,
+        s1_0.customer_id,
+        s1_0.date,
+        s1_0.price,
+        c1_0.year 
+    from
+        cars c1_0 
+    left join
+        dealerships d1_0 
+            on d1_0.id=c1_0.dealership_id 
+    left join
+        car_features f1_0 
+            on c1_0.id=f1_0.car_id 
+    left join
+        features f1_1 
+            on f1_1.id=f1_0.feature_id 
+    left join
+        sales s1_0 
+            on c1_0.id=s1_0.car_id
+2026-03-30 14:15:34.942 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-03-30 14:15:34.946 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-03-30 14:15:34.949 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-03-30 14:35:27.952 [restartedMain] INFO  c.e.autosalon.AutosalonApplication - Starting AutosalonApplication using Java 25.0.2 with PID 15668 (C:\Users\roiko\IdeaProjects\autosalon\target\classes started by roiko in C:\Users\roiko\IdeaProjects\autosalon)
+2026-03-30 14:35:27.953 [restartedMain] DEBUG c.e.autosalon.AutosalonApplication - Running with Spring Boot v3.3.10, Spring v6.1.18
+2026-03-30 14:35:27.953 [restartedMain] INFO  c.e.autosalon.AutosalonApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-30 14:35:28.004 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-03-30 14:35:28.004 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-03-30 14:35:28.888 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-03-30 14:35:28.961 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 66 ms. Found 5 JPA repository interfaces.
+2026-03-30 14:35:29.732 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-03-30 14:35:29.745 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-30 14:35:29.747 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-03-30 14:35:29.747 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.39]
+2026-03-30 14:35:29.805 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-03-30 14:35:29.805 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1801 ms
+2026-03-30 14:35:30.460 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-03-30 14:35:30.495 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-03-30 14:35:30.679 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@5e74ce03
+2026-03-30 14:35:30.683 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-30 14:35:32.301 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-03-30 14:35:32.644 [restartedMain] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-03-30 14:35:33.591 [restartedMain] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-30 14:35:34.249 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2026-03-30 14:35:34.274 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-30 14:35:34.293 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2026-03-30 14:35:34.302 [restartedMain] INFO  c.e.autosalon.AutosalonApplication - Started AutosalonApplication in 6.938 seconds (process running for 7.814)
+2026-03-30 14:35:34.371 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Feature x */ select
+            count(*) 
+        from
+            features f1_0
+2026-03-30 14:35:34.425 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Feature */insert 
+    into
+        features (category, description, name) 
+    values
+        (?, ?, ?) 
+    returning id
+2026-03-30 14:35:34.450 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Feature */insert 
+    into
+        features (category, description, name) 
+    values
+        (?, ?, ?) 
+    returning id
+2026-03-30 14:35:34.453 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Feature */insert 
+    into
+        features (category, description, name) 
+    values
+        (?, ?, ?) 
+    returning id
+2026-03-30 14:35:34.455 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Feature */insert 
+    into
+        features (category, description, name) 
+    values
+        (?, ?, ?) 
+    returning id
+2026-03-30 14:35:34.456 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Feature */insert 
+    into
+        features (category, description, name) 
+    values
+        (?, ?, ?) 
+    returning id
+2026-03-30 14:35:34.458 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Feature */insert 
+    into
+        features (category, description, name) 
+    values
+        (?, ?, ?) 
+    returning id
+2026-03-30 14:35:34.459 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Feature */insert 
+    into
+        features (category, description, name) 
+    values
+        (?, ?, ?) 
+    returning id
+2026-03-30 14:35:34.461 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Feature */insert 
+    into
+        features (category, description, name) 
+    values
+        (?, ?, ?) 
+    returning id
+2026-03-30 14:35:34.462 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Feature */insert 
+    into
+        features (category, description, name) 
+    values
+        (?, ?, ?) 
+    returning id
+2026-03-30 14:35:34.463 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Feature */insert 
+    into
+        features (category, description, name) 
+    values
+        (?, ?, ?) 
+    returning id
+2026-03-30 14:35:34.464 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Feature */insert 
+    into
+        features (category, description, name) 
+    values
+        (?, ?, ?) 
+    returning id
+2026-03-30 14:35:34.468 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Feature */insert 
+    into
+        features (category, description, name) 
+    values
+        (?, ?, ?) 
+    returning id
+2026-03-30 14:35:34.470 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Feature */insert 
+    into
+        features (category, description, name) 
+    values
+        (?, ?, ?) 
+    returning id
+2026-03-30 14:35:34.471 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Feature */insert 
+    into
+        features (category, description, name) 
+    values
+        (?, ?, ?) 
+    returning id
+2026-03-30 14:35:34.473 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Feature */insert 
+    into
+        features (category, description, name) 
+    values
+        (?, ?, ?) 
+    returning id
+2026-03-30 14:35:34.473 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Feature */insert 
+    into
+        features (category, description, name) 
+    values
+        (?, ?, ?) 
+    returning id
+2026-03-30 14:35:34.474 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Feature */insert 
+    into
+        features (category, description, name) 
+    values
+        (?, ?, ?) 
+    returning id
+2026-03-30 14:35:34.475 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Feature */insert 
+    into
+        features (category, description, name) 
+    values
+        (?, ?, ?) 
+    returning id
+2026-03-30 14:35:34.488 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Dealership x */ select
+            count(*) 
+        from
+            dealerships d1_0
+2026-03-30 14:35:34.491 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Dealership */insert 
+    into
+        dealerships (address, name, phone) 
+    values
+        (?, ?, ?) 
+    returning id
+2026-03-30 14:35:34.503 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Dealership */insert 
+    into
+        dealerships (address, name, phone) 
+    values
+        (?, ?, ?) 
+    returning id
+2026-03-30 14:35:34.506 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Dealership */insert 
+    into
+        dealerships (address, name, phone) 
+    values
+        (?, ?, ?) 
+    returning id
+2026-03-30 14:35:34.507 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Dealership */insert 
+    into
+        dealerships (address, name, phone) 
+    values
+        (?, ?, ?) 
+    returning id
+2026-03-30 14:35:34.508 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Dealership */insert 
+    into
+        dealerships (address, name, phone) 
+    values
+        (?, ?, ?) 
+    returning id
+2026-03-30 14:35:34.518 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Car x */ select
+            count(*) 
+        from
+            cars c1_0
+2026-03-30 14:35:34.545 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        d1_0.id,
+        d1_0.address,
+        d1_0.name,
+        d1_0.phone 
+    from
+        dealerships d1_0
+2026-03-30 14:35:34.552 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        f1_0.id,
+        f1_0.category,
+        f1_0.description,
+        f1_0.name 
+    from
+        features f1_0
+2026-03-30 14:35:34.559 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car */insert 
+    into
+        cars (brand, color, dealership_id, model, price, year) 
+    values
+        (?, ?, ?, ?, ?, ?) 
+    returning id
+2026-03-30 14:35:34.599 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car */insert 
+    into
+        cars (brand, color, dealership_id, model, price, year) 
+    values
+        (?, ?, ?, ?, ?, ?) 
+    returning id
+2026-03-30 14:35:34.603 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car */insert 
+    into
+        cars (brand, color, dealership_id, model, price, year) 
+    values
+        (?, ?, ?, ?, ?, ?) 
+    returning id
+2026-03-30 14:35:34.604 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car */insert 
+    into
+        cars (brand, color, dealership_id, model, price, year) 
+    values
+        (?, ?, ?, ?, ?, ?) 
+    returning id
+2026-03-30 14:35:34.606 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car */insert 
+    into
+        cars (brand, color, dealership_id, model, price, year) 
+    values
+        (?, ?, ?, ?, ?, ?) 
+    returning id
+2026-03-30 14:35:34.607 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car */insert 
+    into
+        cars (brand, color, dealership_id, model, price, year) 
+    values
+        (?, ?, ?, ?, ?, ?) 
+    returning id
+2026-03-30 14:35:34.609 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car */insert 
+    into
+        cars (brand, color, dealership_id, model, price, year) 
+    values
+        (?, ?, ?, ?, ?, ?) 
+    returning id
+2026-03-30 14:35:34.610 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car */insert 
+    into
+        cars (brand, color, dealership_id, model, price, year) 
+    values
+        (?, ?, ?, ?, ?, ?) 
+    returning id
+2026-03-30 14:35:34.611 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car */insert 
+    into
+        cars (brand, color, dealership_id, model, price, year) 
+    values
+        (?, ?, ?, ?, ?, ?) 
+    returning id
+2026-03-30 14:35:34.612 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car */insert 
+    into
+        cars (brand, color, dealership_id, model, price, year) 
+    values
+        (?, ?, ?, ?, ?, ?) 
+    returning id
+2026-03-30 14:35:34.614 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car */insert 
+    into
+        cars (brand, color, dealership_id, model, price, year) 
+    values
+        (?, ?, ?, ?, ?, ?) 
+    returning id
+2026-03-30 14:35:34.616 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car */insert 
+    into
+        cars (brand, color, dealership_id, model, price, year) 
+    values
+        (?, ?, ?, ?, ?, ?) 
+    returning id
+2026-03-30 14:35:34.617 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car */insert 
+    into
+        cars (brand, color, dealership_id, model, price, year) 
+    values
+        (?, ?, ?, ?, ?, ?) 
+    returning id
+2026-03-30 14:35:34.622 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        f1_0.id,
+        f1_0.category,
+        f1_0.description,
+        f1_0.name 
+    from
+        features f1_0
+2026-03-30 14:35:34.643 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.653 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.653 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.655 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.656 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.657 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.657 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.658 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.658 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.659 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.659 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.660 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.660 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.660 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.662 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.662 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.662 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.662 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.663 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.663 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.664 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.665 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.665 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.665 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.666 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.666 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.668 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.668 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.669 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.669 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.670 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.670 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.671 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.671 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.672 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.672 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.672 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.674 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.674 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.674 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.675 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.675 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.676 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.676 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.676 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.678 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.678 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.679 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.679 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.679 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.680 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.680 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.680 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.681 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.682 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.682 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.683 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.684 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.684 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.686 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.686 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.686 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.687 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.688 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.688 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.688 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.689 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.689 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.689 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.690 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.690 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.690 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.690 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.692 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.692 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.693 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.693 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.693 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.694 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.694 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.694 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.695 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.695 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.695 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.695 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.696 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.697 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.698 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.698 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:35:34.703 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        c1_0.id,
+        c1_0.brand,
+        c1_0.color,
+        d1_0.id,
+        d1_0.address,
+        d1_0.name,
+        d1_0.phone,
+        f1_0.car_id,
+        f1_1.id,
+        f1_1.category,
+        f1_1.description,
+        f1_1.name,
+        c1_0.model,
+        c1_0.price,
+        s1_0.id,
+        s1_0.customer_id,
+        s1_0.date,
+        s1_0.price,
+        c1_0.year 
+    from
+        cars c1_0 
+    left join
+        dealerships d1_0 
+            on d1_0.id=c1_0.dealership_id 
+    left join
+        car_features f1_0 
+            on c1_0.id=f1_0.car_id 
+    left join
+        features f1_1 
+            on f1_1.id=f1_0.feature_id 
+    left join
+        sales s1_0 
+            on c1_0.id=s1_0.car_id
+2026-03-30 14:35:34.722 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Customer x */ select
+            count(*) 
+        from
+            customers c1_0
+2026-03-30 14:35:34.725 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Customer */insert 
+    into
+        customers (email, first_name, last_name, phone) 
+    values
+        (?, ?, ?, ?) 
+    returning id
+2026-03-30 14:35:34.759 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Customer */insert 
+    into
+        customers (email, first_name, last_name, phone) 
+    values
+        (?, ?, ?, ?) 
+    returning id
+2026-03-30 14:35:34.761 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Customer */insert 
+    into
+        customers (email, first_name, last_name, phone) 
+    values
+        (?, ?, ?, ?) 
+    returning id
+2026-03-30 14:35:34.762 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Customer */insert 
+    into
+        customers (email, first_name, last_name, phone) 
+    values
+        (?, ?, ?, ?) 
+    returning id
+2026-03-30 14:35:34.762 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Customer */insert 
+    into
+        customers (email, first_name, last_name, phone) 
+    values
+        (?, ?, ?, ?) 
+    returning id
+2026-03-30 14:35:34.763 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Customer */insert 
+    into
+        customers (email, first_name, last_name, phone) 
+    values
+        (?, ?, ?, ?) 
+    returning id
+2026-03-30 14:35:34.764 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Customer */insert 
+    into
+        customers (email, first_name, last_name, phone) 
+    values
+        (?, ?, ?, ?) 
+    returning id
+2026-03-30 14:35:34.766 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Customer */insert 
+    into
+        customers (email, first_name, last_name, phone) 
+    values
+        (?, ?, ?, ?) 
+    returning id
+2026-03-30 14:35:34.766 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Customer */insert 
+    into
+        customers (email, first_name, last_name, phone) 
+    values
+        (?, ?, ?, ?) 
+    returning id
+2026-03-30 14:35:34.767 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Customer */insert 
+    into
+        customers (email, first_name, last_name, phone) 
+    values
+        (?, ?, ?, ?) 
+    returning id
+2026-03-30 14:35:34.773 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Sale x */ select
+            count(*) 
+        from
+            sales s1_0
+2026-03-30 14:35:34.777 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        c1_0.id,
+        c1_0.brand,
+        c1_0.color,
+        d1_0.id,
+        d1_0.address,
+        d1_0.name,
+        d1_0.phone,
+        f1_0.car_id,
+        f1_1.id,
+        f1_1.category,
+        f1_1.description,
+        f1_1.name,
+        c1_0.model,
+        c1_0.price,
+        s1_0.id,
+        s1_0.customer_id,
+        s1_0.date,
+        s1_0.price,
+        c1_0.year 
+    from
+        cars c1_0 
+    left join
+        dealerships d1_0 
+            on d1_0.id=c1_0.dealership_id 
+    left join
+        car_features f1_0 
+            on c1_0.id=f1_0.car_id 
+    left join
+        features f1_1 
+            on f1_1.id=f1_0.feature_id 
+    left join
+        sales s1_0 
+            on c1_0.id=s1_0.car_id
+2026-03-30 14:35:34.783 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        c1_0.id,
+        c1_0.email,
+        c1_0.first_name,
+        c1_0.last_name,
+        c1_0.phone 
+    from
+        customers c1_0
+2026-03-30 14:35:34.786 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Sale */insert 
+    into
+        sales (car_id, customer_id, date, price) 
+    values
+        (?, ?, ?, ?) 
+    returning id
+2026-03-30 14:35:34.801 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Sale */insert 
+    into
+        sales (car_id, customer_id, date, price) 
+    values
+        (?, ?, ?, ?) 
+    returning id
+2026-03-30 14:35:34.802 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Sale */insert 
+    into
+        sales (car_id, customer_id, date, price) 
+    values
+        (?, ?, ?, ?) 
+    returning id
+2026-03-30 14:35:34.803 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Sale */insert 
+    into
+        sales (car_id, customer_id, date, price) 
+    values
+        (?, ?, ?, ?) 
+    returning id
+2026-03-30 14:35:34.804 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Sale */insert 
+    into
+        sales (car_id, customer_id, date, price) 
+    values
+        (?, ?, ?, ?) 
+    returning id
+2026-03-30 14:35:34.806 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Sale */insert 
+    into
+        sales (car_id, customer_id, date, price) 
+    values
+        (?, ?, ?, ?) 
+    returning id
+2026-03-30 14:35:34.806 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Sale */insert 
+    into
+        sales (car_id, customer_id, date, price) 
+    values
+        (?, ?, ?, ?) 
+    returning id
+2026-03-30 14:35:34.808 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Sale */insert 
+    into
+        sales (car_id, customer_id, date, price) 
+    values
+        (?, ?, ?, ?) 
+    returning id
+2026-03-30 14:35:34.809 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Sale */insert 
+    into
+        sales (car_id, customer_id, date, price) 
+    values
+        (?, ?, ?, ?) 
+    returning id
+2026-03-30 14:35:34.810 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Sale */insert 
+    into
+        sales (car_id, customer_id, date, price) 
+    values
+        (?, ?, ?, ?) 
+    returning id
+2026-03-30 14:35:34.810 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Sale */insert 
+    into
+        sales (car_id, customer_id, date, price) 
+    values
+        (?, ?, ?, ?) 
+    returning id
+2026-03-30 14:35:34.811 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Sale */insert 
+    into
+        sales (car_id, customer_id, date, price) 
+    values
+        (?, ?, ?, ?) 
+    returning id
+2026-03-30 14:35:34.814 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Feature x */ select
+            count(*) 
+        from
+            features f1_0
+2026-03-30 14:35:34.818 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Dealership x */ select
+            count(*) 
+        from
+            dealerships d1_0
+2026-03-30 14:35:34.820 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Car x */ select
+            count(*) 
+        from
+            cars c1_0
+2026-03-30 14:35:34.821 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Customer x */ select
+            count(*) 
+        from
+            customers c1_0
+2026-03-30 14:35:34.822 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Sale x */ select
+            count(*) 
+        from
+            sales s1_0
+2026-03-30 14:35:34.826 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        c1_0.id,
+        c1_0.brand,
+        c1_0.color,
+        d1_0.id,
+        d1_0.address,
+        d1_0.name,
+        d1_0.phone,
+        f1_0.car_id,
+        f1_1.id,
+        f1_1.category,
+        f1_1.description,
+        f1_1.name,
+        c1_0.model,
+        c1_0.price,
+        s1_0.id,
+        s1_0.customer_id,
+        s1_0.date,
+        s1_0.price,
+        c1_0.year 
+    from
+        cars c1_0 
+    left join
+        dealerships d1_0 
+            on d1_0.id=c1_0.dealership_id 
+    left join
+        car_features f1_0 
+            on c1_0.id=f1_0.car_id 
+    left join
+        features f1_1 
+            on f1_1.id=f1_0.feature_id 
+    left join
+        sales s1_0 
+            on c1_0.id=s1_0.car_id
+2026-03-30 14:35:56.156 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-03-30 14:35:56.156 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-03-30 14:35:56.157 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2026-03-30 14:35:57.085 [http-nio-8080-exec-5] INFO  o.s.api.AbstractOpenApiResource - Init duration for springdoc-openapi is: 517 ms
+2026-03-30 14:37:28.218 [http-nio-8080-exec-2] ERROR c.e.autosalon.GlobalExceptionHandler - Validation error: Год выпуска не может быть больше 2026
+2026-03-30 14:37:28.230 [http-nio-8080-exec-2] WARN  o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.web.bind.MethodArgumentNotValidException: Validation failed for argument [0] in public org.springframework.http.ResponseEntity<com.example.autosalon.dto.CarResponseDto> com.example.autosalon.controller.CarController.createCar(com.example.autosalon.dto.CarRequestDto): [Field error in object 'carRequestDto' on field 'year': rejected value [2028]; codes [Max.carRequestDto.year,Max.year,Max.java.lang.Integer,Max]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [carRequestDto.year,year]; arguments []; default message [year],2026]; default message [Год выпуска не может быть больше 2026]] ]
+2026-03-30 14:39:16.786 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=45s990ms505µs800ns).
+2026-03-30 14:41:53.220 [File Watcher] INFO  o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Restarting due to 12 class path changes (0 additions, 12 deletions, 0 modifications)
+2026-03-30 14:41:53.226 [Thread-5] INFO  o.a.coyote.http11.Http11NioProtocol - Stopping ProtocolHandler ["http-nio-8080"]
+2026-03-30 14:41:53.240 [Thread-5] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-03-30 14:41:53.247 [Thread-5] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-03-30 14:41:53.253 [Thread-5] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-03-30 14:41:53.433 [restartedMain] INFO  c.e.autosalon.AutosalonApplication - Starting AutosalonApplication using Java 25.0.2 with PID 15668 (C:\Users\roiko\IdeaProjects\autosalon\target\classes started by roiko in C:\Users\roiko\IdeaProjects\autosalon)
+2026-03-30 14:41:53.434 [restartedMain] DEBUG c.e.autosalon.AutosalonApplication - Running with Spring Boot v3.3.10, Spring v6.1.18
+2026-03-30 14:41:53.434 [restartedMain] INFO  c.e.autosalon.AutosalonApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-30 14:41:53.850 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-03-30 14:41:53.860 [restartedMain] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: java.lang.TypeNotPresentException: Type com.example.autosalon.entity.Customer not present
+2026-03-30 14:41:53.868 [restartedMain] INFO  o.s.b.a.l.ConditionEvaluationReportLogger - 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2026-03-30 14:41:53.899 [restartedMain] ERROR o.s.boot.SpringApplication - Application run failed
+java.lang.TypeNotPresentException: Type com.example.autosalon.entity.Customer not present
+	at java.base/sun.reflect.generics.factory.CoreReflectionFactory.makeNamedType(CoreReflectionFactory.java:120)
+	at java.base/sun.reflect.generics.visitor.Reifier.visitClassTypeSignature(Reifier.java:125)
+	at java.base/sun.reflect.generics.tree.ClassTypeSignature.accept(ClassTypeSignature.java:49)
+	at java.base/sun.reflect.generics.visitor.Reifier.reifyTypeArguments(Reifier.java:68)
+	at java.base/sun.reflect.generics.visitor.Reifier.visitClassTypeSignature(Reifier.java:138)
+	at java.base/sun.reflect.generics.tree.ClassTypeSignature.accept(ClassTypeSignature.java:49)
+	at java.base/sun.reflect.generics.repository.ClassRepository.computeSuperInterfaces(ClassRepository.java:117)
+	at java.base/sun.reflect.generics.repository.ClassRepository.getSuperInterfaces(ClassRepository.java:95)
+	at java.base/java.lang.Class.getGenericInterfaces(Class.java:1278)
+	at org.springframework.core.ResolvableType.getInterfaces(ResolvableType.java:517)
+	at org.springframework.core.ResolvableType.as(ResolvableType.java:465)
+	at org.springframework.data.util.TypeDiscoverer.getSuperTypeInformation(TypeDiscoverer.java:256)
+	at org.springframework.data.util.ClassTypeInformation.getSuperTypeInformation(ClassTypeInformation.java:36)
+	at org.springframework.data.util.TypeInformation.getRequiredSuperTypeInformation(TypeInformation.java:327)
+	at org.springframework.data.repository.core.support.DefaultRepositoryMetadata.<init>(DefaultRepositoryMetadata.java:55)
+	at org.springframework.data.repository.core.support.AbstractRepositoryMetadata.getMetadata(AbstractRepositoryMetadata.java:77)
+	at org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport.getRepositoryConfigurations(RepositoryConfigurationExtensionSupport.java:92)
+	at org.springframework.data.repository.config.RepositoryConfigurationDelegate.registerRepositoriesIn(RepositoryConfigurationDelegate.java:168)
+	at org.springframework.boot.autoconfigure.data.AbstractRepositoryConfigurationSourceSupport.registerBeanDefinitions(AbstractRepositoryConfigurationSourceSupport.java:62)
+	at org.springframework.context.annotation.ConfigurationClassBeanDefinitionReader.lambda$loadBeanDefinitionsFromRegistrars$1(ConfigurationClassBeanDefinitionReader.java:375)
+	at java.base/java.util.LinkedHashMap.forEach(LinkedHashMap.java:987)
+	at org.springframework.context.annotation.ConfigurationClassBeanDefinitionReader.loadBeanDefinitionsFromRegistrars(ConfigurationClassBeanDefinitionReader.java:374)
+	at org.springframework.context.annotation.ConfigurationClassBeanDefinitionReader.loadBeanDefinitionsForConfigurationClass(ConfigurationClassBeanDefinitionReader.java:147)
+	at org.springframework.context.annotation.ConfigurationClassBeanDefinitionReader.loadBeanDefinitions(ConfigurationClassBeanDefinitionReader.java:119)
+	at org.springframework.context.annotation.ConfigurationClassPostProcessor.processConfigBeanDefinitions(ConfigurationClassPostProcessor.java:429)
+	at org.springframework.context.annotation.ConfigurationClassPostProcessor.postProcessBeanDefinitionRegistry(ConfigurationClassPostProcessor.java:290)
+	at org.springframework.context.support.PostProcessorRegistrationDelegate.invokeBeanDefinitionRegistryPostProcessors(PostProcessorRegistrationDelegate.java:349)
+	at org.springframework.context.support.PostProcessorRegistrationDelegate.invokeBeanFactoryPostProcessors(PostProcessorRegistrationDelegate.java:118)
+	at org.springframework.context.support.AbstractApplicationContext.invokeBeanFactoryPostProcessors(AbstractApplicationContext.java:789)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:607)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:754)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:456)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:335)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1363)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1352)
+	at com.example.autosalon.AutosalonApplication.main(AutosalonApplication.java:10)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at org.springframework.boot.devtools.restart.RestartLauncher.run(RestartLauncher.java:50)
+Caused by: java.lang.ClassNotFoundException: com.example.autosalon.entity.Customer
+	at java.base/jdk.internal.loader.BuiltinClassLoader.loadClass(BuiltinClassLoader.java:580)
+	at java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:490)
+	at java.base/java.lang.Class.forName0(Native Method)
+	at java.base/java.lang.Class.forName(Class.java:547)
+	at org.springframework.boot.devtools.restart.classloader.RestartClassLoader.loadClass(RestartClassLoader.java:121)
+	at java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:490)
+	at java.base/java.lang.Class.forName0(Native Method)
+	at java.base/java.lang.Class.forName(Class.java:547)
+	at java.base/sun.reflect.generics.factory.CoreReflectionFactory.makeNamedType(CoreReflectionFactory.java:117)
+	... 39 common frames omitted
+2026-03-30 14:41:57.502 [restartedMain] INFO  c.e.autosalon.AutosalonApplication - Starting AutosalonApplication using Java 25.0.2 with PID 15668 (C:\Users\roiko\IdeaProjects\autosalon\target\classes started by roiko in C:\Users\roiko\IdeaProjects\autosalon)
+2026-03-30 14:41:57.502 [restartedMain] DEBUG c.e.autosalon.AutosalonApplication - Running with Spring Boot v3.3.10, Spring v6.1.18
+2026-03-30 14:41:57.502 [restartedMain] INFO  c.e.autosalon.AutosalonApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-30 14:41:58.053 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-03-30 14:41:58.085 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 32 ms. Found 5 JPA repository interfaces.
+2026-03-30 14:41:58.317 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-03-30 14:41:58.319 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-30 14:41:58.319 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-03-30 14:41:58.319 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.39]
+2026-03-30 14:41:58.358 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-03-30 14:41:58.358 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 854 ms
+2026-03-30 14:41:58.452 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-03-30 14:41:58.454 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Starting...
+2026-03-30 14:41:58.531 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-2 - Added connection org.postgresql.jdbc.PgConnection@6397c162
+2026-03-30 14:41:58.531 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Start completed.
+2026-03-30 14:41:59.303 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-03-30 14:41:59.891 [restartedMain] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-30 14:42:00.341 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2026-03-30 14:42:00.356 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-30 14:42:00.360 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2026-03-30 14:42:00.362 [restartedMain] INFO  c.e.autosalon.AutosalonApplication - Started AutosalonApplication in 2.916 seconds (process running for 393.876)
+2026-03-30 14:42:00.370 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Feature x */ select
+            count(*) 
+        from
+            features f1_0
+2026-03-30 14:42:00.372 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Dealership x */ select
+            count(*) 
+        from
+            dealerships d1_0
+2026-03-30 14:42:00.374 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Car x */ select
+            count(*) 
+        from
+            cars c1_0
+2026-03-30 14:42:00.377 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        f1_0.id,
+        f1_0.category,
+        f1_0.description,
+        f1_0.name 
+    from
+        features f1_0
+2026-03-30 14:42:00.389 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        c1_0.id,
+        c1_0.brand,
+        c1_0.color,
+        d1_0.id,
+        d1_0.address,
+        d1_0.name,
+        d1_0.phone,
+        f1_0.car_id,
+        f1_1.id,
+        f1_1.category,
+        f1_1.description,
+        f1_1.name,
+        c1_0.model,
+        c1_0.price,
+        s1_0.id,
+        s1_0.customer_id,
+        s1_0.date,
+        s1_0.price,
+        c1_0.year 
+    from
+        cars c1_0 
+    left join
+        dealerships d1_0 
+            on d1_0.id=c1_0.dealership_id 
+    left join
+        car_features f1_0 
+            on c1_0.id=f1_0.car_id 
+    left join
+        features f1_1 
+            on f1_1.id=f1_0.feature_id 
+    left join
+        sales s1_0 
+            on c1_0.id=s1_0.car_id
+2026-03-30 14:42:00.407 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Customer x */ select
+            count(*) 
+        from
+            customers c1_0
+2026-03-30 14:42:00.407 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Sale x */ select
+            count(*) 
+        from
+            sales s1_0
+2026-03-30 14:42:00.407 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Feature x */ select
+            count(*) 
+        from
+            features f1_0
+2026-03-30 14:42:00.413 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Dealership x */ select
+            count(*) 
+        from
+            dealerships d1_0
+2026-03-30 14:42:00.417 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Car x */ select
+            count(*) 
+        from
+            cars c1_0
+2026-03-30 14:42:00.417 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Customer x */ select
+            count(*) 
+        from
+            customers c1_0
+2026-03-30 14:42:00.421 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Sale x */ select
+            count(*) 
+        from
+            sales s1_0
+2026-03-30 14:42:00.423 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        c1_0.id,
+        c1_0.brand,
+        c1_0.color,
+        d1_0.id,
+        d1_0.address,
+        d1_0.name,
+        d1_0.phone,
+        f1_0.car_id,
+        f1_1.id,
+        f1_1.category,
+        f1_1.description,
+        f1_1.name,
+        c1_0.model,
+        c1_0.price,
+        s1_0.id,
+        s1_0.customer_id,
+        s1_0.date,
+        s1_0.price,
+        c1_0.year 
+    from
+        cars c1_0 
+    left join
+        dealerships d1_0 
+            on d1_0.id=c1_0.dealership_id 
+    left join
+        car_features f1_0 
+            on c1_0.id=f1_0.car_id 
+    left join
+        features f1_1 
+            on f1_1.id=f1_0.feature_id 
+    left join
+        sales s1_0 
+            on c1_0.id=s1_0.car_id
+2026-03-30 14:42:00.425 [restartedMain] INFO  o.s.b.d.a.ConditionEvaluationDeltaLoggingListener - Condition evaluation unchanged
+2026-03-30 14:42:06.415 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-03-30 14:42:06.416 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Shutdown initiated...
+2026-03-30 14:42:06.422 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Shutdown completed.
+2026-03-30 14:46:55.092 [restartedMain] INFO  c.e.autosalon.AutosalonApplication - Starting AutosalonApplication using Java 25.0.2 with PID 21420 (C:\Users\roiko\IdeaProjects\autosalon\target\classes started by roiko in C:\Users\roiko\IdeaProjects\autosalon)
+2026-03-30 14:46:55.094 [restartedMain] DEBUG c.e.autosalon.AutosalonApplication - Running with Spring Boot v3.3.10, Spring v6.1.18
+2026-03-30 14:46:55.094 [restartedMain] INFO  c.e.autosalon.AutosalonApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-30 14:46:55.144 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-03-30 14:46:55.146 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-03-30 14:46:56.136 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-03-30 14:46:56.220 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 75 ms. Found 5 JPA repository interfaces.
+2026-03-30 14:46:57.073 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-03-30 14:46:57.086 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-30 14:46:57.088 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-03-30 14:46:57.088 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.39]
+2026-03-30 14:46:57.148 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-03-30 14:46:57.149 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 2002 ms
+2026-03-30 14:46:57.863 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-03-30 14:46:57.904 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-03-30 14:46:58.103 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@3fbabfa6
+2026-03-30 14:46:58.105 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-30 14:46:59.882 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-03-30 14:47:00.308 [restartedMain] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-03-30 14:47:01.336 [restartedMain] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-30 14:47:02.075 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2026-03-30 14:47:02.098 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-30 14:47:02.117 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2026-03-30 14:47:02.128 [restartedMain] INFO  c.e.autosalon.AutosalonApplication - Started AutosalonApplication in 7.654 seconds (process running for 8.577)
+2026-03-30 14:47:02.201 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Feature x */ select
+            count(*) 
+        from
+            features f1_0
+2026-03-30 14:47:02.208 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Dealership x */ select
+            count(*) 
+        from
+            dealerships d1_0
+2026-03-30 14:47:02.210 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Car x */ select
+            count(*) 
+        from
+            cars c1_0
+2026-03-30 14:47:02.230 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        f1_0.id,
+        f1_0.category,
+        f1_0.description,
+        f1_0.name 
+    from
+        features f1_0
+2026-03-30 14:47:02.276 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        c1_0.id,
+        c1_0.brand,
+        c1_0.color,
+        d1_0.id,
+        d1_0.address,
+        d1_0.name,
+        d1_0.phone,
+        f1_0.car_id,
+        f1_1.id,
+        f1_1.category,
+        f1_1.description,
+        f1_1.name,
+        c1_0.model,
+        c1_0.price,
+        s1_0.id,
+        s1_0.customer_id,
+        s1_0.date,
+        s1_0.price,
+        c1_0.year 
+    from
+        cars c1_0 
+    left join
+        dealerships d1_0 
+            on d1_0.id=c1_0.dealership_id 
+    left join
+        car_features f1_0 
+            on c1_0.id=f1_0.car_id 
+    left join
+        features f1_1 
+            on f1_1.id=f1_0.feature_id 
+    left join
+        sales s1_0 
+            on c1_0.id=s1_0.car_id
+2026-03-30 14:47:02.320 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Customer x */ select
+            count(*) 
+        from
+            customers c1_0
+2026-03-30 14:47:02.325 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Sale x */ select
+            count(*) 
+        from
+            sales s1_0
+2026-03-30 14:47:02.330 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Feature x */ select
+            count(*) 
+        from
+            features f1_0
+2026-03-30 14:47:02.334 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Dealership x */ select
+            count(*) 
+        from
+            dealerships d1_0
+2026-03-30 14:47:02.338 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Car x */ select
+            count(*) 
+        from
+            cars c1_0
+2026-03-30 14:47:02.341 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Customer x */ select
+            count(*) 
+        from
+            customers c1_0
+2026-03-30 14:47:02.345 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* select
+        count(*) 
+    from
+        Sale x */ select
+            count(*) 
+        from
+            sales s1_0
+2026-03-30 14:47:02.351 [restartedMain] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        c1_0.id,
+        c1_0.brand,
+        c1_0.color,
+        d1_0.id,
+        d1_0.address,
+        d1_0.name,
+        d1_0.phone,
+        f1_0.car_id,
+        f1_1.id,
+        f1_1.category,
+        f1_1.description,
+        f1_1.name,
+        c1_0.model,
+        c1_0.price,
+        s1_0.id,
+        s1_0.customer_id,
+        s1_0.date,
+        s1_0.price,
+        c1_0.year 
+    from
+        cars c1_0 
+    left join
+        dealerships d1_0 
+            on d1_0.id=c1_0.dealership_id 
+    left join
+        car_features f1_0 
+            on c1_0.id=f1_0.car_id 
+    left join
+        features f1_1 
+            on f1_1.id=f1_0.feature_id 
+    left join
+        sales s1_0 
+            on c1_0.id=s1_0.car_id
+2026-03-30 14:47:14.824 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-03-30 14:47:14.824 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-03-30 14:47:14.824 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 0 ms
+2026-03-30 14:47:15.045 [http-nio-8080-exec-1] ERROR c.e.autosalon.GlobalExceptionHandler - Validation error: Год выпуска не может быть больше 2026
+2026-03-30 14:47:15.089 [http-nio-8080-exec-1] WARN  o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.web.bind.MethodArgumentNotValidException: Validation failed for argument [0] in public org.springframework.http.ResponseEntity<com.example.autosalon.dto.CarResponseDto> com.example.autosalon.controller.CarController.createCar(com.example.autosalon.dto.CarRequestDto): [Field error in object 'carRequestDto' on field 'year': rejected value [2028]; codes [Max.carRequestDto.year,Max.year,Max.java.lang.Integer,Max]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [carRequestDto.year,year]; arguments []; default message [year],2026]; default message [Год выпуска не может быть больше 2026]] ]
+2026-03-30 14:49:50.049 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    /* <criteria> */ select
+        f1_0.id,
+        f1_0.category,
+        f1_0.description,
+        f1_0.name 
+    from
+        features f1_0 
+    where
+        f1_0.id in (?)
+2026-03-30 14:49:50.061 [http-nio-8080-exec-2] INFO  c.e.autosalon.aspect.LoggingAspect - ▶ ВЫЗОВ: CarService.createCar
+2026-03-30 14:49:50.082 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car */insert 
+    into
+        cars (brand, color, dealership_id, model, price, year) 
+    values
+        (?, ?, ?, ?, ?, ?) 
+    returning id
+2026-03-30 14:49:50.099 [http-nio-8080-exec-2] INFO  c.e.autosalon.cache.CarSearchCache -  КЭШ ОЧИЩЕН
+2026-03-30 14:49:50.099 [http-nio-8080-exec-2] INFO  c.e.autosalon.service.CarService -  Создана новая машина, кэш очищен
+2026-03-30 14:49:50.099 [http-nio-8080-exec-2] INFO  c.e.autosalon.aspect.LoggingAspect - ◀ ВЫПОЛНЕН: CarService.createCar за 38 мс
+2026-03-30 14:49:50.102 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    /* insert for
+        com.example.autosalon.entity.Car.features */insert 
+    into
+        car_features (car_id, feature_id) 
+    values
+        (?, ?)
+2026-03-30 14:53:22.685 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-03-30 14:53:22.688 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-03-30 14:53:22.694 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.

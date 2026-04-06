@@ -638,18 +638,17 @@ public class DataInitializer implements CommandLineRunner {
     }
 }
 
-DELETE FROM car_features;
-DELETE FROM cars;
-DELETE FROM dealerships;
-DELETE FROM features;
-DELETE FROM customers;
-DELETE FROM sales;
 
-ALTER SEQUENCE cars_id_seq RESTART WITH 1;
-ALTER SEQUENCE dealerships_id_seq RESTART WITH 1;
-ALTER SEQUENCE features_id_seq RESTART WITH 1;
-ALTER SEQUENCE customers_id_seq RESTART WITH 1;
-ALTER SEQUENCE sales_id_seq RESTART WITH 1;
 
 Swagger UI: http://localhost:8080/swagger-ui/index.html
 OpenAPI JSON: http://localhost:8080/v3/api-docs
+
+# 1) запуск wrapper из текущей папки
+.\mvnw.cmd -version
+# 2) временно переключить Java на 17 (только для текущего окна PowerShell)
+$env:JAVA_HOME = "$env:USERPROFILE\.jdks\ms-17.0.18"
+$env:Path = "$env:JAVA_HOME\bin;$env:Path"
+# 3) проверить
+java -version
+# 4) запуск тестов
+.\mvnw.cmd test

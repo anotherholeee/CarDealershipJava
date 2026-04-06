@@ -1,9 +1,6 @@
 package com.example.autosalon.controller;
 
-import com.example.autosalon.dto.CarRequestDto;
-import com.example.autosalon.dto.CarResponseDto;
-import com.example.autosalon.dto.CarSearchRequest;
-import com.example.autosalon.dto.PageResponseDto;
+import com.example.autosalon.dto.*;
 import com.example.autosalon.entity.Car;
 import com.example.autosalon.mapper.CarMapper;
 import com.example.autosalon.service.CarService;
@@ -101,6 +98,31 @@ public class CarController {
         Car savedCar = carService.createCar(car);
         CarResponseDto responseDto = carMapper.toResponseDto(savedCar);
         return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/bulk")
+    @Operation(summary = "Массовое создание автомобилей",
+            description = "Создает несколько автомобилей за один запрос")
+    public ResponseEntity<List<CarResponseDto>> createCarsBulk(
+            @Valid @RequestBody CarListRequestDto bulkDto) {
+        List<CarResponseDto> created = carService.createCarsBulk(bulkDto.getCars());
+        return new ResponseEntity<>(created, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/bulk/transactional")
+    @Operation(summary = "Массовое создание с транзакцией (откат при ошибке)")
+    public ResponseEntity<List<CarResponseDto>> createCarsBulkTransactional(
+            @Valid @RequestBody CarListRequestDto bulkDto) {
+        List<CarResponseDto> result = carService.createCarsBulkTransactional(bulkDto.getCars());
+        return new ResponseEntity<>(result, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/bulk/non-transactional")
+    @Operation(summary = "Массовое создание без транзакции (частичное сохранение)")
+    public ResponseEntity<List<CarResponseDto>> createCarsBulkNonTransactional(
+            @Valid @RequestBody CarListRequestDto bulkDto) {
+        List<CarResponseDto> result = carService.createCarsBulkNonTransactional(bulkDto.getCars());
+        return new ResponseEntity<>(result, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")

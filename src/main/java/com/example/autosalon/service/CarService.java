@@ -2,6 +2,7 @@ package com.example.autosalon.service;
 
 import com.example.autosalon.cache.CarCacheKey;
 import com.example.autosalon.cache.CarSearchCache;
+import com.example.autosalon.dto.CarRequestDto;
 import com.example.autosalon.dto.CarResponseDto;
 import com.example.autosalon.dto.CarSearchRequest;
 import com.example.autosalon.dto.PageResponseDto;
@@ -10,7 +11,6 @@ import com.example.autosalon.entity.Sale;
 import com.example.autosalon.mapper.CarMapper;
 import com.example.autosalon.repository.CarRepository;
 import com.example.autosalon.repository.SaleRepository;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectProvider;
@@ -20,6 +20,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -52,6 +55,124 @@ public class CarService {
         searchCache.clear();
         log.info(" Создана новая машина, кэш очищен");
         return saved;
+    }
+
+    @Transactional
+    public List<CarResponseDto> createCarsBulk(List<CarRequestDto> carRequests) {
+        log.info("Массовое создание автомобилей: получено {} записей", carRequests.size());
+
+        Set<String> seenKeys = new HashSet<>();
+        List<CarRequestDto> uniqueRequests = carRequests.stream()
+                .filter(dto -> {
+                    String key = dto.getBrand().toLowerCase() + "|" +
+                            dto.getModel().toLowerCase() + "|" +
+                            dto.getYear();
+                    if (seenKeys.contains(key)) {
+                        log.warn("Дубликат в пакете: {} {} {}, пропускаем",
+                                dto.getBrand(), dto.getModel(), dto.getYear());
+                        return false;
+                    }
+                    seenKeys.add(key);
+                    return true;
+                })
+                .collect(Collectors.toList());
+
+        List<Car> existingCars = carRepository.findAll();
+
+        List<Car> carsToSave = uniqueRequests.stream()
+                .map(carMapper::toEntity)
+                .filter(newCar -> {
+                    Optional<Car> existing = existingCars.stream()
+                            .filter(c -> c.getBrand().equalsIgnoreCase(newCar.getBrand())
+                                    && c.getModel().equalsIgnoreCase(newCar.getModel())
+                                    && c.getYear() == newCar.getYear())
+                            .findFirst();
+                    if (existing.isPresent()) {
+                        log.info("Машина {} {} {} уже существует в БД (ID={}), пропускаем",
+                                newCar.getBrand(), newCar.getModel(), newCar.getYear(),
+                                existing.get().getId());
+                        return false;
+                    }
+                    return true;
+                })
+                .collect(Collectors.toList());
+
+        if (carsToSave.isEmpty()) {
+            log.info("Нет новых автомобилей для сохранения (все дубликаты)");
+            return List.of();
+        }
+
+        List<Car> savedCars = carRepository.saveAll(carsToSave);
+        searchCache.clear();
+
+        log.info("Успешно создано {} автомобилей (пропущено дубликатов: {})",
+                savedCars.size(), carRequests.size() - carsToSave.size());
+
+        return savedCars.stream()
+                .map(carMapper::toResponseDto)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Демонстрация ТРАНЗАКЦИОННОЙ bulk-операции.
+     * При ошибке (например, на 3-м автомобиле) все сохранённые ранее откатываются.
+     */
+    @Transactional
+    public List<CarResponseDto> createCarsBulkTransactional(List<CarRequestDto> carRequests) {
+        log.info("=== ТРАНЗАКЦИОННЫЙ режим: получено {} записей ===", carRequests.size());
+
+        List<Car> carsToSave = carRequests.stream()
+                .map(carMapper::toEntity)
+                .collect(Collectors.toList());
+
+        for (int i = 0; i < carsToSave.size(); i++) {
+            if (i == 2) {
+                String errorMsg = String.format("Симуляция ошибки на автомобиле #%d: %s %s %d",
+                        i + 1,
+                        carsToSave.get(i).getBrand(),
+                        carsToSave.get(i).getModel(),
+                        carsToSave.get(i).getYear());
+                log.error(errorMsg);
+                throw new RuntimeException(errorMsg);
+            }
+        }
+
+        List<Car> saved = carRepository.saveAll(carsToSave);
+        searchCache.clear();
+        log.info("Транзакционный режим: успешно сохранено {} автомобилей", saved.size());
+        return saved.stream().map(carMapper::toResponseDto).collect(Collectors.toList());
+    }
+
+    /**
+     * Демонстрация НЕТРАНЗАКЦИОННОЙ bulk-операции (без @Transactional).
+     * При ошибке ранее сохранённые записи остаются в БД.
+     */
+    public List<CarResponseDto> createCarsBulkNonTransactional(List<CarRequestDto> carRequests) {
+        log.info("=== НЕТРАНЗАКЦИОННЫЙ режим: получено {} записей ===", carRequests.size());
+
+        List<Car> carsToSave = carRequests.stream()
+                .map(carMapper::toEntity)
+                .collect(Collectors.toList());
+
+        List<Car> saved = new ArrayList<>();
+
+        for (int i = 0; i < carsToSave.size(); i++) {
+            if (i == 2) {
+                String errorMsg = String.format("Ошибка на автомобиле #%d: %s %s %d – предыдущие уже сохранены!",
+                        i + 1,
+                        carsToSave.get(i).getBrand(),
+                        carsToSave.get(i).getModel(),
+                        carsToSave.get(i).getYear());
+                log.error(errorMsg);
+                throw new RuntimeException(errorMsg);
+            }
+            Car savedCar = carRepository.save(carsToSave.get(i));
+            saved.add(savedCar);
+        }
+
+        searchCache.clear();
+        log.info("Нетранзакционный режим: сохранено {} автомобилей до ошибки", saved.size());
+        return saved.stream().map(carMapper::toResponseDto).collect(Collectors.toList());
     }
 
     @Transactional
