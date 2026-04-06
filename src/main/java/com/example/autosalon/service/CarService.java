@@ -75,7 +75,7 @@ public class CarService {
                     seenKeys.add(key);
                     return true;
                 })
-                .collect(Collectors.toList());
+                .toList();
 
         List<Car> existingCars = carRepository.findAll();
 
@@ -95,7 +95,7 @@ public class CarService {
                     }
                     return true;
                 })
-                .collect(Collectors.toList());
+                .toList();
 
         if (carsToSave.isEmpty()) {
             log.info("Нет новых автомобилей для сохранения (все дубликаты)");
@@ -110,7 +110,7 @@ public class CarService {
 
         return savedCars.stream()
                 .map(carMapper::toResponseDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
@@ -123,7 +123,7 @@ public class CarService {
 
         List<Car> carsToSave = carRequests.stream()
                 .map(carMapper::toEntity)
-                .collect(Collectors.toList());
+                .toList();
 
         for (int i = 0; i < carsToSave.size(); i++) {
             if (i == 2) {
@@ -133,14 +133,14 @@ public class CarService {
                         carsToSave.get(i).getModel(),
                         carsToSave.get(i).getYear());
                 log.error(errorMsg);
-                throw new RuntimeException(errorMsg);
+                throw new IllegalStateException(errorMsg);
             }
         }
 
         List<Car> saved = carRepository.saveAll(carsToSave);
         searchCache.clear();
         log.info("Транзакционный режим: успешно сохранено {} автомобилей", saved.size());
-        return saved.stream().map(carMapper::toResponseDto).collect(Collectors.toList());
+        return saved.stream().map(carMapper::toResponseDto).toList();
     }
 
     /**
@@ -152,7 +152,7 @@ public class CarService {
 
         List<Car> carsToSave = carRequests.stream()
                 .map(carMapper::toEntity)
-                .collect(Collectors.toList());
+                .toList();
 
         List<Car> saved = new ArrayList<>();
 
@@ -164,7 +164,7 @@ public class CarService {
                         carsToSave.get(i).getModel(),
                         carsToSave.get(i).getYear());
                 log.error(errorMsg);
-                throw new RuntimeException(errorMsg);
+                throw new IllegalStateException(errorMsg);
             }
             Car savedCar = carRepository.save(carsToSave.get(i));
             saved.add(savedCar);
@@ -172,7 +172,7 @@ public class CarService {
 
         searchCache.clear();
         log.info("Нетранзакционный режим: сохранено {} автомобилей до ошибки", saved.size());
-        return saved.stream().map(carMapper::toResponseDto).collect(Collectors.toList());
+        return saved.stream().map(carMapper::toResponseDto).toList();
     }
 
     @Transactional
@@ -229,7 +229,6 @@ public class CarService {
         return carRepository.findByBrandIgnoreCase(brand);
     }
 
-
     @Transactional(readOnly = true)
     public List<Car> getCarsByFeatureCategoryJpql(String category) {
         log.info(" JPQL: Поиск автомобилей с категорией особенностей: {}", category);
@@ -237,7 +236,6 @@ public class CarService {
         log.info(" JPQL: Найдено {} автомобилей", cars.size());
         return cars;
     }
-
 
     @Transactional(readOnly = true)
     public PageResponseDto<CarResponseDto> findCarsWithPaginationJpql(CarSearchRequest request) {
@@ -279,7 +277,6 @@ public class CarService {
 
         return response;
     }
-
 
     private PageResponseDto<CarResponseDto> mapToPageResponse(Page<Car> carPage) {
         List<CarResponseDto> content = carPage.getContent().stream()
