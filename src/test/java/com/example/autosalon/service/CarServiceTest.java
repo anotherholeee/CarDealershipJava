@@ -443,7 +443,10 @@ class CarServiceTest {
         when(carRepository.save(firstCar)).thenReturn(firstCar);
         when(carRepository.save(secondCar)).thenReturn(secondCar);
 
-        assertThatThrownBy(() -> carService.createCarsBulkNonTransactional(List.of(dto1, dto2, dto3)))
+        // Fix: Create the list outside the lambda
+        List<CarRequestDto> requests = List.of(dto1, dto2, dto3);
+
+        assertThatThrownBy(() -> carService.createCarsBulkNonTransactional(requests))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("уже существует в БД");
 
