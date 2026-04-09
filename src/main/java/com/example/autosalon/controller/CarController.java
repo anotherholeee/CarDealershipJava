@@ -100,15 +100,6 @@ public class CarController {
         return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
     }
 
-    @PostMapping("/bulk")
-    @Operation(summary = "Массовое создание автомобилей",
-            description = "Создает несколько автомобилей за один запрос")
-    public ResponseEntity<List<CarResponseDto>> createCarsBulk(
-            @Valid @RequestBody CarListRequestDto bulkDto) {
-        List<CarResponseDto> created = carService.createCarsBulk(bulkDto.getCars());
-        return new ResponseEntity<>(created, HttpStatus.CREATED);
-    }
-
     @PostMapping("/bulk/transactional")
     @Operation(summary = "Массовое создание с транзакцией (откат при ошибке)")
     public ResponseEntity<List<CarResponseDto>> createCarsBulkTransactional(

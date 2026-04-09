@@ -22,9 +22,9 @@
         <!-- Настройки Sonar: отключаем автоматическую проверку -->
         <sonar.qualitygate.wait>false</sonar.qualitygate.wait>
         <sonar.skipAutoScan>true</sonar.skipAutoScan>
-        <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
-        <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
-        <sonar.jacoco.reportPaths>${project.build.directory}/jacoco.exec</sonar.jacoco.reportPaths>
+        <sonar.coverage.jacoco.xmlReportPaths>
+            ${project.build.directory}/site/jacoco/jacoco.xml
+        </sonar.coverage.jacoco.xmlReportPaths>
 
         <!-- Исключаем из отчёта покрытия всё, кроме сервисов (однострочное значение) -->
         <sonar.coverage.exclusions>**/dto/**,**/entity/**,**/repository/**,**/controller/**,**/config/**,**/aspect/**,**/cache/**,**/mapper/**,**/AutosalonApplication.java,**/DataInitializer.java,**/GlobalExceptionHandler.java</sonar.coverage.exclusions>

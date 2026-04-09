@@ -320,20 +320,22 @@ class CarServiceTest {
     }
 
     @Test
-    void createCarsBulkTransactional_shouldRollbackOnError() {
-        List<CarRequestDto> requests = List.of(requestDto, requestDto, requestDto);
-        when(carMapper.toEntity(any(CarRequestDto.class))).thenReturn(car);
+    void createCarsBulkTransactional_shouldThrowConflict_whenDuplicateExistsInDb() {
+        List<CarRequestDto> requests = List.of(requestDto);
+        when(carMapper.toEntity(requestDto)).thenReturn(car);
+        when(carRepository.findAll()).thenReturn(List.of(car));
 
         assertThatThrownBy(() -> carService.createCarsBulkTransactional(requests))
                 .isInstanceOf(IllegalStateException.class)
-                .hasMessageContaining("Симуляция ошибки");
+                .hasMessageContaining("уже существует в БД");
 
         verify(carRepository, never()).saveAll(anyList());
+        verify(searchCache, never()).clear();
     }
 
     @Test
     void createCarsBulkTransactional_shouldSaveAll_whenNoError() {
-        List<CarRequestDto> requests = List.of(requestDto, requestDto); // только 2, чтобы не было ошибки
+        List<CarRequestDto> requests = List.of(requestDto, requestDto);
 
         Car car2 = new Car();
         car2.setBrand("BMW");
@@ -341,6 +343,7 @@ class CarServiceTest {
         car2.setYear(2023);
 
         when(carMapper.toEntity(any(CarRequestDto.class))).thenReturn(car, car2);
+        when(carRepository.findAll()).thenReturn(List.of());
         when(carRepository.saveAll(anyList())).thenReturn(List.of(car, car2));
         when(carMapper.toResponseDto(any(Car.class))).thenReturn(responseDto);
 
@@ -352,7 +355,66 @@ class CarServiceTest {
     }
 
     @Test
-    void createCarsBulkNonTransactional_shouldSavePartialOnError() {
+    void createCarsBulkTransactional_shouldSave_whenExistingCarsDifferByModelOrYear() {
+        CarRequestDto incoming = createRequestDto("BMW", "X5", 2023);
+        Car mapped = new Car();
+        mapped.setBrand("BMW");
+        mapped.setModel("X5");
+        mapped.setYear(2023);
+
+        Car existingDifferentModel = new Car();
+        existingDifferentModel.setBrand("BMW");
+        existingDifferentModel.setModel("X3");
+        existingDifferentModel.setYear(2023);
+
+        Car existingDifferentYear = new Car();
+        existingDifferentYear.setBrand("BMW");
+        existingDifferentYear.setModel("X5");
+        existingDifferentYear.setYear(2022);
+
+        when(carMapper.toEntity(incoming)).thenReturn(mapped);
+        when(carRepository.findAll()).thenReturn(List.of(existingDifferentModel, existingDifferentYear));
+        when(carRepository.saveAll(anyList())).thenReturn(List.of(mapped));
+        when(carMapper.toResponseDto(mapped)).thenReturn(responseDto);
+
+        List<CarResponseDto> result = carService.createCarsBulkTransactional(List.of(incoming));
+
+        assertThat(result).hasSize(1);
+        verify(carRepository).saveAll(anyList());
+        verify(searchCache).clear();
+    }
+
+    @Test
+    void createCarsBulkTransactional_shouldSave_whenExistingCarHasDifferentBrand() {
+        CarRequestDto incoming = createRequestDto("BMW", "X5", 2023);
+        Car mapped = new Car();
+        mapped.setBrand("BMW");
+        mapped.setModel("X5");
+        mapped.setYear(2023);
+
+        Car existingDifferentBrand = new Car();
+        existingDifferentBrand.setBrand("Audi");
+        existingDifferentBrand.setModel("X5");
+        existingDifferentBrand.setYear(2023);
+
+        when(carMapper.toEntity(incoming)).thenReturn(mapped);
+        when(carRepository.findAll()).thenReturn(List.of(existingDifferentBrand));
+        when(carRepository.saveAll(anyList())).thenReturn(List.of(mapped));
+        when(carMapper.toResponseDto(mapped)).thenReturn(responseDto);
+
+        List<CarResponseDto> result = carService.createCarsBulkTransactional(List.of(incoming));
+
+        assertThat(result).hasSize(1);
+        verify(carRepository).saveAll(anyList());
+        verify(searchCache).clear();
+    }
+
+    @Test
+    void createCarsBulkNonTransactional_shouldSavePartialBeforeConflict() {
+        CarRequestDto dto1 = createRequestDto("BMW", "X5", 2023);
+        CarRequestDto dto2 = createRequestDto("Audi", "Q7", 2022);
+        CarRequestDto dto3 = createRequestDto("CCC", "C3", 2022);
+
         Car firstCar = new Car();
         firstCar.setBrand("BMW");
         firstCar.setModel("X5");
@@ -361,29 +423,29 @@ class CarServiceTest {
         Car secondCar = new Car();
         secondCar.setBrand("Audi");
         secondCar.setModel("Q7");
-        secondCar.setYear(2023);
+        secondCar.setYear(2022);
 
         Car thirdCar = new Car();
-        thirdCar.setBrand("Mercedes");
-        thirdCar.setModel("GLE");
-        thirdCar.setYear(2023);
+        thirdCar.setBrand("CCC");
+        thirdCar.setModel("C3");
+        thirdCar.setYear(2022);
 
-        CarRequestDto dto1 = createRequestDto("BMW", "X5", 2023);
-        CarRequestDto dto2 = createRequestDto("Audi", "Q7", 2023);
-        CarRequestDto dto3 = createRequestDto("Mercedes", "GLE", 2023);
-
-        List<CarRequestDto> requests = List.of(dto1, dto2, dto3);
+        Car existing = new Car();
+        existing.setId(100L);
+        existing.setBrand("CCC");
+        existing.setModel("C3");
+        existing.setYear(2022);
 
         when(carMapper.toEntity(dto1)).thenReturn(firstCar);
         when(carMapper.toEntity(dto2)).thenReturn(secondCar);
         when(carMapper.toEntity(dto3)).thenReturn(thirdCar);
-
+        when(carRepository.findAll()).thenReturn(List.of(existing));
         when(carRepository.save(firstCar)).thenReturn(firstCar);
         when(carRepository.save(secondCar)).thenReturn(secondCar);
 
-        assertThatThrownBy(() -> carService.createCarsBulkNonTransactional(requests))
+        assertThatThrownBy(() -> carService.createCarsBulkNonTransactional(List.of(dto1, dto2, dto3)))
                 .isInstanceOf(IllegalStateException.class)
-                .hasMessageContaining("Ошибка на автомобиле #3");
+                .hasMessageContaining("уже существует в БД");
 
         verify(carRepository, times(2)).save(any(Car.class));
         verify(carRepository, never()).save(thirdCar);
@@ -392,14 +454,17 @@ class CarServiceTest {
 
     @Test
     void createCarsBulkNonTransactional_shouldSaveAll_whenNoError() {
-        List<CarRequestDto> requests = List.of(requestDto, requestDto); // только 2, чтобы не было ошибки
+        CarRequestDto secondRequest = createRequestDto("Audi", "Q7", 2023);
+        List<CarRequestDto> requests = List.of(requestDto, secondRequest);
 
         Car car2 = new Car();
-        car2.setBrand("BMW");
-        car2.setModel("X5");
+        car2.setBrand("Audi");
+        car2.setModel("Q7");
         car2.setYear(2023);
 
-        when(carMapper.toEntity(any(CarRequestDto.class))).thenReturn(car, car2);
+        when(carMapper.toEntity(requestDto)).thenReturn(car);
+        when(carMapper.toEntity(secondRequest)).thenReturn(car2);
+        when(carRepository.findAll()).thenReturn(List.of());
         when(carRepository.save(any(Car.class))).thenReturn(car, car2);
         when(carMapper.toResponseDto(any(Car.class))).thenReturn(responseDto);
 
@@ -407,6 +472,36 @@ class CarServiceTest {
 
         assertThat(result).hasSize(2);
         verify(carRepository, times(2)).save(any(Car.class));
+        verify(searchCache).clear();
+    }
+
+    @Test
+    void createCarsBulkNonTransactional_shouldSave_whenExistingCarsDifferByModelOrYear() {
+        CarRequestDto incoming = createRequestDto("BMW", "X5", 2023);
+        Car mapped = new Car();
+        mapped.setBrand("BMW");
+        mapped.setModel("X5");
+        mapped.setYear(2023);
+
+        Car existingDifferentModel = new Car();
+        existingDifferentModel.setBrand("BMW");
+        existingDifferentModel.setModel("X3");
+        existingDifferentModel.setYear(2023);
+
+        Car existingDifferentYear = new Car();
+        existingDifferentYear.setBrand("BMW");
+        existingDifferentYear.setModel("X5");
+        existingDifferentYear.setYear(2022);
+
+        when(carMapper.toEntity(incoming)).thenReturn(mapped);
+        when(carRepository.findAll()).thenReturn(List.of(existingDifferentModel, existingDifferentYear));
+        when(carRepository.save(mapped)).thenReturn(mapped);
+        when(carMapper.toResponseDto(mapped)).thenReturn(responseDto);
+
+        List<CarResponseDto> result = carService.createCarsBulkNonTransactional(List.of(incoming));
+
+        assertThat(result).hasSize(1);
+        verify(carRepository).save(mapped);
         verify(searchCache).clear();
     }
 
@@ -454,7 +549,7 @@ class CarServiceTest {
         PageResponseDto<CarResponseDto> result = carService.findCarsWithPaginationJpql(request);
 
         assertThat(result.getContent()).hasSize(1);
-        assertThat(result.getPage()).isEqualTo(0);
+        assertThat(result.getPage()).isZero();
         assertThat(result.getSize()).isEqualTo(10);
         assertThat(result.getTotalElements()).isEqualTo(1);
         assertThat(result.getTotalPages()).isEqualTo(1);
@@ -500,7 +595,7 @@ class CarServiceTest {
         PageResponseDto<CarResponseDto> result = carService.findCarsWithPaginationJpql(request);
 
         assertThat(result.getContent()).isEmpty();
-        assertThat(result.getTotalElements()).isEqualTo(0);
+        assertThat(result.getTotalElements()).isZero();
         verify(searchCache).put(any(CarCacheKey.class), any(PageResponseDto.class));
     }
 

@@ -34,3 +34,8 @@ build/
 
 ### Application Properties ###
 application.properties
+
+### Runtime logs and generated archives ###
+logs/
+*.log
+DataArchive.txt

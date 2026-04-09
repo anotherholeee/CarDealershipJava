@@ -190,8 +190,9 @@ class SaleServiceTest {
     @Test
     void updateSale_notFound_throws() {
         when(saleRepository.findById(99L)).thenReturn(Optional.empty());
+        Sale saleDetails = new Sale();
 
-        assertThatThrownBy(() -> saleService.updateSale(99L, new Sale()))
+        assertThatThrownBy(() -> saleService.updateSale(99L, saleDetails))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

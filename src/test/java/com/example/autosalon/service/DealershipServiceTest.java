@@ -133,7 +133,7 @@ class DealershipServiceTest {
         when(dealershipRepository.findByIdWithCars(1L)).thenReturn(Optional.of(dealership));
         when(carRepository.findById(10L)).thenReturn(Optional.of(car));
         Dealership updated = dealershipService.removeCarFromDealership(1L, 10L);
-        assertThat(updated.getCars()).doesNotContain(car);
+        assertThat(updated.getCars()).isEmpty();
         assertThat(car.getDealership()).isNull();
     }
 

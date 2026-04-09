@@ -113,10 +113,6 @@ public class CarService {
                 .toList();
     }
 
-    /**
-     * Демонстрация ТРАНЗАКЦИОННОЙ bulk-операции.
-     * При ошибке (например, на 3-м автомобиле) все сохранённые ранее откатываются.
-     */
     @Transactional
     public List<CarResponseDto> createCarsBulkTransactional(List<CarRequestDto> carRequests) {
         log.info("=== ТРАНЗАКЦИОННЫЙ режим: получено {} записей ===", carRequests.size());
@@ -125,13 +121,19 @@ public class CarService {
                 .map(carMapper::toEntity)
                 .toList();
 
-        for (int i = 0; i < carsToSave.size(); i++) {
-            if (i == 2) {
-                String errorMsg = String.format("Симуляция ошибки на автомобиле #%d: %s %s %d",
-                        i + 1,
-                        carsToSave.get(i).getBrand(),
-                        carsToSave.get(i).getModel(),
-                        carsToSave.get(i).getYear());
+        List<Car> existingCars = carRepository.findAll();
+        for (Car newCar : carsToSave) {
+            boolean duplicateExists = existingCars.stream()
+                    .anyMatch(existing -> existing.getBrand().equalsIgnoreCase(newCar.getBrand())
+                            && existing.getModel().equalsIgnoreCase(newCar.getModel())
+                            && existing.getYear() == newCar.getYear());
+            if (duplicateExists) {
+                String errorMsg = String.format(
+                        "Конфликт данных: автомобиль %s %s %d уже существует в БД",
+                        newCar.getBrand(),
+                        newCar.getModel(),
+                        newCar.getYear()
+                );
                 log.error(errorMsg);
                 throw new IllegalStateException(errorMsg);
             }
@@ -143,10 +145,6 @@ public class CarService {
         return saved.stream().map(carMapper::toResponseDto).toList();
     }
 
-    /**
-     * Демонстрация НЕТРАНЗАКЦИОННОЙ bulk-операции (без @Transactional).
-     * При ошибке ранее сохранённые записи остаются в БД.
-     */
     public List<CarResponseDto> createCarsBulkNonTransactional(List<CarRequestDto> carRequests) {
         log.info("=== НЕТРАНЗАКЦИОННЫЙ режим: получено {} записей ===", carRequests.size());
 
@@ -154,24 +152,31 @@ public class CarService {
                 .map(carMapper::toEntity)
                 .toList();
 
+        List<Car> knownCars = new ArrayList<>(carRepository.findAll());
         List<Car> saved = new ArrayList<>();
 
-        for (int i = 0; i < carsToSave.size(); i++) {
-            if (i == 2) {
-                String errorMsg = String.format("Ошибка на автомобиле #%d: %s %s %d – предыдущие уже сохранены!",
-                        i + 1,
-                        carsToSave.get(i).getBrand(),
-                        carsToSave.get(i).getModel(),
-                        carsToSave.get(i).getYear());
+        for (Car carToSave : carsToSave) {
+            boolean duplicateExists = knownCars.stream()
+                    .anyMatch(existing -> existing.getBrand().equalsIgnoreCase(carToSave.getBrand())
+                            && existing.getModel().equalsIgnoreCase(carToSave.getModel())
+                            && existing.getYear() == carToSave.getYear());
+            if (duplicateExists) {
+                String errorMsg = String.format(
+                        "Конфликт данных: автомобиль %s %s %d уже существует в БД",
+                        carToSave.getBrand(),
+                        carToSave.getModel(),
+                        carToSave.getYear()
+                );
                 log.error(errorMsg);
                 throw new IllegalStateException(errorMsg);
             }
-            Car savedCar = carRepository.save(carsToSave.get(i));
+            Car savedCar = carRepository.save(carToSave);
             saved.add(savedCar);
+            knownCars.add(savedCar);
         }
 
         searchCache.clear();
-        log.info("Нетранзакционный режим: сохранено {} автомобилей до ошибки", saved.size());
+        log.info("Нетранзакционный режим: успешно сохранено {} автомобилей", saved.size());
         return saved.stream().map(carMapper::toResponseDto).toList();
     }
 
