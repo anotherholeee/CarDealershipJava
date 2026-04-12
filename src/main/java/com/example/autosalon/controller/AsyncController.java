@@ -1,68 +1,55 @@
 package com.example.autosalon.controller;
 
+import com.example.autosalon.dto.AsyncTaskResponse;
 import com.example.autosalon.dto.CarListRequestDto;
-import com.example.autosalon.dto.AsyncTaskResponseDto;
 import com.example.autosalon.enums.TaskStatus;
 import com.example.autosalon.service.AsyncCarProcessingService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
-@Slf4j
+@Tag(name = "Асинхронные операции с автомобилями", description = "Пакетная обработка и демонстрация concurrency")
 @RestController
 @RequestMapping("/api/async")
 @RequiredArgsConstructor
-@Tag(name = "Async Operations", description = "Асинхронные операции с автомобилями")
 public class AsyncController {
 
-    private final AsyncCarProcessingService asyncService;
+    private final AsyncCarProcessingService asyncCarProcessingService;
 
+    @Operation(summary = "Создать автомобили (async bulk)", description = "Создаёт задачу и обрабатывает список в фоне")
     @PostMapping("/cars/batch")
-    @Operation(summary = "Запустить асинхронную пакетную обработку автомобилей")
-    public ResponseEntity<AsyncTaskResponseDto> startAsyncBatch(@Valid @RequestBody CarListRequestDto bulkDto) {
-        Long taskId = asyncService.createNewTask();
-        asyncService.processCarsAsync(taskId, bulkDto.getCars());
-
-        return ResponseEntity.accepted().body(new AsyncTaskResponseDto(taskId, TaskStatus.ACCEPTED));
+    public ResponseEntity<Map<String, Long>> addAsync(@Valid @RequestBody CarListRequestDto bulkDto) {
+        Long id = asyncCarProcessingService.createNewTask();
+        asyncCarProcessingService.processCarsAsync(id, bulkDto.getCars());
+        return ResponseEntity.accepted().body(Map.of("taskId", id));
     }
 
-    @GetMapping("/status/{taskId}")
-    @Operation(summary = "Получить статус асинхронной задачи")
-    public ResponseEntity<AsyncTaskResponseDto> getTaskStatus(@PathVariable Long taskId) {
-        TaskStatus status = asyncService.getTaskStatus(taskId);
-        if (status == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(new AsyncTaskResponseDto(taskId, status));
+    @Operation(summary = "Получить статус задачи", description = "Текущий статус обработки по ID задачи")
+    @GetMapping("/status/{id}")
+    public AsyncTaskResponse getStatus(@PathVariable Long id) {
+        TaskStatus status = asyncCarProcessingService.getTaskStatus(id);
+        return new AsyncTaskResponse(id, status);
     }
 
+    @Operation(summary = "Продемонстрировать проблему Race Condition", description = "60 потоков, небезопасный счётчик")
     @GetMapping("/test_problem")
-    @Operation(summary = "Продемонстрировать проблему Race Condition")
-    public Map<String, Object> testRace(
-            @RequestParam(defaultValue = "60") int threads,
-            @RequestParam(defaultValue = "10000") int operations) throws InterruptedException {
-        return asyncService.runRaceConditionTest(threads, operations);
+    public String testRace() throws InterruptedException {
+        return asyncCarProcessingService.runRaceConditionTest();
     }
 
+    @Operation(summary = "Продемонстрировать решение Race Condition", description = "Корректный счётчик через AtomicLong")
     @GetMapping("/test_solution")
-    @Operation(summary = "Продемонстрировать решение Race Condition через AtomicLong")
-    public Map<String, Object> testAtomic(
-            @RequestParam(defaultValue = "60") int threads,
-            @RequestParam(defaultValue = "10000") int operations) throws InterruptedException {
-        return asyncService.runAtomicSolutionTest(threads, operations);
-    }
-
-    @GetMapping("/test_solution_synchronized")
-    @Operation(summary = "Продемонстрировать решение Race Condition через synchronized")
-    public Map<String, Object> testSynchronized(
-            @RequestParam(defaultValue = "60") int threads,
-            @RequestParam(defaultValue = "10000") int operations) throws InterruptedException {
-        return asyncService.runSynchronizedSolutionTest(threads, operations);
+    public String testAtomic() throws InterruptedException {
+        return asyncCarProcessingService.runAtomicSolutionTest();
     }
 }

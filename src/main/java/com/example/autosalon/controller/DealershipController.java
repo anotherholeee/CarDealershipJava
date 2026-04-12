@@ -3,7 +3,6 @@ package com.example.autosalon.controller;
 import com.example.autosalon.dto.CarRequestDto;
 import com.example.autosalon.dto.DealershipRequestDto;
 import com.example.autosalon.dto.DealershipResponseDto;
-import com.example.autosalon.dto.DealershipWithCarsRequest;
 import com.example.autosalon.dto.DealershipWithCarsResponseDto;
 import com.example.autosalon.entity.Dealership;
 import com.example.autosalon.mapper.CarMapper;
