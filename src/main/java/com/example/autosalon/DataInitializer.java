@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -574,21 +575,31 @@ public class DataInitializer implements CommandLineRunner {
         }
 
         LocalDateTime now = LocalDateTime.now();
-
-        List<Sale> sales = Arrays.asList(
-                createSale(cars.get(0), customers.get(0), now.minusDays(14), 148000),
-                createSale(cars.get(1), customers.get(1), now.minusDays(13), 138000),
-                createSale(cars.get(2), customers.get(2), now.minusDays(12), 133000),
-                createSale(cars.get(3), customers.get(3), now.minusDays(11), 245000),
-                createSale(cars.get(4), customers.get(4), now.minusDays(10), 118000),
-                createSale(cars.get(5), customers.get(5), now.minusDays(6), 113000),
-                createSale(cars.get(6), customers.get(6), now.minusDays(5), 34000),
-                createSale(cars.get(7), customers.get(7), now.minusDays(4), 31000),
-                createSale(cars.get(8), customers.get(8), now.minusDays(3), 29500),
-                createSale(cars.get(9), customers.get(9), now.minusDays(2), 98000),
-                createSale(cars.get(10), customers.get(0), now.minusDays(1), 108000),
-                createSale(cars.get(11), customers.get(1), now, 83000)
+        List<Integer> prices = Arrays.asList(
+                148000, 138000, 133000, 245000, 118000, 113000,
+                34000, 31000, 29500, 98000, 108000, 83000
         );
+        List<Integer> daysAgo = Arrays.asList(
+                14, 13, 12, 11, 10, 6, 5, 4, 3, 2, 1, 0
+        );
+
+        int salesCount = Math.min(Math.min(cars.size(), prices.size()), daysAgo.size());
+        List<Sale> sales = new ArrayList<>();
+
+        for (int i = 0; i < salesCount; i++) {
+            Customer customer = customers.get(i % customers.size());
+            sales.add(createSale(
+                    cars.get(i),
+                    customer,
+                    now.minusDays(daysAgo.get(i)),
+                    prices.get(i)
+            ));
+        }
+
+        if (sales.isEmpty()) {
+            System.out.println("    Не удалось создать продажи: недостаточно данных");
+            return;
+        }
 
         saleRepository.saveAll(sales);
         System.out.println("    Создано " + sales.size() + " продаж");
