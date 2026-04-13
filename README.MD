@@ -187,3 +187,109 @@ https://sonarcloud.io/summary/new_code?id=anotherholeee_CarDealershipJava&branch
 - `GET /api/cache/info` — информация о размере кеша
 - `GET /api/cache/clear` — принудительная очистка кеша
 
+---
+
+## Этап 4: Error logging / handling
+
+### Что реализовано
+- Глобальная обработка ошибок через `@ControllerAdvice` (`GlobalExceptionHandler`).
+- Валидация входных DTO через `@Valid` в контроллерах.
+- Единый формат ошибок через `ErrorResponseDto`.
+- Логирование настроено в `logback-spring.xml` (уровни и ротация логов).
+- AOP-логирование времени выполнения сервисных методов (`LoggingAspect`).
+- Подключен Swagger/OpenAPI для документирования endpoint и DTO.
+
+---
+
+## Этап 5: Batch data processing & Testing
+
+### Что реализовано
+- Bulk-операция с бизнес-смыслом:
+  - `POST /api/cars/bulk/transactional` (пакетное создание с транзакцией),
+  - `POST /api/cars/bulk/non-transactional` (пакетное создание без транзакции),
+  - `POST /api/async/cars/batch` (асинхронная пакетная обработка).
+- В сервисном слое используются `Stream API` и `Optional`.
+- Показана разница поведения с/без `@Transactional`:
+  - без транзакции — частичное сохранение данных,
+  - с транзакцией — откат всей операции при ошибке.
+- Написаны unit-тесты сервисов (Mockito):
+  - `CarServiceTest`,
+  - `CustomerServiceTest`,
+  - `FeatureServiceTest`,
+  - `SaleServiceTest`,
+  - `DealershipServiceTest`,
+  - `DealershipTransactionalServiceTest`.
+
+---
+
+## Этап 6: Concurrency
+
+### Асинхронная бизнес-операция
+- `POST /api/async/cars/batch` возвращает `202 Accepted` и `taskId`.
+- `GET /api/async/status/{id}` возвращает текущий статус задачи (`ACCEPTED`, `IN_PROGRESS`, `SAVED`, `COMPLETED`, `FAILED`).
+- Асинхронность включена через `@EnableAsync` в `AsyncConfig`, выполнение — через `@Async` в `AsyncCarProcessingService`.
+
+### Потокобезопасность и race condition
+- Демонстрация race condition:
+  - `GET /api/async/test_problem` — 60 потоков, небезопасный счетчик `long`.
+- Решение:
+  - `GET /api/async/test_solution` — корректный счетчик на `AtomicLong`.
+
+### Нагрузочное тестирование (JMeter)
+- Добавлен отдельный endpoint для нагрузочных прогонов:
+  - `POST /api/load-test/cars`,
+  - `GET /api/load-test/stats`,
+  - `DELETE /api/load-test/reset`.
+- Для отчета вставить результаты JMeter (Throughput, среднее время ответа, ошибки, p95/p99).
+
+---
+
+## Соответствие требованиям (чеклист)
+
+### Basic REST service
+- [x] Spring Boot приложение создано.
+- [x] Реализован REST API ключевой сущности (`Car`).
+- [x] Есть `GET` с `@RequestParam`.
+- [x] Есть `GET` с `@PathVariable`.
+- [x] Архитектура `Controller -> Service -> Repository`.
+- [x] Используются DTO и mapper.
+- [x] Подключен и используется Checkstyle (`maven-checkstyle-plugin`).
+
+### JPA (Hibernate/Spring Data)
+- [x] Подключена реляционная БД.
+- [x] Реализовано минимум 5 сущностей.
+- [x] Реализованы связи `OneToMany` и `ManyToMany`.
+- [x] Реализованы CRUD операции.
+- [x] Настроены и использованы `CascadeType` и `FetchType`.
+- [x] Показана проблема N+1 и решение через `@EntityGraph`.
+- [x] Показана разница сохранения с/без `@Transactional`.
+- [x] ER-диаграмма добавлена.
+
+### Data caching
+- [x] Сложный `GET` с вложенной фильтрацией через JPQL (`@Query`).
+- [x] Аналогичный запрос через native query.
+- [x] Добавлена пагинация (`Pageable`).
+- [x] Реализован in-memory индекс на `HashMap`/`ConcurrentHashMap` с составным ключом.
+- [x] Корректная работа ключа через `equals()` и `hashCode()`.
+- [x] Реализована инвалидация кеша при изменении данных.
+
+### Error logging/handling
+- [x] Глобальная обработка ошибок (`@ControllerAdvice`).
+- [x] Валидация входных данных (`@Valid`).
+- [x] Единый формат ошибки.
+- [x] Logback: уровни и ротация логов.
+- [x] AOP-логирование времени выполнения сервисов.
+- [x] Swagger/OpenAPI подключен.
+
+### Batch data processing & Testing
+- [x] Реализована bulk-операция.
+- [x] Используются `Stream API` и `Optional`.
+- [x] Продемонстрирована транзакционность bulk-операций.
+- [x] Написаны unit-тесты сервисов (Mockito).
+
+### Concurrency
+- [x] Реализована async-операция с `taskId` и проверкой статуса.
+- [x] Реализован потокобезопасный счетчик (`AtomicLong`).
+- [x] Продемонстрированы race condition и решение (50+ потоков).
+- [x] Подготовлены endpoint для нагрузочного тестирования JMeter.
+

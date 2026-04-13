@@ -7,24 +7,10 @@ package com.example.autosalon.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.context.annotation.Bean;
-import java.util.concurrent.Executor;
 
 @Configuration
 @EnableAsync
 public class AsyncConfig {
-
-    @Bean(name = "taskExecutor")
-    public Executor taskExecutor() {
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(5);
-        executor.setMaxPoolSize(10);
-        executor.setQueueCapacity(100);
-        executor.setThreadNamePrefix("Async-");
-        executor.initialize();
-        return executor;
-    }
 }
 ```
 
@@ -42,7 +28,7 @@ public enum TaskStatus {
 }
 ```
 
-Файл AsyncTaskResponseDto.java
+Файл AsyncTaskResponse.java
 
 ```java
 package com.example.autosalon.dto;
@@ -50,13 +36,11 @@ package com.example.autosalon.dto;
 import com.example.autosalon.enums.TaskStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class AsyncTaskResponseDto {
-    private long taskId;
+public class AsyncTaskResponse {
+    private long id;
     private TaskStatus status;
 }
 ```
@@ -72,7 +56,6 @@ import com.example.autosalon.entity.Car;
 import com.example.autosalon.mapper.CarMapper;
 import com.example.autosalon.repository.CarRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -84,7 +67,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AsyncCarProcessingService {
@@ -93,9 +75,9 @@ public class AsyncCarProcessingService {
     private final CarMapper carMapper;
     private final Map<Long, TaskStatus> taskStatusMap = new ConcurrentHashMap<>();
     private final AtomicLong idGenerator = new AtomicLong(1);
-    private final AtomicLong atomicCounter = new AtomicLong(0);
+
+    private final AtomicLong testAtomicCounter = new AtomicLong(0);
     private long unsafeCounter = 0;
-    private long synchronizedCounter = 0;
 
     public long createNewTask() {
         long taskId = idGenerator.getAndIncrement();
@@ -103,14 +85,14 @@ public class AsyncCarProcessingService {
         return taskId;
     }
 
-    @Async("taskExecutor")
+    @Async
     public void processCarsAsync(Long taskId, List<CarRequestDto> carsDto) {
         try {
             taskStatusMap.put(taskId, TaskStatus.IN_PROGRESS);
             List<Car> cars = carsDto.stream().map(carMapper::toEntity).toList();
             carRepository.saveAll(cars);
             taskStatusMap.put(taskId, TaskStatus.SAVED);
-            Thread.sleep(2000);
+            Thread.sleep(3000);
             taskStatusMap.put(taskId, TaskStatus.COMPLETED);
         } catch (InterruptedException exception) {
             Thread.currentThread().interrupt();
@@ -122,53 +104,32 @@ public class AsyncCarProcessingService {
         return taskStatusMap.get(id);
     }
 
-    public Map<String, Object> runRaceConditionTest(int threads, int operations) throws InterruptedException {
+    public String runRaceConditionTest() throws InterruptedException {
         unsafeCounter = 0;
-        ExecutorService testExecutor = Executors.newFixedThreadPool(threads);
-        for (int i = 0; i < operations; i++) {
+        long total = 10000;
+        ExecutorService testExecutor = Executors.newFixedThreadPool(60);
+        for (int i = 0; i < total; i++) {
             testExecutor.submit(() -> unsafeCounter++);
         }
         testExecutor.shutdown();
-        testExecutor.awaitTermination(10, TimeUnit.SECONDS);
-        return Map.of(
-                "counterType", "UNSAFE",
-                "expectedValue", operations,
-                "actualValue", unsafeCounter
-        );
+        testExecutor.awaitTermination(5, TimeUnit.SECONDS);
+        return "Демонстрация проблемы Race Condition:\n"
+                + "Ожидание: " + total + "\n"
+                + "Получили: " + unsafeCounter + "\n";
     }
 
-    public Map<String, Object> runAtomicSolutionTest(int threads, int operations) throws InterruptedException {
-        atomicCounter.set(0);
-        ExecutorService testExecutor = Executors.newFixedThreadPool(threads);
-        for (int i = 0; i < operations; i++) {
-            testExecutor.submit(atomicCounter::incrementAndGet);
+    public String runAtomicSolutionTest() throws InterruptedException {
+        long total = 10000;
+        testAtomicCounter.set(0);
+        ExecutorService testExecutor = Executors.newFixedThreadPool(60);
+        for (int i = 0; i < total; i++) {
+            testExecutor.submit(testAtomicCounter::getAndIncrement);
         }
         testExecutor.shutdown();
-        testExecutor.awaitTermination(10, TimeUnit.SECONDS);
-        return Map.of(
-                "counterType", "ATOMIC",
-                "expectedValue", operations,
-                "actualValue", atomicCounter.get()
-        );
-    }
-
-    public Map<String, Object> runSynchronizedSolutionTest(int threads, int operations) throws InterruptedException {
-        synchronizedCounter = 0;
-        ExecutorService testExecutor = Executors.newFixedThreadPool(threads);
-        for (int i = 0; i < operations; i++) {
-            testExecutor.submit(this::incrementSynchronizedCounter);
-        }
-        testExecutor.shutdown();
-        testExecutor.awaitTermination(10, TimeUnit.SECONDS);
-        return Map.of(
-                "counterType", "SYNCHRONIZED",
-                "expectedValue", operations,
-                "actualValue", synchronizedCounter
-        );
-    }
-
-    private synchronized void incrementSynchronizedCounter() {
-        synchronizedCounter++;
+        testExecutor.awaitTermination(5, TimeUnit.SECONDS);
+        return "Решение проблемы Race Condition:\n"
+                + "Ожидание: " + total + "\n"
+                + "Получили: " + testAtomicCounter.get() + "\n";
     }
 }
 ```
@@ -178,70 +139,57 @@ public class AsyncCarProcessingService {
 ```java
 package com.example.autosalon.controller;
 
+import com.example.autosalon.dto.AsyncTaskResponse;
 import com.example.autosalon.dto.CarListRequestDto;
-import com.example.autosalon.dto.AsyncTaskResponseDto;
 import com.example.autosalon.enums.TaskStatus;
 import com.example.autosalon.service.AsyncCarProcessingService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
-@Slf4j
+@Tag(name = "Асинхронные операции с автомобилями", description = "Пакетная обработка и демонстрация concurrency")
 @RestController
 @RequestMapping("/api/async")
 @RequiredArgsConstructor
-@Tag(name = "Async Operations", description = "Асинхронные операции с автомобилями")
 public class AsyncController {
 
-    private final AsyncCarProcessingService asyncService;
+    private final AsyncCarProcessingService asyncCarProcessingService;
 
+    @Operation(summary = "Создать автомобили (async bulk)", description = "Создаёт задачу и обрабатывает список в фоне")
     @PostMapping("/cars/batch")
-    @Operation(summary = "Запустить асинхронную пакетную обработку автомобилей")
-    public ResponseEntity<AsyncTaskResponseDto> startAsyncBatch(@Valid @RequestBody CarListRequestDto bulkDto) {
-        Long taskId = asyncService.createNewTask();
-        asyncService.processCarsAsync(taskId, bulkDto.getCars());
-
-        return ResponseEntity.accepted().body(new AsyncTaskResponseDto(taskId, TaskStatus.ACCEPTED));
+    public ResponseEntity<Map<String, Long>> addAsync(@Valid @RequestBody CarListRequestDto bulkDto) {
+        Long id = asyncCarProcessingService.createNewTask();
+        asyncCarProcessingService.processCarsAsync(id, bulkDto.getCars());
+        return ResponseEntity.accepted().body(Map.of("taskId", id));
     }
 
-    @GetMapping("/status/{taskId}")
-    @Operation(summary = "Получить статус асинхронной задачи")
-    public ResponseEntity<AsyncTaskResponseDto> getTaskStatus(@PathVariable Long taskId) {
-        TaskStatus status = asyncService.getTaskStatus(taskId);
-        if (status == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(new AsyncTaskResponseDto(taskId, status));
+    @Operation(summary = "Получить статус задачи", description = "Текущий статус обработки по ID задачи")
+    @GetMapping("/status/{id}")
+    public AsyncTaskResponse getStatus(@PathVariable Long id) {
+        TaskStatus status = asyncCarProcessingService.getTaskStatus(id);
+        return new AsyncTaskResponse(id, status);
     }
 
+    @Operation(summary = "Продемонстрировать проблему Race Condition", description = "60 потоков, небезопасный счётчик")
     @GetMapping("/test_problem")
-    @Operation(summary = "Продемонстрировать проблему Race Condition")
-    public Map<String, Object> testRace(
-            @RequestParam(defaultValue = "60") int threads,
-            @RequestParam(defaultValue = "10000") int operations) throws InterruptedException {
-        return asyncService.runRaceConditionTest(threads, operations);
+    public String testRace() throws InterruptedException {
+        return asyncCarProcessingService.runRaceConditionTest();
     }
 
+    @Operation(summary = "Продемонстрировать решение Race Condition", description = "Корректный счётчик через AtomicLong")
     @GetMapping("/test_solution")
-    @Operation(summary = "Продемонстрировать решение Race Condition через AtomicLong")
-    public Map<String, Object> testAtomic(
-            @RequestParam(defaultValue = "60") int threads,
-            @RequestParam(defaultValue = "10000") int operations) throws InterruptedException {
-        return asyncService.runAtomicSolutionTest(threads, operations);
-    }
-
-    @GetMapping("/test_solution_synchronized")
-    @Operation(summary = "Продемонстрировать решение Race Condition через synchronized")
-    public Map<String, Object> testSynchronized(
-            @RequestParam(defaultValue = "60") int threads,
-            @RequestParam(defaultValue = "10000") int operations) throws InterruptedException {
-        return asyncService.runSynchronizedSolutionTest(threads, operations);
+    public String testAtomic() throws InterruptedException {
+        return asyncCarProcessingService.runAtomicSolutionTest();
     }
 }
 ```
@@ -355,6 +303,15 @@ public class LoadTestController {
     }
 }
 ```
+
+## Асинхронная обработка и демонстрация concurrency
+
+- **POST** `/api/async/cars/batch` — создаёт задачу, возвращает **202 Accepted** и JSON `{"taskId": <long>}`; обработка списка машин выполняется в фоне через `@Async`.
+- **GET** `/api/async/status/{id}` — текущий `TaskStatus` в теле `AsyncTaskResponse` (если задачи не было, `status` будет `null`).
+- **GET** `/api/async/test_problem` — гонка: 60 потоков, 10000 инкрементов `long` без синхронизации (ожидаемо «Получили» меньше 10000).
+- **GET** `/api/async/test_solution` — то же с `AtomicLong` (ожидаемо ровно 10000).
+
+Пул для `@Async` задаётся конфигурацией Spring Boot по умолчанию; явный `ThreadPoolTaskExecutor` в проекте не используется.
 
 ## Нагрузочное тестирование (JMeter)
 
