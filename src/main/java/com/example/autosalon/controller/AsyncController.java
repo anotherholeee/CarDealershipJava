@@ -52,4 +52,10 @@ public class AsyncController {
     public String testAtomic() throws InterruptedException {
         return asyncCarProcessingService.runAtomicSolutionTest();
     }
+
+    @Operation(summary = "Продемонстрировать решение Race Condition через synchronized", description = "Корректный счётчик с синхронизированным инкрементом")
+    @GetMapping("/test_solution_synchronized")
+    public String testSynchronized() throws InterruptedException {
+        return asyncCarProcessingService.runSynchronizedSolutionTest();
+    }
 }

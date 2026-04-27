@@ -28,6 +28,7 @@ public class AsyncCarProcessingService {
 
     private final AtomicLong testAtomicCounter = new AtomicLong(0);
     private long unsafeCounter = 0;
+    private long synchronizedCounter = 0;
 
     public long createNewTask() {
         long taskId = idGenerator.getAndIncrement();
@@ -42,7 +43,7 @@ public class AsyncCarProcessingService {
             List<Car> cars = carsDto.stream().map(carMapper::toEntity).toList();
             carRepository.saveAll(cars);
             taskStatusMap.put(taskId, TaskStatus.SAVED);
-            Thread.sleep(3000);
+            Thread.sleep(10000);
             taskStatusMap.put(taskId, TaskStatus.COMPLETED);
         } catch (InterruptedException exception) {
             Thread.currentThread().interrupt();
@@ -80,5 +81,23 @@ public class AsyncCarProcessingService {
         return "Решение проблемы Race Condition:\n"
                 + "Ожидание: " + total + "\n"
                 + "Получили: " + testAtomicCounter.get() + "\n";
+    }
+
+    public String runSynchronizedSolutionTest() throws InterruptedException {
+        long total = 10000;
+        synchronizedCounter = 0;
+        ExecutorService testExecutor = Executors.newFixedThreadPool(60);
+        for (int i = 0; i < total; i++) {
+            testExecutor.submit(this::incrementSynchronizedCounter);
+        }
+        testExecutor.shutdown();
+        testExecutor.awaitTermination(5, TimeUnit.SECONDS);
+        return "Решение проблемы Race Condition (synchronized):\n"
+                + "Ожидание: " + total + "\n"
+                + "Получили: " + synchronizedCounter + "\n";
+    }
+
+    public synchronized void incrementSynchronizedCounter() {
+        synchronizedCounter++;
     }
 }

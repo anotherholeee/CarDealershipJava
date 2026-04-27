@@ -701,3 +701,12 @@ ALTER SEQUENCE cars_id_seq RESTART WITH 1;
 ALTER SEQUENCE customers_id_seq RESTART WITH 1;
 ALTER SEQUENCE dealerships_id_seq RESTART WITH 1;
 ALTER SEQUENCE features_id_seq RESTART WITH 1;
+
+TRUNCATE TABLE
+    car_features,
+    sales,
+    cars,
+    customers,
+    dealerships,
+    features
+RESTART IDENTITY CASCADE;
