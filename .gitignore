@@ -35,6 +35,9 @@ build/
 ### Application Properties ###
 application.properties
 
+### Uploaded car photos (local dev) ###
+uploads/
+
 ### Runtime logs and generated archives ###
 logs/
 *.log

@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
@@ -19,6 +20,7 @@ import lombok.ToString;
 @Entity
 @Table(name = "dealerships")
 @Data
+@EqualsAndHashCode(exclude = {"cars"})
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString(exclude = "cars")

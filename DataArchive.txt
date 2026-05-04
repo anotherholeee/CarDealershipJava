@@ -695,12 +695,14 @@ DELETE FROM cars;
 DELETE FROM customers;
 DELETE FROM dealerships;
 DELETE FROM features;
+DELETE FROM user_accounts;
 
 ALTER SEQUENCE sales_id_seq RESTART WITH 1;
 ALTER SEQUENCE cars_id_seq RESTART WITH 1;
 ALTER SEQUENCE customers_id_seq RESTART WITH 1;
 ALTER SEQUENCE dealerships_id_seq RESTART WITH 1;
 ALTER SEQUENCE features_id_seq RESTART WITH 1;
+ALTER SEQUENCE user_accounts_id_seq RESTART WITH 1;
 
 TRUNCATE TABLE
     car_features,
@@ -708,5 +710,10 @@ TRUNCATE TABLE
     cars,
     customers,
     dealerships,
-    features
+    features,
+    user_accounts
 RESTART IDENTITY CASCADE;
+
+cd C:\Users\roiko\IdeaProjects\autosalon\frontend
+npm.cmd run
+ логин: +375299000001, пароль: admin123

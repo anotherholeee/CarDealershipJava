@@ -1,5 +1,8 @@
 package com.example.autosalon.dto;
 
+import com.example.autosalon.CarModelYear;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.Data;
 import org.springframework.data.domain.Sort;
 
@@ -9,7 +12,13 @@ public class CarSearchRequest {
 
     private String brand;
     private String model;
+
+    @Min(CarModelYear.MIN)
+    @Max(CarModelYear.MAX)
     private Integer yearFrom;
+
+    @Min(CarModelYear.MIN)
+    @Max(CarModelYear.MAX)
     private Integer yearTo;
     private Double priceFrom;
     private Double priceTo;

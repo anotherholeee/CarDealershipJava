@@ -9,4 +9,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface FeatureRepository extends JpaRepository<Feature, Long> {
     List<Feature> findByCategory(String category);
+
+    boolean existsByName(String name);
 }

@@ -24,7 +24,6 @@ class DealershipServiceTest {
     @Mock private DealershipRepository dealershipRepository;
     @Mock private CarRepository carRepository;
     @Mock private CarService carService;
-    @Mock private DealershipTransactionalService dealershipTransactionalService;
     @InjectMocks private DealershipService dealershipService;
 
     private Dealership dealership;
@@ -95,7 +94,7 @@ class DealershipServiceTest {
         details.setAddress("Addr");
         details.setPhone("999");
 
-        when(dealershipTransactionalService.getDealershipById(1L)).thenReturn(dealership);
+        when(dealershipRepository.findById(1L)).thenReturn(Optional.of(dealership));
         Dealership updated = dealershipService.updateDealership(1L, details);
         assertThat(updated.getName()).isEqualTo("NewName");
         assertThat(updated.getAddress()).isEqualTo("Addr");

@@ -2,7 +2,10 @@ package com.example.autosalon.controller;
 
 import com.example.autosalon.dto.*;
 import com.example.autosalon.entity.Car;
+import com.example.autosalon.entity.UserAccount;
+import com.example.autosalon.enums.AccountType;
 import com.example.autosalon.mapper.CarMapper;
+import com.example.autosalon.service.AuthService;
 import com.example.autosalon.service.CarService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -21,6 +24,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,6 +38,7 @@ public class CarController {
 
     private final CarService carService;
     private final CarMapper carMapper;
+    private final AuthService authService;
 
     @GetMapping
     @Operation(summary = "Получить список автомобилей", description = "Возвращает все автомобили или фильтрует по бренду")
@@ -62,6 +67,14 @@ public class CarController {
         return ResponseEntity.ok(responseDto);
     }
 
+    @GetMapping("/mine")
+    @Operation(summary = "Получить мои автомобили")
+    public ResponseEntity<List<CarResponseDto>> getMyCars(
+            @RequestHeader("Authorization") String authorization) {
+        UserAccount user = authService.requireUserByToken(authorization);
+        return ResponseEntity.ok(carService.getCarsByOwnerAsDtos(user));
+    }
+
 
     @GetMapping("/search/jpql")
     @Operation(summary = "Поиск автомобилей по категории опции (JPQL)")
@@ -84,7 +97,7 @@ public class CarController {
     @GetMapping("/pagination/jpql")
     @Operation(summary = "Поиск автомобилей с пагинацией (JPQL)")
     public ResponseEntity<PageResponseDto<CarResponseDto>> getCarsWithPaginationJpql(
-            @ModelAttribute CarSearchRequest request) {
+            @Valid @ModelAttribute CarSearchRequest request) {
 
         log.info("📄 JPQL С ПАГИНАЦИЕЙ: {}", request);
         PageResponseDto<CarResponseDto> response = carService.findCarsWithPaginationJpql(request);
@@ -93,11 +106,27 @@ public class CarController {
 
     @PostMapping
     @Operation(summary = "Создать автомобиль")
-    public ResponseEntity<CarResponseDto> createCar(@Valid @RequestBody CarRequestDto createDto) {
+    public ResponseEntity<CarResponseDto> createCar(
+            @RequestHeader("Authorization") String authorization,
+            @Valid @RequestBody CarRequestDto createDto) {
+        UserAccount user = authService.requireUserByToken(authorization);
         Car car = carMapper.toEntity(createDto);
-        Car savedCar = carService.createCar(car);
+        Car savedCar = carService.createCar(car, user, createDto.getOwnerUserId());
         CarResponseDto responseDto = carMapper.toResponseDto(savedCar);
         return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/bulk/dealership")
+    @Operation(summary = "Пакетное добавление объявлений (только автосалон)", description = "До 30 объявлений за запрос, все привязываются к текущему пользователю")
+    public ResponseEntity<List<CarResponseDto>> createDealershipBulk(
+            @RequestHeader("Authorization") String authorization,
+            @Valid @RequestBody DealershipCarBulkRequestDto bulkDto) {
+        UserAccount user = authService.requireUserByToken(authorization);
+        if (user.getAccountType() != AccountType.DEALERSHIP && user.getAccountType() != AccountType.ADMIN) {
+            throw new IllegalArgumentException("Пакетное добавление доступно только для автосалона или администратора");
+        }
+        List<CarResponseDto> result = carService.createDealershipCarBulk(user, bulkDto.getCars());
+        return new ResponseEntity<>(result, HttpStatus.CREATED);
     }
 
     @PostMapping("/bulk/transactional")
@@ -119,18 +148,23 @@ public class CarController {
     @PutMapping("/{id}")
     @Operation(summary = "Обновить автомобиль")
     public ResponseEntity<CarResponseDto> updateCar(
+            @RequestHeader("Authorization") String authorization,
             @PathVariable Long id,
             @Valid @RequestBody CarRequestDto updateDto) {
+        UserAccount user = authService.requireUserByToken(authorization);
         Car carDetails = carMapper.toEntity(updateDto);
-        Car updatedCar = carService.updateCar(id, carDetails);
+        Car updatedCar = carService.updateCar(id, carDetails, user);
         CarResponseDto responseDto = carMapper.toResponseDto(updatedCar);
         return ResponseEntity.ok(responseDto);
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Удалить автомобиль")
-    public ResponseEntity<Void> deleteCar(@PathVariable Long id) {
-        carService.deleteCar(id);
+    public ResponseEntity<Void> deleteCar(
+            @RequestHeader("Authorization") String authorization,
+            @PathVariable Long id) {
+        UserAccount user = authService.requireUserByToken(authorization);
+        carService.deleteCar(id, user);
         return ResponseEntity.noContent().build();
     }
 

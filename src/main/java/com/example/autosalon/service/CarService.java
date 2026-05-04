@@ -7,10 +7,14 @@ import com.example.autosalon.dto.CarResponseDto;
 import com.example.autosalon.dto.CarSearchRequest;
 import com.example.autosalon.dto.PageResponseDto;
 import com.example.autosalon.entity.Car;
+import com.example.autosalon.entity.Feature;
 import com.example.autosalon.entity.Sale;
+import com.example.autosalon.entity.UserAccount;
+import com.example.autosalon.enums.AccountType;
 import com.example.autosalon.mapper.CarMapper;
 import com.example.autosalon.repository.CarRepository;
 import com.example.autosalon.repository.SaleRepository;
+import com.example.autosalon.repository.UserAccountRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectProvider;
@@ -31,13 +35,41 @@ public class CarService {
 
     private final CarRepository carRepository;
     private final SaleRepository saleRepository;
+    private final UserAccountRepository userAccountRepository;
     private final CarMapper carMapper;
     private final CarSearchCache searchCache;
     private final ObjectProvider<CarService> self;
+    private final CarImageService carImageService;
 
     @Transactional(readOnly = true)
     public List<Car> getAllCars() {
         return carRepository.findAllWithAllRelations();
+    }
+
+    @Transactional(readOnly = true)
+    public List<Car> getCarsByOwner(UserAccount owner) {
+        return carRepository.findByOwnerId(owner.getId());
+    }
+
+    /**
+     * Маппинг в DTO внутри той же read-only транзакции, чтобы коллекции features/images
+     * гарантированно были инициализированы (избегаем пустого photos в /cars/mine).
+     */
+    @Transactional(readOnly = true)
+    public List<CarResponseDto> getCarsByOwnerAsDtos(UserAccount owner) {
+        List<Car> cars = carRepository.findByOwnerId(owner.getId());
+        List<CarResponseDto> dtos = new ArrayList<>(cars.size());
+        for (Car car : cars) {
+            if (car.getImages() != null) {
+                car.getImages().size();
+            }
+            if (car.getFeatures() != null) {
+                car.getFeatures().size();
+            }
+            dtos.add(carMapper.toResponseDto(car));
+        }
+        dtos.sort(Comparator.comparing(CarResponseDto::getId));
+        return dtos;
     }
 
     @Transactional(readOnly = true)
@@ -49,12 +81,70 @@ public class CarService {
     }
 
     @Transactional
-    public Car createCar(Car car) {
+    public Car createCar(Car car, UserAccount actor, Long ownerUserId) {
+        UserAccount owner = resolveOwner(actor, ownerUserId);
         car.setId(null);
+        car.setOwner(owner);
         Car saved = carRepository.save(car);
         searchCache.clear();
         log.info(" Создана новая машина, кэш очищен");
         return saved;
+    }
+
+    private UserAccount resolveOwner(UserAccount actor, Long ownerUserId) {
+        if (ownerUserId == null) {
+            return actor;
+        }
+        if (actor.getAccountType() != AccountType.ADMIN) {
+            throw new IllegalStateException("Указывать владельца может только администратор");
+        }
+        return userAccountRepository.findById(ownerUserId)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Пользователь-владелец не найден: id=" + ownerUserId));
+    }
+
+    private boolean canManageCar(Car car, UserAccount actor) {
+        if (AuthService.isAdmin(actor)) {
+            return true;
+        }
+        return car.getOwner() != null && car.getOwner().getId().equals(actor.getId());
+    }
+
+    /**
+     * Пакетное создание объявлений для автосалона: все позиции пакета привязываются к владельцу.
+     * Дубликаты внутри одного запроса (марка+модель+год без учёта регистра) не допускаются.
+     */
+    @Transactional
+    public List<CarResponseDto> createDealershipCarBulk(UserAccount owner, List<CarRequestDto> requests) {
+        Objects.requireNonNull(owner, "owner");
+        if (requests == null || requests.isEmpty()) {
+            throw new IllegalArgumentException("Список автомобилей не может быть пустым");
+        }
+        Set<String> seen = new HashSet<>();
+        for (int i = 0; i < requests.size(); i++) {
+            CarRequestDto dto = requests.get(i);
+            String key = dto.getBrand().trim().toLowerCase(Locale.ROOT) + "|"
+                    + dto.getModel().trim().toLowerCase(Locale.ROOT) + "|" + dto.getYear();
+            if (!seen.add(key)) {
+                throw new IllegalArgumentException(String.format(
+                        "В пакете повторяется объявление: %s %s %d (позиция %d)",
+                        dto.getBrand().trim(),
+                        dto.getModel().trim(),
+                        dto.getYear(),
+                        i + 1));
+            }
+        }
+        List<Car> toSave = new ArrayList<>(requests.size());
+        for (CarRequestDto dto : requests) {
+            Car car = carMapper.toEntity(dto);
+            car.setId(null);
+            car.setOwner(resolveOwner(owner, dto.getOwnerUserId()));
+            toSave.add(car);
+        }
+        List<Car> saved = carRepository.saveAll(toSave);
+        searchCache.clear();
+        log.info("Пакет автосалона: сохранено {} объявлений для пользователя id={}", saved.size(), owner.getId());
+        return saved.stream().map(carMapper::toResponseDto).toList();
     }
 
     @Transactional
@@ -181,14 +271,44 @@ public class CarService {
     }
 
     @Transactional
-    public Car updateCar(Long id, Car carDetails) {
+    public Car updateCar(Long id, Car carDetails, UserAccount actor) {
         Car existingCar = self.getObject().getCarById(id);
+        if (!canManageCar(existingCar, actor)) {
+            throw new IllegalStateException("Можно изменять только свои объявления");
+        }
 
         existingCar.setBrand(carDetails.getBrand());
         existingCar.setModel(carDetails.getModel());
         existingCar.setYear(carDetails.getYear());
         existingCar.setColor(carDetails.getColor());
+        existingCar.setInteriorColor(carDetails.getInteriorColor());
+        existingCar.setInteriorMaterial(carDetails.getInteriorMaterial());
+        existingCar.setEngineVolume(carDetails.getEngineVolume());
+        existingCar.setMileage(carDetails.getMileage());
+        existingCar.setPowerHp(carDetails.getPowerHp());
+        existingCar.setFuelConsumptionCity(carDetails.getFuelConsumptionCity());
+        existingCar.setFuelConsumptionHighway(carDetails.getFuelConsumptionHighway());
+        existingCar.setFuelConsumptionMixed(carDetails.getFuelConsumptionMixed());
+        existingCar.setSeatCount(carDetails.getSeatCount());
+        existingCar.setCity(carDetails.getCity());
+        existingCar.setTransmission(carDetails.getTransmission());
+        existingCar.setBodyType(carDetails.getBodyType());
+        existingCar.setEngineType(carDetails.getEngineType());
+        existingCar.setDriveType(carDetails.getDriveType());
         existingCar.setPrice(carDetails.getPrice());
+        String cur = carDetails.getPriceCurrency();
+        existingCar.setPriceCurrency(
+                cur != null && !cur.isBlank() ? cur.trim().toUpperCase(Locale.ROOT) : "USD");
+
+        List<Feature> toDetach = new ArrayList<>(existingCar.getFeatures());
+        for (Feature f : toDetach) {
+            existingCar.removeFeature(f);
+        }
+        if (carDetails.getFeatures() != null) {
+            for (Feature f : carDetails.getFeatures()) {
+                existingCar.addFeature(f);
+            }
+        }
 
         searchCache.clear();
         log.info(" Машина обновлена, кэш очищен");
@@ -197,8 +317,11 @@ public class CarService {
     }
 
     @Transactional
-    public void deleteCar(Long id) {
+    public void deleteCar(Long id, UserAccount actor) {
         Car car = self.getObject().getCarById(id);
+        if (actor != null && !canManageCar(car, actor)) {
+            throw new IllegalStateException("Можно удалять только свои объявления");
+        }
 
         if (car.getSale() != null) {
             Sale sale = car.getSale();
@@ -222,11 +345,17 @@ public class CarService {
         log.info("Удаление машины ID={} {} {} (не продана)",
                 car.getId(), car.getBrand(), car.getModel());
 
+        carImageService.deleteAllFilesForCar(car.getId());
         car.getFeatures().clear();
         carRepository.delete(car);
 
         searchCache.clear();
         log.info("🗑️ Машина удалена, кэш очищен");
+    }
+
+    @Transactional
+    public void deleteCar(Long id) {
+        deleteCar(id, null);
     }
 
     @Transactional(readOnly = true)

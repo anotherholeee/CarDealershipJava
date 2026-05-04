@@ -9,8 +9,11 @@ import com.example.autosalon.dto.PageResponseDto;
 import com.example.autosalon.entity.Car;
 import com.example.autosalon.entity.Customer;
 import com.example.autosalon.entity.Sale;
+import com.example.autosalon.entity.UserAccount;
 import com.example.autosalon.mapper.CarMapper;
 import com.example.autosalon.repository.CarRepository;
+import com.example.autosalon.repository.SaleRepository;
+import com.example.autosalon.repository.UserAccountRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,6 +28,8 @@ import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import org.mockito.ArgumentCaptor;
+
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
@@ -32,14 +37,18 @@ import static org.mockito.Mockito.*;
 class CarServiceTest {
 
     @Mock private CarRepository carRepository;
+    @Mock private SaleRepository saleRepository;
+    @Mock private UserAccountRepository userAccountRepository;
     @Mock private CarMapper carMapper;
     @Mock private CarSearchCache searchCache;
     @Mock private ObjectProvider<CarService> selfProvider;
+    @Mock private CarImageService carImageService;
     @InjectMocks private CarService carService;
 
     private Car car;
     private CarRequestDto requestDto;
     private CarResponseDto responseDto;
+    private UserAccount owner;
 
     @BeforeEach
     void setUp() {
@@ -48,14 +57,45 @@ class CarServiceTest {
         car.setBrand("BMW");
         car.setModel("X5");
         car.setYear(2023);
-        car.setColor("Black");
+        car.setColor("Чёрный");
+        car.setInteriorColor("Чёрный");
+        car.setInteriorMaterial("Кожа");
+        car.setEngineVolume(3.0);
+        car.setMileage(10000);
+        car.setPowerHp(340);
+        car.setFuelConsumptionCity(11.0);
+        car.setFuelConsumptionHighway(7.0);
+        car.setFuelConsumptionMixed(8.5);
+        car.setSeatCount(5);
+        car.setCity("Москва");
+        car.setTransmission("auto");
+        car.setBodyType("sedan");
+        car.setEngineType("petrol");
+        car.setDriveType("awd");
         car.setPrice(60000.0);
+        owner = new UserAccount();
+        owner.setId(77L);
+        car.setOwner(owner);
 
         requestDto = new CarRequestDto();
         requestDto.setBrand("BMW");
         requestDto.setModel("X5");
         requestDto.setYear(2023);
-        requestDto.setColor("Black");
+        requestDto.setColor("Чёрный");
+        requestDto.setInteriorColor("Чёрный");
+        requestDto.setInteriorMaterial("Кожа");
+        requestDto.setEngineVolume(3.0);
+        requestDto.setMileage(10000);
+        requestDto.setPowerHp(340);
+        requestDto.setFuelConsumptionCity(11.0);
+        requestDto.setFuelConsumptionHighway(7.0);
+        requestDto.setFuelConsumptionMixed(8.5);
+        requestDto.setSeatCount(5);
+        requestDto.setCity("Москва");
+        requestDto.setTransmission("auto");
+        requestDto.setBodyType("sedan");
+        requestDto.setEngineType("petrol");
+        requestDto.setDriveType("awd");
         requestDto.setPrice(60000.0);
 
         responseDto = new CarResponseDto();
@@ -63,7 +103,7 @@ class CarServiceTest {
         responseDto.setBrand("BMW");
         responseDto.setModel("X5");
         responseDto.setYear(2023);
-        responseDto.setColor("Black");
+        responseDto.setColor("Чёрный");
         responseDto.setPrice(60000.0);
     }
 
@@ -87,7 +127,7 @@ class CarServiceTest {
     @Test
     void createCar_shouldClearCache() {
         when(carRepository.save(car)).thenReturn(car);
-        Car created = carService.createCar(car);
+        Car created = carService.createCar(car, owner, null);
         assertThat(created).isEqualTo(car);
         verify(searchCache).clear();
     }
@@ -98,18 +138,34 @@ class CarServiceTest {
         updatedDetails.setBrand("Audi");
         updatedDetails.setModel("Q7");
         updatedDetails.setYear(2024);
-        updatedDetails.setColor("White");
+        updatedDetails.setColor("Белый");
+        updatedDetails.setInteriorColor("Бежевый");
+        updatedDetails.setInteriorMaterial("Кожа");
+        updatedDetails.setEngineVolume(3.0);
+        updatedDetails.setMileage(5000);
+        updatedDetails.setPowerHp(340);
+        updatedDetails.setFuelConsumptionCity(10.5);
+        updatedDetails.setFuelConsumptionHighway(6.5);
+        updatedDetails.setFuelConsumptionMixed(8.0);
+        updatedDetails.setSeatCount(5);
+        updatedDetails.setCity("Санкт-Петербург");
+        updatedDetails.setTransmission("auto");
+        updatedDetails.setBodyType("suv");
+        updatedDetails.setEngineType("diesel");
+        updatedDetails.setDriveType("awd");
         updatedDetails.setPrice(70000.0);
 
         when(carRepository.findById(1L)).thenReturn(Optional.of(car));
         when(selfProvider.getObject()).thenReturn(carService);
 
-        Car result = carService.updateCar(1L, updatedDetails);
+        Car result = carService.updateCar(1L, updatedDetails, owner);
 
         assertThat(result.getBrand()).isEqualTo("Audi");
         assertThat(result.getModel()).isEqualTo("Q7");
         assertThat(result.getYear()).isEqualTo(2024);
-        assertThat(result.getColor()).isEqualTo("White");
+        assertThat(result.getColor()).isEqualTo("Белый");
+        assertThat(result.getCity()).isEqualTo("Санкт-Петербург");
+        assertThat(result.getPowerHp()).isEqualTo(340);
         assertThat(result.getPrice()).isEqualTo(70000.0);
         verify(searchCache).clear();
     }
@@ -158,6 +214,7 @@ class CarServiceTest {
 
         carService.deleteCar(1L);
 
+        verify(carImageService).deleteAllFilesForCar(1L);
         verify(carRepository).delete(car);
         verify(searchCache).clear();
     }
@@ -254,14 +311,42 @@ class CarServiceTest {
         duplicate1.setBrand("Toyota");
         duplicate1.setModel("Camry");
         duplicate1.setYear(2022);
-        duplicate1.setColor("Red");
+        duplicate1.setColor("Красный");
+        duplicate1.setInteriorColor("Чёрный");
+        duplicate1.setInteriorMaterial("Ткань");
+        duplicate1.setEngineVolume(2.5);
+        duplicate1.setMileage(20000);
+        duplicate1.setPowerHp(200);
+        duplicate1.setFuelConsumptionCity(9.0);
+        duplicate1.setFuelConsumptionHighway(5.5);
+        duplicate1.setFuelConsumptionMixed(7.0);
+        duplicate1.setSeatCount(5);
+        duplicate1.setCity("Минск");
+        duplicate1.setTransmission("auto");
+        duplicate1.setBodyType("sedan");
+        duplicate1.setEngineType("petrol");
+        duplicate1.setDriveType("fwd");
         duplicate1.setPrice(30000.0);
 
         CarRequestDto duplicate2 = new CarRequestDto();
         duplicate2.setBrand("Toyota");
         duplicate2.setModel("Camry");
         duplicate2.setYear(2022);
-        duplicate2.setColor("Blue");
+        duplicate2.setColor("Синий");
+        duplicate2.setInteriorColor("Серый");
+        duplicate2.setInteriorMaterial("Ткань");
+        duplicate2.setEngineVolume(2.5);
+        duplicate2.setMileage(21000);
+        duplicate2.setPowerHp(200);
+        duplicate2.setFuelConsumptionCity(9.0);
+        duplicate2.setFuelConsumptionHighway(5.5);
+        duplicate2.setFuelConsumptionMixed(7.0);
+        duplicate2.setSeatCount(5);
+        duplicate2.setCity("Минск");
+        duplicate2.setTransmission("auto");
+        duplicate2.setBodyType("sedan");
+        duplicate2.setEngineType("petrol");
+        duplicate2.setDriveType("fwd");
         duplicate2.setPrice(31000.0);
 
         List<CarRequestDto> requests = List.of(duplicate1, duplicate2);
@@ -631,13 +716,77 @@ class CarServiceTest {
         return request;
     }
 
+    @Test
+    void createDealershipCarBulk_assignsOwnerAndClearsCache() {
+        CarRequestDto a = createRequestDto("Audi", "A4", 2022);
+        CarRequestDto b = createRequestDto("VW", "Golf", 2021);
+
+        Car entityA = new Car();
+        entityA.setBrand("Audi");
+        Car entityB = new Car();
+        entityB.setBrand("VW");
+
+        when(carMapper.toEntity(a)).thenReturn(entityA);
+        when(carMapper.toEntity(b)).thenReturn(entityB);
+
+        Car savedA = new Car();
+        savedA.setId(10L);
+        Car savedB = new Car();
+        savedB.setId(11L);
+
+        when(carRepository.saveAll(anyList())).thenReturn(List.of(savedA, savedB));
+
+        CarResponseDto dtoA = new CarResponseDto();
+        dtoA.setId(10L);
+        CarResponseDto dtoB = new CarResponseDto();
+        dtoB.setId(11L);
+        when(carMapper.toResponseDto(savedA)).thenReturn(dtoA);
+        when(carMapper.toResponseDto(savedB)).thenReturn(dtoB);
+
+        List<CarResponseDto> result = carService.createDealershipCarBulk(owner, List.of(a, b));
+
+        assertThat(result).hasSize(2);
+        @SuppressWarnings("unchecked")
+        ArgumentCaptor<List<Car>> captor = ArgumentCaptor.forClass(List.class);
+        verify(carRepository).saveAll(captor.capture());
+        assertThat(captor.getValue()).hasSize(2);
+        assertThat(captor.getValue().get(0).getOwner()).isSameAs(owner);
+        assertThat(captor.getValue().get(1).getOwner()).isSameAs(owner);
+        assertThat(captor.getValue().get(0).getId()).isNull();
+        verify(searchCache).clear();
+    }
+
+    @Test
+    void createDealershipCarBulk_throwsWhenDuplicateInBatch() {
+        CarRequestDto a = createRequestDto("BMW", "X5", 2023);
+        CarRequestDto b = createRequestDto("bmw", "x5", 2023);
+
+        assertThatThrownBy(() -> carService.createDealershipCarBulk(owner, List.of(a, b)))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("повторяется");
+    }
+
     private CarRequestDto createRequestDto(String brand, String model, int year) {
         CarRequestDto dto = new CarRequestDto();
         dto.setBrand(brand);
         dto.setModel(model);
         dto.setYear(year);
-        dto.setColor("Black");
-        dto.setPrice(50000.0);  
+        dto.setColor("Чёрный");
+        dto.setInteriorColor("Чёрный");
+        dto.setInteriorMaterial("Кожа");
+        dto.setEngineVolume(2.0);
+        dto.setMileage(15000);
+        dto.setPowerHp(200);
+        dto.setFuelConsumptionCity(9.5);
+        dto.setFuelConsumptionHighway(6.0);
+        dto.setFuelConsumptionMixed(7.5);
+        dto.setSeatCount(5);
+        dto.setCity("Москва");
+        dto.setTransmission("auto");
+        dto.setBodyType("sedan");
+        dto.setEngineType("petrol");
+        dto.setDriveType("fwd");
+        dto.setPrice(50000.0);
         return dto;
     }
 }

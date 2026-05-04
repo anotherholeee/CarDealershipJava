@@ -19,7 +19,6 @@ public class DealershipService {
     private final DealershipRepository dealershipRepository;
     private final CarRepository carRepository;
     private final CarService carService;
-    private final DealershipTransactionalService dealershipTransactionalService;
 
     @Transactional(readOnly = true)
     public List<Dealership> getAllDealerships() {
@@ -48,7 +47,7 @@ public class DealershipService {
 
     @Transactional
     public Dealership updateDealership(Long id, Dealership dealershipDetails) {
-        Dealership existing = dealershipTransactionalService.getDealershipById(id);
+        Dealership existing = getDealershipById(id);
         existing.setName(dealershipDetails.getName());
         existing.setAddress(dealershipDetails.getAddress());
         existing.setPhone(dealershipDetails.getPhone());

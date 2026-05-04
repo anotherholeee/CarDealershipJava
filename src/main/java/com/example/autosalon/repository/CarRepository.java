@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CarRepository extends JpaRepository<Car, Long> {
 
-    @EntityGraph(attributePaths = {"features"})
+    @EntityGraph(attributePaths = {"owner", "dealership"})
     List<Car> findByBrandIgnoreCase(String brand);
 
     @Override
@@ -22,10 +22,10 @@ public interface CarRepository extends JpaRepository<Car, Long> {
     List<Car> findAll();
 
     @Override
-    @EntityGraph(attributePaths = {"features", "sale", "dealership"})
+    @EntityGraph(attributePaths = {"sale", "dealership", "owner"})
     Optional<Car> findById(Long id);
 
-    @EntityGraph(attributePaths = {"features", "sale", "dealership"})
+    @EntityGraph(attributePaths = {"sale", "dealership", "owner"})
     @Query("SELECT DISTINCT c FROM Car c JOIN c.features f WHERE f.category = :category")
     List<Car> findCarsByFeatureCategoryJpql(@Param("category") String category);
 
@@ -44,12 +44,16 @@ public interface CarRepository extends JpaRepository<Car, Long> {
     @Query("SELECT c FROM Car c")
     List<Car> findAllWithFeaturesAndSale();
 
-    @EntityGraph(attributePaths = {"features", "sale", "sale.customer", "dealership"})
+    @EntityGraph(attributePaths = {"sale", "sale.customer", "dealership", "owner"})
     @Query("SELECT c FROM Car c")
     List<Car> findAllWithAllRelations();
 
     @EntityGraph(attributePaths = {"sale", "features"})
     List<Car> findByDealershipId(Long dealershipId);
+
+    @EntityGraph(attributePaths = {"owner", "dealership"})
+    @Query("SELECT c FROM Car c WHERE c.owner.id = :ownerId")
+    List<Car> findByOwnerId(@Param("ownerId") Long ownerId);
 
     @EntityGraph(attributePaths = {"features", "sale", "sale.customer"})
     @Query("SELECT c FROM Car c WHERE c.dealership.id = :dealershipId")

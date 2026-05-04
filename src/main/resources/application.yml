@@ -1,0 +1,16 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+  servlet:
+    multipart:
+      max-file-size: 8MB
+      max-request-size: 55MB
+
+app:
+  upload-dir: ${APP_UPLOAD_DIR:${user.dir}/uploads}
+  max-images-per-car: 10
+  admin:
+    # Создаётся при старте, если пользователя с таким логином ещё нет. Смените пароль в проде.
+    username: ${APP_ADMIN_USERNAME:+375299000001}
+    password: ${APP_ADMIN_PASSWORD:admin123}

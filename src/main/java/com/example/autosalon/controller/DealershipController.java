@@ -7,6 +7,7 @@ import com.example.autosalon.dto.DealershipWithCarsResponseDto;
 import com.example.autosalon.entity.Dealership;
 import com.example.autosalon.mapper.CarMapper;
 import com.example.autosalon.mapper.DealershipMapper;
+import com.example.autosalon.service.AuthService;
 import com.example.autosalon.service.DealershipService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -38,6 +40,7 @@ public class DealershipController {
     private final DealershipService dealershipService;
     private final DealershipMapper dealershipMapper;
     private final CarMapper carMapper;
+    private final AuthService authService;
 
 
     @GetMapping
@@ -77,7 +80,9 @@ public class DealershipController {
     @PostMapping
     @Operation(summary = "Создать автосалон")
     public ResponseEntity<DealershipResponseDto> createDealership(
+            @RequestHeader("Authorization") String authorization,
             @Valid @RequestBody DealershipRequestDto requestDto) {
+        authService.requireAdminByToken(authorization);
         log.info("POST /api/dealerships - создание нового автосалона: {}", requestDto.getName());
         Dealership created = dealershipService.createDealership(
                 dealershipMapper.toEntity(requestDto));
@@ -90,8 +95,10 @@ public class DealershipController {
     @PutMapping("/{id}")
     @Operation(summary = "Обновить автосалон")
     public ResponseEntity<DealershipResponseDto> updateDealership(
+            @RequestHeader("Authorization") String authorization,
             @PathVariable Long id,
             @Valid @RequestBody DealershipRequestDto requestDto) {
+        authService.requireAdminByToken(authorization);
         log.info("PUT /api/dealerships/{} - обновление автосалона", id);
         Dealership updated = dealershipService.updateDealership(
                 id,
@@ -102,7 +109,10 @@ public class DealershipController {
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Удалить автосалон")
-    public ResponseEntity<Void> deleteDealership(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteDealership(
+            @RequestHeader("Authorization") String authorization,
+            @PathVariable Long id) {
+        authService.requireAdminByToken(authorization);
         log.info("DELETE /api/dealerships/{} - удаление автосалона", id);
         dealershipService.deleteDealership(id);
         return ResponseEntity.noContent().build();
@@ -112,8 +122,10 @@ public class DealershipController {
     @PostMapping("/{dealershipId}/cars/{carId}")
     @Operation(summary = "Добавить автомобиль в автосалон")
     public ResponseEntity<DealershipWithCarsResponseDto> addCarToDealership(
+            @RequestHeader("Authorization") String authorization,
             @PathVariable Long dealershipId,
             @PathVariable Long carId) {
+        authService.requireAdminByToken(authorization);
         log.info("POST /api/dealerships/{}/cars/{} - добавление машины в салон", dealershipId, carId);
         Dealership dealership = dealershipService.addCarToDealership(dealershipId, carId);
         return ResponseEntity.ok(dealershipMapper.toWithCarsResponseDto(dealership));
@@ -123,8 +135,10 @@ public class DealershipController {
     @DeleteMapping("/{dealershipId}/cars/{carId}")
     @Operation(summary = "Удалить автомобиль из автосалона")
     public ResponseEntity<DealershipWithCarsResponseDto> removeCarFromDealership(
+            @RequestHeader("Authorization") String authorization,
             @PathVariable Long dealershipId,
             @PathVariable Long carId) {
+        authService.requireAdminByToken(authorization);
         log.info("DELETE /api/dealerships/{}/cars/{} - удаление машины из салона", dealershipId, carId);
         Dealership dealership = dealershipService.removeCarFromDealership(dealershipId, carId);
         return ResponseEntity.ok(dealershipMapper.toWithCarsResponseDto(dealership));
