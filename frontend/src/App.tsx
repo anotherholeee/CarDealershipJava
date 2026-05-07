@@ -52,8 +52,8 @@ type DealershipWithCars = Dealership & {
   cars: Car[];
 };
 
-const API_BASE =
-  import.meta.env.VITE_API_BASE_URL?.trim() || "http://localhost:8080/api";
+const API_BASE = import.meta.env.VITE_API_BASE_URL?.trim()
+  || (import.meta.env.PROD ? `${window.location.origin}/api` : "http://localhost:8080/api");
 
 /** Сколько BYN за 1 USD (для показа «второй» цены; при желании задайте VITE_BYN_PER_USD в .env). */
 const RAW_BYN_PER_USD = Number(import.meta.env.VITE_BYN_PER_USD);
