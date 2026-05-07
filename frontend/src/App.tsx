@@ -338,7 +338,7 @@ export function RelationsTab() {
             <option value="">Select dealership</option>
             {dealerships.map((d) => (
               <option key={d.id} value={d.id}>
-                {d.name} (id={d.id})
+                {d.name}
               </option>
             ))}
           </select>
@@ -512,6 +512,7 @@ type CarDetailsProps = {
   onBack: () => void;
   isFavorite: boolean;
   onFavoriteToggle: () => void;
+  viewerPhone?: string | null;
 };
 
 type PickerOption = {
@@ -776,7 +777,7 @@ function buildCarPayloadFromSellerFields(
   if (!row.engineType.trim()) missing.push("тип двигателя");
   if (!row.driveType.trim()) missing.push("тип привода");
   if (missing.length) {
-    return { ok: false, message: `Заполните обязательные поля: ${missing.join(", ")}.` };
+    return { ok: false, message: "Заполните обязательные поля" };
   }
 
   const payload: CarCreateApiPayload = {
@@ -832,9 +833,35 @@ async function copyTextToClipboard(text: string): Promise<boolean> {
   }
 }
 
-function CarDetailsPage({ car, onBack, isFavorite, onFavoriteToggle }: CarDetailsProps) {
+function formatBelarusPhoneForContact(raw: string): string {
+  let digits = raw.replace(/\D/g, "");
+  if (digits.startsWith("375")) {
+    digits = digits.slice(3);
+  }
+  digits = digits.slice(0, 9);
+
+  let formatted = "+375";
+  if (digits.length === 0) return formatted;
+
+  formatted += ` (${digits.slice(0, Math.min(2, digits.length))}`;
+  if (digits.length >= 2) formatted += ")";
+  if (digits.length > 2) formatted += ` ${digits.slice(2, Math.min(5, digits.length))}`;
+  if (digits.length > 5) formatted += `-${digits.slice(5, Math.min(7, digits.length))}`;
+  if (digits.length > 7) formatted += `-${digits.slice(7, 9)}`;
+  return formatted;
+}
+
+function CarDetailsPage({ car, onBack, isFavorite, onFavoriteToggle, viewerPhone }: CarDetailsProps) {
   const [activePhoto, setActivePhoto] = useState(0);
   const [callSellerNotice, setCallSellerNotice] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
+  const [contactPhoneNotice, setContactPhoneNotice] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
+  const [contactPhoneDraft, setContactPhoneDraft] = useState(() => {
+    try {
+      return formatBelarusPhoneForContact(localStorage.getItem("autosalon_contact_phone_draft") || "");
+    } catch {
+      return "+375";
+    }
+  });
   const callSellerNoticeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -894,6 +921,34 @@ function CarDetailsPage({ car, onBack, isFavorite, onFavoriteToggle }: CarDetail
   }, [car.id]);
 
   const photos = galleryUrls;
+  const canSlidePhotos = photos.length > 1;
+  const showPrevPhoto = () => {
+    setActivePhoto((prev) => (prev - 1 + photos.length) % photos.length);
+  };
+  const showNextPhoto = () => {
+    setActivePhoto((prev) => (prev + 1) % photos.length);
+  };
+
+  useEffect(() => {
+    const phone = viewerPhone?.trim();
+    if (!phone) return;
+    setContactPhoneDraft(formatBelarusPhoneForContact(phone));
+  }, [viewerPhone]);
+
+  const confirmContactPhone = () => {
+    const value = contactPhoneDraft.trim();
+    const phoneMaskPattern = /^\+375 \(\d{2}\) \d{3}-\d{2}-\d{2}$/;
+    if (!phoneMaskPattern.test(value)) {
+      setContactPhoneNotice({ kind: "err", text: "Введите номер в формате +375 (XX) XXX-XX-XX." });
+      return;
+    }
+    try {
+      localStorage.setItem("autosalon_contact_phone_draft", value);
+      setContactPhoneNotice({ kind: "ok", text: "Номер сохранён для связи." });
+    } catch {
+      setContactPhoneNotice({ kind: "err", text: "Не удалось сохранить номер. Попробуйте снова." });
+    }
+  };
 
   return (
     <section className="car-details card">
@@ -916,6 +971,7 @@ function CarDetailsPage({ car, onBack, isFavorite, onFavoriteToggle }: CarDetail
           {isFavorite ? "♥" : "♡"}
         </button>
       </div>
+      <p className="details-techline">{detailsHeaderSpecLine(car)}</p>
       <p className="details-subtitle">{car.color}, в наличии</p>
       <p className="details-published">Опубликовано: {formatPublishedRelative(car.publishedAt)}</p>
       {(car.sellerAccountType === "DEALERSHIP" || car.sellerAccountType === "PERSON") && (
@@ -930,7 +986,29 @@ function CarDetailsPage({ car, onBack, isFavorite, onFavoriteToggle }: CarDetail
 
       <div className="details-layout">
         <div className="details-gallery">
-          <img className="details-main-image" src={photos[activePhoto]} alt={`${car.brand} ${car.model}`} />
+          <div className="details-main-image-wrap">
+            <img className="details-main-image" src={photos[activePhoto]} alt={`${car.brand} ${car.model}`} />
+            {canSlidePhotos && (
+              <>
+                <button
+                  type="button"
+                  className="details-gallery-arrow details-gallery-arrow--prev"
+                  aria-label="Предыдущее фото"
+                  onClick={showPrevPhoto}
+                >
+                  ‹
+                </button>
+                <button
+                  type="button"
+                  className="details-gallery-arrow details-gallery-arrow--next"
+                  aria-label="Следующее фото"
+                  onClick={showNextPhoto}
+                >
+                  ›
+                </button>
+              </>
+            )}
+          </div>
           <div className="details-thumbs">
             {photos.map((src, idx) => (
               <button
@@ -981,6 +1059,28 @@ function CarDetailsPage({ car, onBack, isFavorite, onFavoriteToggle }: CarDetail
           <button type="button" className="show-results-btn details-primary-btn" onClick={() => void handleCallSeller()}>
             Позвонить продавцу
           </button>
+          <div className="details-contact-box">
+            <p className="details-contact-title">Оставить свой номер телефона для связи</p>
+            <input
+              type="tel"
+              inputMode="numeric"
+              maxLength={19}
+              placeholder="+375 (XX) XXX-XX-XX"
+              value={contactPhoneDraft}
+              onFocus={() => {
+                if (!contactPhoneDraft.trim()) setContactPhoneDraft("+375");
+              }}
+              onChange={(e) => setContactPhoneDraft(formatBelarusPhoneForContact(e.target.value))}
+            />
+            <button type="button" className="secondary details-contact-submit" onClick={confirmContactPhone}>
+              Оставить номер
+            </button>
+            {contactPhoneNotice && (
+              <p className={contactPhoneNotice.kind === "ok" ? "message success" : "message error"} role="status">
+                {contactPhoneNotice.text}
+              </p>
+            )}
+          </div>
         </aside>
       </div>
 
@@ -1075,6 +1175,32 @@ function bodyTypeLabel(car: Car): string {
   const code = car.bodyType?.trim().toLowerCase();
   if (code && BODY_LABELS[code]) return BODY_LABELS[code];
   return car.bodyType?.trim() || "—";
+}
+
+function detailsHeaderSpecLine(car: Car): string {
+  const transmissionCode = car.transmission?.trim().toLowerCase();
+  const transmissionShort =
+    transmissionCode === "manual"
+      ? "MT"
+      : transmissionCode === "robot"
+        ? "AMT"
+        : transmissionCode === "auto"
+          ? "AT"
+          : "AT";
+
+  const driveCode = car.driveType?.trim().toLowerCase();
+  const driveShort =
+    driveCode === "awd" ? "AWD" : driveCode === "rwd" ? "RWD" : driveCode === "fwd" ? "FWD" : "FWD";
+
+  const volume =
+    car.engineVolume != null && car.engineVolume > 0
+      ? car.engineVolume.toLocaleString("ru-RU", { minimumFractionDigits: 1, maximumFractionDigits: 1 })
+      : "2,0";
+
+  const power =
+    car.powerHp != null && car.powerHp > 0 ? car.powerHp.toLocaleString("ru-RU") : "—";
+
+  return `${volume} ${transmissionShort} ${driveShort} (${power} л.с.)`;
 }
 
 function normalizeYearInput(value: string): string {
@@ -1281,6 +1407,7 @@ function CarsTabWithDesign({
   /** После сохранения нового объявления — id для загрузки фото, пока не сбросили форму или не открыли другое объявление. */
   const [photoUploadCarId, setPhotoUploadCarId] = useState<number | null>(null);
   const [photoBusy, setPhotoBusy] = useState(false);
+  const [createPhotoFiles, setCreatePhotoFiles] = useState<File[]>([]);
   /** Сообщение прямо в блоке фото (глобальное message уезжало вниз страницы). */
   const [photoBanner, setPhotoBanner] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
 
@@ -1300,11 +1427,15 @@ function CarsTabWithDesign({
   const [filters, setFilters] = useState(() => ({ ...BUYER_FILTERS_INITIAL }));
   const [appliedFilters, setAppliedFilters] = useState(() => ({ ...BUYER_FILTERS_INITIAL }));
   const [buyerSort, setBuyerSort] = useState<ListingSortKey>("date_desc");
+  const [listingsPage, setListingsPage] = useState(1);
+  const [paginationScrollIntent, setPaginationScrollIntent] = useState<"top" | "bottom" | null>(null);
+  const LISTINGS_PER_PAGE = 10;
   const resetBuyerFilters = () => {
     const reset = { ...BUYER_FILTERS_INITIAL };
     setFilters(reset);
     setAppliedFilters(reset);
     setBuyerSort("date_desc");
+    setListingsPage(1);
   };
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   const [showSellerAdvancedFilters, setShowSellerAdvancedFilters] = useState(false);
@@ -1328,8 +1459,11 @@ function CarsTabWithDesign({
   const [selectedCar, setSelectedCar] = useState<Car | null>(null);
   const buyerBrandPickerRef = useRef<HTMLDivElement | null>(null);
   const buyerModelPickerRef = useRef<HTMLDivElement | null>(null);
+  const listingsTopRef = useRef<HTMLDivElement | null>(null);
+  const listingsBottomRef = useRef<HTMLDivElement | null>(null);
   const lastHeroModelNavNonceRef = useRef<number | null>(null);
   const sellerPhotoInputRef = useRef<HTMLInputElement | null>(null);
+  const createPhotoInputRef = useRef<HTMLInputElement | null>(null);
   const photoUploadLockRef = useRef(false);
   const [featureCatalog, setFeatureCatalog] = useState<FeatureApiRow[]>([]);
 
@@ -1347,58 +1481,27 @@ function CarsTabWithDesign({
       .catch(() => setFeatureCatalog([]));
   }, []);
 
-  const [adminOwnerUsers, setAdminOwnerUsers] = useState<AdminUserRow[]>([]);
-
-  useEffect(() => {
-    if (currentUser?.accountType !== "admin" || !currentUser.token) {
-      setAdminOwnerUsers([]);
-      return;
-    }
-    let cancelled = false;
-    void apiAuth<AdminUserRow[]>("/admin/users", currentUser.token)
-      .then((list) => {
-        if (!cancelled) setAdminOwnerUsers(Array.isArray(list) ? list : []);
-      })
-      .catch(() => {
-        if (!cancelled) setAdminOwnerUsers([]);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [currentUser?.accountType, currentUser?.token]);
-
-  const adminOwnerUsersSorted = useMemo(
-    () => [...adminOwnerUsers].sort((a, b) => a.id - b.id),
-    [adminOwnerUsers]
-  );
-
-  const adminOwnerPickerOptions = useMemo<PickerOption[]>(() => {
-    const rows: PickerOption[] = [
-      { value: "", label: "По умолчанию — текущий администратор" },
-    ];
-    for (const row of adminOwnerUsersSorted) {
-      rows.push({
-        value: String(row.id),
-        label: `#${row.id} — ${adminUserDisplayLabel(row)} (${formatAdminAccountType(row.accountType)}) · ${row.username}`,
-      });
-    }
-    return rows;
-  }, [adminOwnerUsersSorted]);
-
   const featureSections = useMemo(() => {
     const byCat = new Map<string, Map<string, string>>();
     for (const f of featureCatalog) {
       const c = (f.category && f.category.trim()) || "Прочее";
       const rawName = f.name?.trim();
       if (!rawName) continue;
+      const normalizedCategory = c.toLocaleLowerCase("ru");
       const normalizedName = rawName.toLocaleLowerCase("ru");
+      const canonicalName =
+        normalizedName === "обогрев сидений" ? "подогрев сидений" : normalizedName;
+      if (normalizedCategory === "комфорт" && canonicalName === "кожаный салон") {
+        continue;
+      }
       let namesByKey = byCat.get(c);
       if (!namesByKey) {
         namesByKey = new Map<string, string>();
         byCat.set(c, namesByKey);
       }
-      if (!namesByKey.has(normalizedName)) {
-        namesByKey.set(normalizedName, rawName);
+      if (!namesByKey.has(canonicalName)) {
+        const displayName = canonicalName === "подогрев сидений" ? "Подогрев сидений" : rawName;
+        namesByKey.set(canonicalName, displayName);
       }
     }
     return [...byCat.entries()]
@@ -1639,6 +1742,48 @@ function CarsTabWithDesign({
     return list;
   }, [mode, cars, filteredCars, buyerSort]);
 
+  const listingsTotalPages = Math.max(1, Math.ceil(listingsToShow.length / LISTINGS_PER_PAGE));
+
+  useEffect(() => {
+    setListingsPage(1);
+  }, [mode, buyerSort, appliedFilters]);
+
+  useEffect(() => {
+    if (listingsPage > listingsTotalPages) {
+      setListingsPage(listingsTotalPages);
+    }
+  }, [listingsPage, listingsTotalPages]);
+
+  useEffect(() => {
+    if (!paginationScrollIntent) return;
+    if (paginationScrollIntent === "top") {
+      window.scrollTo({ top: 0, behavior: "auto" });
+    } else {
+      listingsBottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+    }
+    setPaginationScrollIntent(null);
+  }, [listingsPage, paginationScrollIntent]);
+
+  const listingsPageItems = useMemo(() => {
+    const start = (listingsPage - 1) * LISTINGS_PER_PAGE;
+    return listingsToShow.slice(start, start + LISTINGS_PER_PAGE);
+  }, [listingsToShow, listingsPage]);
+
+  const goToPrevListingsPage = (e?: ReactMouseEvent<HTMLButtonElement>) => {
+    if (listingsPage === 1) return;
+    e?.currentTarget.blur();
+    setPaginationScrollIntent("bottom");
+    setListingsPage((p) => Math.max(1, p - 1));
+  };
+
+  const goToNextListingsPage = (e?: ReactMouseEvent<HTMLButtonElement>) => {
+    if (listingsPage === listingsTotalPages) return;
+    e?.currentTarget.blur();
+    window.scrollTo({ top: 0, behavior: "auto" });
+    setPaginationScrollIntent("top");
+    setListingsPage((p) => Math.min(listingsTotalPages, p + 1));
+  };
+
   const carForPhotos = useMemo(
     () =>
       photoCarIdResolved != null ? cars.find((c) => c.id === photoCarIdResolved) : undefined,
@@ -1811,7 +1956,18 @@ function CarsTabWithDesign({
           headers: { Authorization: `Bearer ${currentUser?.token || ""}` },
         });
         const photoFocusId = created.id;
-        setMessage("Объявление добавлено. Ниже можно прикрепить фотографии.");
+        let createMsg = "Объявление добавлено.";
+        if (createPhotoFiles.length > 0 && currentUser?.token) {
+          const uploaded = await uploadPhotosForCar(photoFocusId, createPhotoFiles, currentUser.token);
+          createMsg =
+            uploaded > 0
+              ? `Объявление добавлено. Загружено фотографий: ${uploaded}.`
+              : "Объявление добавлено. Фото не загружены: сервер вернул пустой список.";
+        }
+        if (createPhotoInputRef.current) createPhotoInputRef.current.value = "";
+        setCreatePhotoFiles([]);
+        setMessage(createMsg);
+        setPhotoBanner({ kind: "ok", text: createMsg });
         setPhotoUploadCarId(photoFocusId);
         setEditingId(null);
         setForm(emptyForm);
@@ -1859,6 +2015,8 @@ function CarsTabWithDesign({
   const cancelSellerEdit = useCallback(() => {
     setEditingId(null);
     setPhotoUploadCarId(null);
+    setCreatePhotoFiles([]);
+    if (createPhotoInputRef.current) createPhotoInputRef.current.value = "";
     setForm(emptyForm);
     setSellerExtras({ ...BUYER_FILTERS_INITIAL });
     setOpenedSellerSection(null);
@@ -1895,6 +2053,37 @@ function CarsTabWithDesign({
     }
   };
 
+  const uploadPhotosForCar = async (id: number, fileList: File[], token: string): Promise<number> => {
+    const fd = new FormData();
+    fileList.forEach((f) => fd.append("files", f));
+    const base = API_BASE.replace(/\/$/, "");
+    const res = await fetch(`${base}/cars/${Number(id)}/photos`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+      body: fd,
+    });
+    const raw = await res.text();
+    let parsed: unknown = null;
+    try {
+      parsed = raw ? JSON.parse(raw) : null;
+    } catch {
+      parsed = null;
+    }
+    if (!res.ok) {
+      const errBody =
+        parsed && typeof parsed === "object" && parsed !== null
+          ? (parsed as { message?: string; error?: string })
+          : {};
+      throw new Error(
+        errBody.message ||
+          errBody.error ||
+          raw?.slice(0, 200) ||
+          `Ошибка ${res.status}: загрузка фото`
+      );
+    }
+    return Array.isArray(parsed) ? parsed.length : 0;
+  };
+
   const handleSellerPhotoInput = async (e: ChangeEvent<HTMLInputElement>) => {
     if (photoUploadLockRef.current || photoBusy) {
       e.target.value = "";
@@ -1924,34 +2113,7 @@ function CarsTabWithDesign({
     setError("");
     setPhotoBanner(null);
     try {
-      const fd = new FormData();
-      fileList.forEach((f) => fd.append("files", f));
-      const base = API_BASE.replace(/\/$/, "");
-      const res = await fetch(`${base}/cars/${Number(id)}/photos`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
-        body: fd,
-      });
-      const raw = await res.text();
-      let parsed: unknown = null;
-      try {
-        parsed = raw ? JSON.parse(raw) : null;
-      } catch {
-        parsed = null;
-      }
-      if (!res.ok) {
-        const errBody =
-          parsed && typeof parsed === "object" && parsed !== null
-            ? (parsed as { message?: string; error?: string })
-            : {};
-        throw new Error(
-          errBody.message ||
-            errBody.error ||
-            raw?.slice(0, 200) ||
-            `Ошибка ${res.status}: загрузка фото`
-        );
-      }
-      const n = Array.isArray(parsed) ? parsed.length : 0;
+      const n = await uploadPhotosForCar(id, fileList, token);
       const okText =
         n > 0
           ? `Готово: загружено фотографий — ${n}. Они появятся в таблице и в превью ниже.`
@@ -1967,6 +2129,15 @@ function CarsTabWithDesign({
       photoUploadLockRef.current = false;
       setPhotoBusy(false);
     }
+  };
+
+  const handleCreatePhotoSelection = (e: ChangeEvent<HTMLInputElement>) => {
+    const fileList = e.target.files ? Array.from(e.target.files) : [];
+    if (fileList.length === 0) {
+      setCreatePhotoFiles([]);
+      return;
+    }
+    setCreatePhotoFiles(fileList.slice(0, 10));
   };
 
   const deleteSellerPhoto = async (carId: number, imageId: number) => {
@@ -2142,6 +2313,7 @@ function CarsTabWithDesign({
           onBack={() => setSelectedCar(null)}
           isFavorite={favoriteCarIds.has(selectedCar.id)}
           onFavoriteToggle={() => onFavoriteToggle(selectedCar.id)}
+          viewerPhone={currentUser?.username ?? null}
         />
       ) : (
         <>
@@ -2587,23 +2759,13 @@ function CarsTabWithDesign({
                     автомобилей» ниже (до {MAX_DEALERSHIP_BULK_ROWS} шт. за раз).
                   </p>
                 )}
-                {currentUser?.accountType === "admin" && (
-                  <p className="search-panel-hint">
-                    Режим администратора: ниже список всех объявлений; можно редактировать и удалять любые. В форме
-                    можно выбрать владельца из списка пользователей, иначе объявление закрепится за вами. Пакетное
-                    добавление и автосалоны — как у дилера.
-                  </p>
-                )}
               </div>
             ) : (
               <div className="listing-edit-modal-head">
                 <h2 className="listing-edit-modal-title" id="listing-edit-dialog-title">
-                  Редактирование объявления №{editingId}
+                  Редактирование объявления
                 </h2>
                 <div className="listing-edit-modal-actions">
-                  <button type="button" className="secondary" onClick={() => cancelSellerEdit()}>
-                    Отменить
-                  </button>
                   <button
                     type="button"
                     className="listing-edit-modal-close"
@@ -2618,7 +2780,7 @@ function CarsTabWithDesign({
             {editingId != null && message && <p className="message success listing-edit-modal-banner">{message}</p>}
             {editingId != null && error && <p className="message error listing-edit-modal-banner">{error}</p>}
           <form onSubmit={submit}>
-            <div className="search-table">
+            <div className="search-table seller-create-table">
               <div className="search-grid">
                 <div className="search-cell">
                   <span className="search-cell-label">Марка</span>
@@ -2676,19 +2838,6 @@ function CarsTabWithDesign({
                   </div>
                 </div>
               </div>
-              {currentUser?.accountType === "admin" && (
-                <div className="search-grid search-grid--3">
-                  <div className="search-cell">
-                    <span className="search-cell-label">Владелец</span>
-                    <SimpleFilterPicker
-                      value={form.ownerUserId}
-                      placeholder="По умолчанию — текущий администратор"
-                      options={adminOwnerPickerOptions}
-                      onChange={(value) => setForm({ ...form, ownerUserId: value })}
-                    />
-                  </div>
-                </div>
-              )}
               <div className="search-grid">
                 <div className="search-cell">
                   <span className="search-cell-label">Город</span>
@@ -2961,13 +3110,43 @@ function CarsTabWithDesign({
                   </div>
                 </div>
               )}
-            {mode === "seller" && currentUser && photoCarIdResolved != null && (
+            {mode === "seller" && currentUser && editingId === null && (
+              <div className="seller-photos card-inset">
+                <h3 className="seller-photos-title">Фотографии нового объявления</h3>
+                <p className="seller-photos-hint">
+                  Добавьте фото до публикации: до 10 файлов, JPEG, PNG или WebP, до 8 МБ каждый.
+                </p>
+                <div className="seller-photos-toolbar">
+                  <input
+                    ref={createPhotoInputRef}
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp"
+                    multiple
+                    disabled={photoBusy}
+                    onChange={handleCreatePhotoSelection}
+                    className="seller-photos-file-native"
+                    aria-label="Файлы изображений нового объявления"
+                  />
+                  <button
+                    type="button"
+                    className="secondary seller-photos-file-btn"
+                    disabled={photoBusy}
+                    onClick={() => createPhotoInputRef.current?.click()}
+                  >
+                    Выбрать фото
+                  </button>
+                  {createPhotoFiles.length > 0 && (
+                    <span className="seller-photos-count">Выбрано: {createPhotoFiles.length}</span>
+                  )}
+                </div>
+              </div>
+            )}
+            {mode === "seller" && currentUser && editingId != null && photoCarIdResolved != null && (
               <div className="seller-photos card-inset">
                 <h3 className="seller-photos-title">Фотографии объявления</h3>
                 <p className="seller-photos-hint">
-                  До 10 файлов, JPEG, PNG или WebP (не HEIC с iPhone), до 8 МБ каждый. Фото относятся к объявлению №{" "}
-                  {photoCarIdResolved}
-                  {editingId != null ? " (редактирование)." : " (только что сохранено — можно добавить снимки)."}
+                  До 10 файлов, JPEG, PNG или WebP (не HEIC с iPhone), до 8 МБ каждый.
+                  {editingId != null ? " Режим редактирования." : " Объявление только что сохранено — можно добавить снимки."}
                 </p>
                 {photoBanner && (
                   <p
@@ -3037,12 +3216,6 @@ function CarsTabWithDesign({
             (currentUser?.accountType === "dealership" || currentUser?.accountType === "admin") && (
             <div className="dealership-bulk card-inset">
               <h3 className="dealership-bulk-title">Несколько автомобилей сразу</h3>
-              <p className="dealership-bulk-desc">
-                Заполните позиции так же, как основную форму: каждая позиция — отдельное объявление. Можно скопировать
-                данные из формы выше в новую позицию. За один раз — до {MAX_DEALERSHIP_BULK_ROWS} позиций; одинаковые
-                марка, модель и год в одном пакете недопустимы.
-                {currentUser?.accountType === "admin" && " Для админа в каждой позиции можно указать id владельца."}
-              </p>
               <div className="dealership-bulk-toolbar">
                 <button type="button" className="secondary" onClick={addBulkRow} disabled={bulkRows.length >= MAX_DEALERSHIP_BULK_ROWS}>
                   + Добавить позицию
@@ -3090,7 +3263,7 @@ function CarsTabWithDesign({
                         </button>
                       )}
                     </div>
-                    <div className="search-table">
+                    <div className="search-table seller-create-table">
                       <div className="search-grid">
                         <div className="search-cell">
                           <span className="search-cell-label">Марка</span>
@@ -3132,19 +3305,6 @@ function CarsTabWithDesign({
                           />
                         </div>
                       </div>
-                      {currentUser?.accountType === "admin" && (
-                        <div className="search-grid search-grid--3">
-                          <div className="search-cell">
-                            <span className="search-cell-label">Владелец</span>
-                            <SimpleFilterPicker
-                              value={row.ownerUserId}
-                              placeholder="По умолчанию — текущий администратор"
-                              options={adminOwnerPickerOptions}
-                              onChange={(value) => updateBulkRow(row.id, { ownerUserId: value })}
-                            />
-                          </div>
-                        </div>
-                      )}
                       <div className="search-grid">
                         <div className="search-cell">
                           <span className="search-cell-label">Город</span>
@@ -3444,8 +3604,10 @@ function CarsTabWithDesign({
             </div>
           )}
           {carsLoadStatus === "ok" && listingsToShow.length > 0 && (
+            <>
+            <div ref={listingsTopRef} />
             <div className="listing-cards" role="list">
-              {listingsToShow.map((car) => {
+              {listingsPageItems.map((car) => {
                 const isFav = favoriteCarIds.has(car.id);
                 const vatStyle = listingShowVatStyle(car);
                 return (
@@ -3543,6 +3705,31 @@ function CarsTabWithDesign({
                 );
               })}
             </div>
+            {listingsTotalPages > 1 && (
+              <div className="listings-pagination" aria-label="Пагинация объявлений">
+                <button
+                  type="button"
+                  className="secondary"
+                  onClick={goToPrevListingsPage}
+                  disabled={listingsPage === 1}
+                >
+                  Назад
+                </button>
+                <span className="listings-pagination__status">
+                  Страница {listingsPage} из {listingsTotalPages}
+                </span>
+                <button
+                  type="button"
+                  className="secondary"
+                  onClick={goToNextListingsPage}
+                  disabled={listingsPage === listingsTotalPages}
+                >
+                  Вперёд
+                </button>
+              </div>
+            )}
+            <div ref={listingsBottomRef} />
+            </>
           )}
         </div>
       </section>
@@ -3589,6 +3776,7 @@ export default function App() {
   const [buyerOpenCarRequest, setBuyerOpenCarRequest] = useState<{ id: number; nonce: number } | null>(null);
   const [carsListLoadStatus, setCarsListLoadStatus] = useState<"loading" | "ok" | "error">("loading");
   const [selectedHeroBrand, setSelectedHeroBrand] = useState("");
+  const [heroShowAllBrands, setHeroShowAllBrands] = useState(false);
   const [resetToListSignal, setResetToListSignal] = useState(0);
   const [heroModelNavigate, setHeroModelNavigate] = useState<HeroModelNavigate | null>(null);
   const [buyerCarDetailOpen, setBuyerCarDetailOpen] = useState(false);
@@ -3600,9 +3788,39 @@ export default function App() {
   const [adminPanelBusy, setAdminPanelBusy] = useState(false);
   const [adminPwdDraft, setAdminPwdDraft] = useState<Record<number, string>>({});
   const adminPeopleRows = useMemo(
-    () => adminUsers.filter((row) => row.accountType !== "DEALERSHIP"),
+    () => adminUsers.filter((row) => row.accountType.trim().toLowerCase() !== "dealership"),
     [adminUsers]
   );
+  const adminDealershipUserByDealershipId = useMemo(() => {
+    const dealershipUsers = adminUsers.filter(
+      (row) => row.accountType.trim().toLowerCase() === "dealership"
+    );
+    const byUsername = new Map<string, AdminUserRow>();
+    const byCompanyName = new Map<string, AdminUserRow>();
+    for (const row of dealershipUsers) {
+      if (row.username?.trim()) {
+        byUsername.set(row.username.trim(), row);
+      }
+      const company = row.companyName?.trim().toLowerCase();
+      if (company) {
+        byCompanyName.set(company, row);
+      }
+    }
+    const linked = new Map<number, AdminUserRow>();
+    for (const d of adminDealerships) {
+      let row: AdminUserRow | undefined;
+      if (d.phone?.trim()) {
+        row = byUsername.get(d.phone.trim());
+      }
+      if (!row && d.name?.trim()) {
+        row = byCompanyName.get(d.name.trim().toLowerCase());
+      }
+      if (row) {
+        linked.set(d.id, row);
+      }
+    }
+    return linked;
+  }, [adminUsers, adminDealerships]);
 
   const onFavoriteToggle = useCallback((carId: number) => {
     setFavoriteCarIds((prev) => {
@@ -3873,23 +4091,10 @@ export default function App() {
     setAccountOpen(false);
   };
 
-  const handleAdminRefreshPanel = async () => {
-    if (!currentUser?.token || currentUser.accountType !== "admin") return;
-    setAdminPanelStatus("loading");
-    setAdminPanelMessage("");
-    try {
-      await reloadAdminPanel(currentUser.token);
-      setAdminPanelStatus("ok");
-    } catch (e) {
-      setAdminPanelStatus("error");
-      setAdminPanelMessage((e as Error).message);
-    }
-  };
-
   const handleAdminDeleteUser = async (id: number) => {
     if (!currentUser?.token) return;
     const row = adminUsers.find((u) => u.id === id);
-    if (!window.confirm(`Удалить пользователя ${row?.username ?? id} и все его объявления?`)) return;
+    if (!window.confirm(`Удалить пользователя ${row?.username ?? "без логина"} и все его объявления?`)) return;
     setAdminPanelBusy(true);
     setAdminPanelMessage("");
     try {
@@ -3928,10 +4133,7 @@ export default function App() {
 
   const handleAdminDeleteDealership = async (d: Dealership) => {
     if (!currentUser?.token) return;
-    if (
-      !window.confirm(`Удалить автосалон «${d.name}» (id ${d.id})? Операция необратима.`)
-    )
-      return;
+    if (!window.confirm(`Удалить автосалон «${d.name}»? Операция необратима.`)) return;
     setAdminPanelBusy(true);
     setAdminPanelMessage("");
     try {
@@ -3948,8 +4150,13 @@ export default function App() {
   const brandStats = useMemo(() => {
     const grouped = new Map<string, number>();
     allCars.forEach((c) => grouped.set(c.brand, (grouped.get(c.brand) || 0) + 1));
-    return [...grouped.entries()].sort((a, b) => b[1] - a[1]).slice(0, 12);
+    return [...grouped.entries()].sort((a, b) => b[1] - a[1]);
   }, [allCars]);
+
+  const heroVisibleBrandStats = useMemo(
+    () => (heroShowAllBrands ? brandStats : brandStats.slice(0, 10)),
+    [brandStats, heroShowAllBrands]
+  );
 
   const selectedBrandModels = useMemo(() => {
     if (!selectedHeroBrand.trim()) return [];
@@ -4132,7 +4339,6 @@ export default function App() {
               {currentUser ? (
                 <>
                   <h3 className="auth-title">Профиль</h3>
-                  <p className="auth-subtitle">Данные вашего аккаунта и быстрые действия.</p>
                   <div className="auth-profile-grid">
                     {currentUser.accountType === "dealership" ? (
                       <>
@@ -4191,22 +4397,9 @@ export default function App() {
                   {currentUser.accountType === "admin" && (
                     <div className="admin-panel">
                       <h4 className="admin-panel-title">Администрирование</h4>
-                      <p className="auth-subtitle admin-panel-subtitle">
-                        Пользователи и автосалоны. Редактирование объявлений и фото — в режиме «Подать объявление».
-                      </p>
-                      <div className="admin-panel-toolbar">
-                        <button
-                          type="button"
-                          className="secondary"
-                          disabled={adminPanelBusy || adminPanelStatus === "loading"}
-                          onClick={() => void handleAdminRefreshPanel()}
-                        >
-                          Обновить списки
-                        </button>
-                        {adminPanelStatus === "loading" && (
-                          <span className="admin-panel-hint">Загрузка…</span>
-                        )}
-                      </div>
+                      {adminPanelStatus === "loading" && (
+                        <span className="admin-panel-hint">Загрузка…</span>
+                      )}
                       {adminPanelMessage && (
                         <p
                           className={
@@ -4225,7 +4418,6 @@ export default function App() {
                             <table className="admin-table">
                               <thead>
                                 <tr>
-                                  <th>Id</th>
                                   <th>Логин</th>
                                   <th>Тип</th>
                                   <th>Имя / компания</th>
@@ -4237,7 +4429,6 @@ export default function App() {
                                   const isSelf = row.username === currentUser.username;
                                   return (
                                     <tr key={row.id}>
-                                      <td>{row.id}</td>
                                       <td>{row.username}</td>
                                       <td>{formatAdminAccountType(row.accountType)}</td>
                                       <td>{adminUserDisplayLabel(row)}</td>
@@ -4262,7 +4453,7 @@ export default function App() {
                                           disabled={adminPanelBusy}
                                           onClick={() => void handleAdminSetPassword(row.id)}
                                         >
-                                          Пароль
+                                          Изменить
                                         </button>
                                         <button
                                           type="button"
@@ -4289,19 +4480,43 @@ export default function App() {
                             <table className="admin-table">
                               <thead>
                                 <tr>
-                                  <th>Id</th>
                                   <th>Название</th>
                                   <th>Адрес</th>
-                                  <th />
+                                  <th>Действия</th>
                                 </tr>
                               </thead>
                               <tbody>
-                                {adminDealerships.map((d) => (
+                                {adminDealerships.map((d) => {
+                                  const linkedUser = adminDealershipUserByDealershipId.get(d.id);
+                                  return (
                                   <tr key={d.id}>
-                                    <td>{d.id}</td>
                                     <td>{d.name}</td>
                                     <td>{d.address}</td>
                                     <td className="admin-table-actions">
+                                      <input
+                                        type="password"
+                                        autoComplete="new-password"
+                                        placeholder="Новый пароль"
+                                        className="admin-pwd-input"
+                                        value={linkedUser ? (adminPwdDraft[linkedUser.id] ?? "") : ""}
+                                        disabled={adminPanelBusy || !linkedUser}
+                                        onChange={(e) => {
+                                          if (!linkedUser) return;
+                                          setAdminPwdDraft((prev) => ({
+                                            ...prev,
+                                            [linkedUser.id]: e.target.value,
+                                          }));
+                                        }}
+                                      />
+                                      <button
+                                        type="button"
+                                        className="secondary"
+                                        disabled={adminPanelBusy || !linkedUser}
+                                        title={linkedUser ? "Изменить пароль автосалона" : "Не найден связанный аккаунт автосалона"}
+                                        onClick={() => linkedUser && void handleAdminSetPassword(linkedUser.id)}
+                                      >
+                                        Изменить
+                                      </button>
                                       <button
                                         type="button"
                                         className="secondary"
@@ -4312,7 +4527,7 @@ export default function App() {
                                       </button>
                                     </td>
                                   </tr>
-                                ))}
+                                )})}
                               </tbody>
                             </table>
                           </div>
@@ -4468,15 +4683,15 @@ export default function App() {
         <>
         {mode === "buyer" && !buyerCarDetailOpen && (!accountOpen || currentUser) && (
           <section className="hero">
-            <h1>
+            <h1 className="hero-count-title">
               {carsListLoadStatus === "loading" && "Загрузка каталога…"}
               {carsListLoadStatus === "error" && "Каталог временно недоступен"}
               {carsListLoadStatus === "ok" && `${allCars.length} объявлений о продаже авто`}
             </h1>
-            <p>Поиск и фильтрация объявлений для покупателей.</p>
+            <div className="hero-market-divider" aria-hidden />
             <div className="brands">
               {carsListLoadStatus === "ok" &&
-                brandStats.map(([brand, count]) => (
+                heroVisibleBrandStats.map(([brand, count]) => (
                   <button
                     type="button"
                     key={brand}
@@ -4499,20 +4714,23 @@ export default function App() {
                 <p className="hero-brands-hint">Проверьте backend и настройки API</p>
               )}
             </div>
+            {carsListLoadStatus === "ok" && (
+              <div className="hero-brands-actions">
+                <button
+                  type="button"
+                  className="hero-all-brands-btn"
+                  onClick={() => {
+                    setHeroShowAllBrands((prev) => !prev);
+                  }}
+                >
+                  {heroShowAllBrands ? "Скрыть" : "Все марки"}
+                </button>
+              </div>
+            )}
             {carsListLoadStatus === "ok" && selectedHeroBrand.trim() && (
               <div className="hero-models">
                 <div className="hero-models-header">
                   <strong>Модели {selectedHeroBrand} в наличии</strong>
-                  <button
-                    type="button"
-                    className="hero-models-reset"
-                    onClick={() => {
-                      setSelectedHeroBrand("");
-                      setHeroModelNavigate(null);
-                    }}
-                  >
-                    Сбросить марку
-                  </button>
                 </div>
                 <div className="hero-models-grid">
                   {selectedBrandModels.map(([model, count]) => (

@@ -33,6 +33,7 @@ build/
 .vscode/
 
 ### Application Properties ###
+.env
 application.properties
 
 ### Uploaded car photos (local dev) ###

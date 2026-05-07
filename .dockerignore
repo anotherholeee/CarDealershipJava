@@ -1,0 +1,10 @@
+target
+.git
+.gitattributes
+.idea
+*.iml
+frontend
+logs
+uploads
+node_modules
+**/.DS_Store
