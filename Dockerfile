@@ -18,11 +18,14 @@ FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
 RUN addgroup -S app && adduser -S app -G app \
     && mkdir -p /app/logs \
+    && mkdir -p /app/static \
     && chown -R app:app /app
 COPY --from=build /workspace/target/autosalon.jar /app/app.jar
+COPY --from=frontend-build /workspace/frontend/dist /app/static
 RUN apk add --no-cache wget \
-    && chown app:app /app/app.jar
+    && chown -R app:app /app/app.jar /app/static
 USER app
 EXPOSE 8080
 ENV JAVA_OPTS=""
+ENV SPRING_WEB_RESOURCES_STATIC_LOCATIONS="file:/app/static/,classpath:/static/"
 ENTRYPOINT ["sh", "-c", "exec java $JAVA_OPTS -jar /app/app.jar"]
