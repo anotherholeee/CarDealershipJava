@@ -52,8 +52,24 @@ type DealershipWithCars = Dealership & {
   cars: Car[];
 };
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL?.trim()
-  || (import.meta.env.PROD ? `${window.location.origin}/api` : "http://localhost:8080/api");
+const apiBaseFromEnv = import.meta.env.VITE_API_BASE_URL?.trim();
+const API_BASE = (() => {
+  if (!apiBaseFromEnv) {
+    return import.meta.env.PROD ? `${window.location.origin}/api` : "http://localhost:8080/api";
+  }
+  // В production игнорируем localhost из env, чтобы хостинг не пытался ходить в локальную машину пользователя.
+  if (import.meta.env.PROD) {
+    try {
+      const u = new URL(apiBaseFromEnv);
+      if (u.hostname === "localhost" || u.hostname === "127.0.0.1") {
+        return `${window.location.origin}/api`;
+      }
+    } catch {
+      return `${window.location.origin}/api`;
+    }
+  }
+  return apiBaseFromEnv;
+})();
 
 /** Сколько BYN за 1 USD (для показа «второй» цены; при желании задайте VITE_BYN_PER_USD в .env). */
 const RAW_BYN_PER_USD = Number(import.meta.env.VITE_BYN_PER_USD);
@@ -3559,8 +3575,7 @@ function CarsTabWithDesign({
               <p className="table-empty-title">Не удалось загрузить объявления</p>
               <p className="table-empty-hint message error">{error || "Ошибка сети"}</p>
               <p className="table-empty-hint">
-                Убедитесь, что backend запущен ({API_BASE.replace(/\/api\/?$/, "")}) и в .env указан верный{" "}
-                <code className="inline-code">VITE_API_BASE_URL</code>.
+                Проверьте доступность backend по адресу {API_BASE.replace(/\/api\/?$/, "")}.
               </p>
               <button type="button" className="secondary mt8" onClick={() => void loadCars()}>
                 Повторить загрузку
